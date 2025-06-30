@@ -1,0 +1,111 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    73.8567,
+                    18.5204
+                ]
+            },
+            "properties":{
+                "name": "Pune, Maharashtra"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    76.7156,
+                    28.8732
+                ]
+            },
+            "properties":{
+                "name": "Luhari Block A and B, Haryana"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    76.4156,
+                    28.1732
+                ]
+            },
+            "properties":{
+                "name": "Luhari Block C and D, Haryana"
+            }
+        },
+        {
+            "type": "Feature",
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    73.3483,
+                    19.2813
+                ]
+            },
+            "properties":{
+                "name": "Bhiwandi, Maharashtra"
+            }
+        },
+        {
+            "type":"Feature",
+            "geometry" :{
+                "type": "Point",
+                "coordinates":[
+                    73.7898,
+                    19.9975
+                ]
+            },
+            "properties":{
+                "name": "Nashik, Maharashtra"
+            }
+        },
+        {
+            "type":"Feature",
+            "geometry" :{
+                "type": "Point",
+                "coordinates":[
+                    78.4772,
+                    17.4065
+                ]
+            },
+            "properties":{
+                "name": "Hyderabad, Telangana"
+            }
+        },
+        {
+            "type":"Feature",
+            "geometry" :{
+                "type": "Point",
+                "coordinates":[
+                    79.9707,
+                    13.0827 
+                ]
+            },
+            "properties":{
+                "name": "Chennai, Tamil Nadu"
+            }
+        }
+        ,
+
+        {
+            "type":"Feature",
+            "geometry":{
+                "type":"Point",
+                "coordinates":[
+                    91.7086,
+                    26.1158
+                ]
+            },
+            "properties":{
+                "name": "Guwahati, Assam"
+            }
+        }
+    ]
+}

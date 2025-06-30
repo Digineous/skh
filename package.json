@@ -1,0 +1,90 @@
+{
+  "name": "dashboard",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.4.1",
+    "@emotion/styled": "^11.3.0",
+    "@fortawesome/fontawesome-svg-core": "^6.7.2",
+    "@fortawesome/free-solid-svg-icons": "^6.7.2",
+    "@fortawesome/react-fontawesome": "^0.2.2",
+    "@mui/icons-material": "^7.1.0",
+    "@mui/material": "^5.0.6",
+    "@mui/x-charts": "^8.5.0",
+    "@mui/x-date-pickers": "^5.0.20",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "apexcharts": "^4.7.0",
+    "axios": "^1.9.0",
+    "chart.js": "^4.4.9",
+    "core-js": "^3.42.0",
+    "d3": "^7.9.0",
+    "date-fns": "^4.1.0",
+    "dayjs": "^1.11.13",
+    "file-saver": "^2.0.5",
+    "framer-motion": "^12.15.0",
+    "lucide-react": "^0.511.0",
+    "react": "^18.3.1",
+    "react-apexcharts": "^1.7.0",
+    "react-chartjs-2": "^5.3.0",
+    "react-dom": "^18.3.1",
+    "react-router-dom": "^7.6.1",
+    "recharts": "^2.15.3",
+    "regenerator-runtime": "^0.14.1",
+    "styled-components": "^6.1.18",
+    "web-vitals": "^5.0.2",
+    "xlsx": "^0.18.5"
+  },
+  "scripts": {
+    "start": "PORT=4200 vite --host",
+    "build": "vite build",
+    "dev": "vite",
+    "test": "react-scripts test"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      "last 2 versions",
+      "not dead",
+      "not op_mini all",
+      "Chrome >= 47",
+      "Samsung 4"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.27.2",
+    "@babel/preset-react": "^7.27.1",
+    "@vitejs/plugin-react-swc": "^3.10.0",
+    "react-scripts": "^5.0.1",
+    "vite": "^6.3.5",
+    "vite-plugin-svgr": "^4.3.0",
+    "vite-tsconfig-paths": "^5.1.4"
+  },
+  "babel": {
+    "presets": [
+      [
+        "@babel/preset-env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions",
+              "Chrome >= 47",
+              "Samsung 4"
+            ]
+          }
+        }
+      ],
+      "@babel/preset-react"
+    ]
+  }
+}

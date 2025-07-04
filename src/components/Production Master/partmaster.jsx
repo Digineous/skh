@@ -380,21 +380,22 @@ const PartMaster = () => {
   );
 
   const handleFileChange = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      //console.log("Selected file:", file);
+    const fileInput = event.target;
+    const file = fileInput.files[0];
 
+    if (file) {
       const formData = new FormData();
       formData.append("file", file);
 
       try {
         const response = await apiUploadPart(formData);
-        //console.log("Upload File Response:", response);
-
         await getParts();
+
+        // ✅ Clear file input (which also effectively resets formData)
+        fileInput.value = "";
       } catch (err) {
         console.error("Error uploading part:", err);
-        handleSnackbarOpen(err.message,"error");
+        handleSnackbarOpen(err.message, "error");
       }
     }
   };

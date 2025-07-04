@@ -389,7 +389,9 @@ export default function HourlyBucketM1() {
               fullWidth
             >
               {shiftData.map((shift) => (
-                <MenuItem key={shift.shiftId} value={shift.shiftName}>{shift.shiftName}</MenuItem>
+                <MenuItem key={shift.shiftId} value={shift.shiftName}>
+                  {shift.shiftName} - {shift.lineName}
+                  </MenuItem>
               ))}
             </Select>
           </ResponsiveFormControl>

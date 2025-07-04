@@ -564,7 +564,7 @@ const PartMaster = () => {
                 marginBottom: "5px",
               }}
               component="a"
-              href="../../../public/assets/skh_part_master_format.xlsx"
+              href="/assets/skh_part_master_format.xlsx"
               download>
               Download Template
             </Button>

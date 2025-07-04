@@ -23,7 +23,7 @@ export const apiQLossReport = async ({ lineNo, machineId, cdate, shiftId }) => {
         },
       }
     );
-    console.log("API response data:", data.data);
+    //console.log("API response data:", data.data);
     return data.data; 
   } catch (error) {
     console.error("Error during getting raw data:", error);

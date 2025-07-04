@@ -12,7 +12,7 @@ export const apiGetCockPitView = async (formData) => {
       deviceNo:formData.machineNo,
       module:formData.module
     };
-    console.log(body)
+    //console.log(body)
     const data = await axios.post(url, body, {
       headers: {
         Authorization: `Bearer ${token}`,

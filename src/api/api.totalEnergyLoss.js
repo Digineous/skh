@@ -10,7 +10,7 @@ export const apiGetTotalThresHold = async (startDate, endDate) => {
       endDate: endDate,
      
     };
-    console.log(body)
+    //console.log(body)
     const data = await axios.post(url, body, {
       headers: {
         Authorization: `Bearer ${token}`,

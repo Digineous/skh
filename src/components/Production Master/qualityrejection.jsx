@@ -133,7 +133,7 @@ export default function QualityRejection() {
   useAuthCheck();
 
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setUpdatedQRejection((prevData) => ({
       ...prevData,
@@ -145,7 +145,7 @@ export default function QualityRejection() {
     }
   };
   const handleHourlyUpdate = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setUpdateHourlyLossData((prevData) => ({
       ...prevData,
@@ -257,7 +257,7 @@ export default function QualityRejection() {
       ...prevData,
       [name]: value,
     }));
-    console.log("rdate", rejectionDetail.rdate);
+    //console.log("rdate", rejectionDetail.rdate);
     if (name === "lineNo") {
       setSelectedLine(value);
     }
@@ -272,13 +272,13 @@ export default function QualityRejection() {
         shiftId: parseInt(hourlyLossData.shiftId, 10),
       };
       // setAddOpen(false);
-      console.log("formatted  data:", formattedHourlyData);
+      //console.log("formatted  data:", formattedHourlyData);
       const result = await apiQLossHourly(formattedHourlyData);
 
       setAdd2Open(false);
       handleSnackbarOpen(" Data fetched successfully!", "success");
       // setLoading(false);
-      console.log(" response get hourly", result.data);
+      //console.log(" response get hourly", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
@@ -307,7 +307,7 @@ export default function QualityRejection() {
       setRefreshData((prev) => !prev);
 
       handleSnackbarOpen("Quality rejection added successfully!", "success");
-      console.log("response", result.data);
+      //console.log("response", result.data);
     } catch (error) {
       console.error("Error adding machine:", error);
       handleSnackbarOpen("Error quality rejection. Please try again.", "error");
@@ -327,13 +327,13 @@ export default function QualityRejection() {
         cdate: formattedFromDate,
         shiftId: parseInt(hourlyLossData.shiftId, 10), // Convert shiftId to an integer
       };
-      console.log("updated hourly data,", formattedRawData);
+      //console.log("updated hourly data,", formattedRawData);
       const result = await apiUpdateQualityRejection(formattedRawData);
       setUpdateOpen(false);
       setRefreshData((prev) => !prev);
 
       handleSnackbarOpen("Quality reason updated successfully!", "success"); 
-      console.log("response", result.data);
+      //console.log("response", result.data);
     } catch (error) {
       console.error("Error updating :", error);
       handleSnackbarOpen(
@@ -344,9 +344,9 @@ export default function QualityRejection() {
   };
 
   const handleHourlyEditClick = (row) => {
-    console.log("selected hourly row", row);
+    //console.log("selected hourly row", row);
     setUpdateHourlyLossData(row);
-    console.log("selected hourly loss data", hourlyLossData);
+    //console.log("selected hourly loss data", hourlyLossData);
     setUpdateHourly(true);
   };
 
@@ -357,7 +357,7 @@ export default function QualityRejection() {
       setUpdateHourly(false);
       setRefreshData((prev) => !prev);
       handleSnackbarOpen("Data updated successfully!", "success");
-      console.log("Response from PUT request:", result.data);
+      //console.log("Response from PUT request:", result.data);
     } catch (error) {
       console.error("Error updating data:", error);
       handleSnackbarOpen("Error updating data. Please try again.", "error");
@@ -376,12 +376,12 @@ export default function QualityRejection() {
       };
       const result = await apiRejectionDetail(formattedQRData);
       setRejectionReport(result.data);
-      console.log("rejection detail data", result.data);
+      //console.log("rejection detail data", result.data);
       setAdd3Open(false);
       setRefreshData((prev) => !prev);
 
       handleSnackbarOpen(" rejection detail fetched successfully!", "success"); 
-      console.log("response", result.data);
+      //console.log("response", result.data);
     } catch (error) {
       console.error("Error getting rejection detail:", error);
       handleSnackbarOpen(
@@ -391,18 +391,18 @@ export default function QualityRejection() {
     }
   };
   const handleEditClick = (row) => {
-    console.log("selected row", row);
+    //console.log("selected row", row);
     setUpdatedQRejection(row);
     setUpdateOpen(true);
   };
 
   const handleDeleteClick = (row) => {
-    console.log("deleting quality rejection:", row.id);
+    //console.log("deleting quality rejection:", row.id);
     setDeleteQRejectionId(row.id);
     setDeleteModalOpen(true);
   };
   const handleHourlyDeleteClick = (row) => {
-    console.log("deleting qr:", row.id);
+    //console.log("deleting qr:", row.id);
     setDeleteHourlyID(row.id);
     setDeleteModalOpen(true);
   };

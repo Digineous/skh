@@ -9,7 +9,7 @@ export const apiDeletePart = async (mid) => {
       const data = await axios.delete(url, {headers:{
           Authorization:`Bearer ${token}`
       }});
-      console.log(data);
+      //console.log(data);
       return data;
     } catch (error) {
       console.error("Error during delete plant:", error);

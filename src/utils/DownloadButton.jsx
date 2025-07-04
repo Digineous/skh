@@ -7,7 +7,7 @@ const DownloadButton = ({ apiCall, formatData, fileName }) => {
   const handleDownload = async () => {
     try {
       const result = await apiCall();
-      console.log("Result from API call:", result);
+      //console.log("Result from API call:", result);
 
       const data = result?.data || result;
 

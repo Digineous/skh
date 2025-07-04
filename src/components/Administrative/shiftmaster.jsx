@@ -72,9 +72,9 @@ useAuthCheck()
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log(result?.data.data);
+        //console.log(result?.data.data);
         setMachinedata(result?.data.data);
-        console.log("machine", machinedata);
+        //console.log("machine", machinedata);
       } catch (error) {
         setError(error.message);
         handleSnackbarOpen(error.message, "error");
@@ -88,7 +88,7 @@ useAuthCheck()
     const  getShift= async () => {
       try {
         const result = await apiGetShift();
-        console.log("shiftdata",result.data.data);
+        //console.log("shiftdata",result.data.data);
         setShiftData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -130,17 +130,17 @@ useAuthCheck()
         lineName
       );
       setAddOpen(false);
-      console.log(
-        "mcode,mid,plantno,lpc,linen",
-        machineCode,
-        machineID,
-        machineName,
-        plantNO,
-        lineProductionCount,
-        lineName
-      );
+      //console.log(
+      //   "mcode,mid,plantno,lpc,linen",
+      //   machineCode,
+      //   machineID,
+      //   machineName,
+      //   plantNO,
+      //   lineProductionCount,
+      //   lineName
+      // );
       handleSnackbarOpen("Machine added successfully!", "success"); // Pass severity as "success"
-      console.log("response", result.data);
+      //console.log("response", result.data);
     } catch (error) {
       console.error("Error adding machine:", error);
       handleSnackbarOpen("Error adding machine. Please try again.", "error"); // Pass severity as "error"

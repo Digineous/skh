@@ -38,10 +38,10 @@ const GanttChartComponent = () => {
     const getMachines = async () => {
       try {
         const result = await apigetLines()
-        console.log("Lines are:", result)
+        //console.log("Lines are:", result)
         setLinesData(result.data.data);
       } catch (error) {
-        console.log(error.message);
+        //console.log(error.message);
     
       }
     }
@@ -80,10 +80,10 @@ const GanttChartComponent = () => {
         status: item.alertStatus,
       
       }));
-      console.log(data.status)
-      console.log(data.machineName)
+      //console.log(data.status)
+      //console.log(data.machineName)
       data.forEach(item => {
-        console.log(item.status, item.machineName);
+        //console.log(item.status, item.machineName);
       });
       
       setChartData(data);

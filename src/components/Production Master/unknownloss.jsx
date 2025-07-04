@@ -135,7 +135,7 @@ export default function UnknownLoss() {
       try {
         const [machineInputResult] = await Promise.all([apiGetMachineInput()]);
         const machineInputData1 = machineInputResult.data.data;
-        console.log("machine input data:", machineInputData1);
+        //console.log("machine input data:", machineInputData1);
         setMachineInputData(machineInputData1);
       } catch (error) {
         handleSnackbarOpen(error.message, "error");
@@ -150,7 +150,7 @@ export default function UnknownLoss() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data); 
+        //console.log("Result data machine:", result.data.data); 
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -163,7 +163,7 @@ export default function UnknownLoss() {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data); 
+        //console.log("Result data line:", result.data.data); 
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -177,7 +177,7 @@ export default function UnknownLoss() {
     const getParts = async () => {
       try {
         const result = await apiGetPart();
-        console.log("part data:", result.data.data);
+        //console.log("part data:", result.data.data);
         setPartData(result.data.data);
       } catch (error) {
         handleSnackbarOpen(error.message, "error");
@@ -196,7 +196,7 @@ export default function UnknownLoss() {
   };
 
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setUnknownLossData((prevData) => ({
       ...prevData,
@@ -214,13 +214,13 @@ export default function UnknownLoss() {
       delete dataToSend.cdate;
 
       // setAddOpen(false);
-      console.log("formatted unknown loss data:", dataToSend);
+      //console.log("formatted unknown loss data:", dataToSend);
       const result = await apiQLossData(dataToSend);
 
       // await getmachine();
       handleSnackbarOpen("Unkown loss Data fetched successfully!", "success"); 
       // setLoading(false);
-      console.log("Unknown loss response", result.data);
+      //console.log("Unknown loss response", result.data);
       setData(result.data);
       const newData = result.data;
       setTableData(newData);
@@ -268,9 +268,9 @@ export default function UnknownLoss() {
         "Unknown loss report fetched successfully!",
         "success"
       );
-      console.log("Unknown loss report response", response.data);
+      //console.log("Unknown loss report response", response.data);
     } catch (error) {
-      console.log("Unknown loss report error.", error);
+      //console.log("Unknown loss report error.", error);
     } finally {
       setLoading(false);
     }
@@ -280,7 +280,7 @@ export default function UnknownLoss() {
     setLoading(true);
 
     try {
-      console.log("Submitting updated data:", updatedData);
+      //console.log("Submitting updated data:", updatedData);
       if (!updatedData.dateTime) {
         setUpdatedData((prevData) => ({
           ...prevData,
@@ -295,7 +295,7 @@ export default function UnknownLoss() {
       setAddOpen(false);
 
       handleSnackbarOpen("Unknown loss updated successfully!", "success");
-      console.log("Unknown loss update response", result.data);
+      //console.log("Unknown loss update response", result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error updating unknown loss:", error);
@@ -313,7 +313,7 @@ export default function UnknownLoss() {
         machineNo: row.machineId,
         dateTime: row.dateTime,
       });
-      console.log("view a loss data:",response.data)
+      //console.log("view a loss data:",response.data)
       setALossReport(response.data);
       setALossModalOpen(true);
     } catch (error) {
@@ -334,12 +334,12 @@ export default function UnknownLoss() {
     });
     setSelectedPlant(row.plantName);
     setSelectedMachine(row.displayMachineName);
-    console.log(
-      "selected plant:",
-      row.plantName,
-      "selected machine:",
-      row.displayMachineName
-    );
+    //console.log(
+    //   "selected plant:",
+    //   row.plantName,
+    //   "selected machine:",
+    //   row.displayMachineName
+    // );
     setAddOpen(true);
   };
 
@@ -354,13 +354,13 @@ export default function UnknownLoss() {
   };
 
   useEffect(() => {
-    console.log(
-      "selectedPlant:",
-      selectedPlant,
-      "selectedMachine:",
-      selectedMachine
-    );
-    console.log("partData:", partData);
+    //console.log(
+    //   "selectedPlant:",
+    //   selectedPlant,
+    //   "selectedMachine:",
+    //   selectedMachine
+    // );
+    //console.log("partData:", partData);
   }, [selectedPlant, selectedMachine, partData]);
 
   const filteredParts = partData.filter(
@@ -369,7 +369,7 @@ export default function UnknownLoss() {
   );
 
   useEffect(() => {
-    console.log("filteredParts:", filteredParts);
+    //console.log("filteredParts:", filteredParts);
   }, [filteredParts]);
 
   return (

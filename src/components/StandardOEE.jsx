@@ -170,7 +170,7 @@ export default function StandardOEE() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data);
+        //console.log("Result data machine:", result.data.data);
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -183,9 +183,9 @@ export default function StandardOEE() {
   const getMachineInput = async () => {
     try {
       const result = await apiGetMachineInput();
-      console.log(result?.data.data);
+      //console.log(result?.data.data);
       setMachineInputData(result?.data.data);
-      console.log("machine", result.data.data);
+      //console.log("machine", result.data.data);
     } catch (error) {
       setError(error.message);
     }
@@ -193,19 +193,19 @@ export default function StandardOEE() {
   const handleMachineChange = (event) => {
     const newSelectedMachine = event.target.value;
     setSelectedMachine(newSelectedMachine);
-    console.log("new selected machine:", newSelectedMachine);
+    //console.log("new selected machine:", newSelectedMachine);
 
     const matchingPart = machineInputData.find(
       (input) => input.machineNo === newSelectedMachine
     );
-    console.log("Part Name:", matchingPart);
+    //console.log("Part Name:", matchingPart);
     setSelectedPartName(matchingPart?.partName || "");
 
   };
   const handleGetOEEData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    console.log("selected machine:", selectedMachine)
+    //console.log("selected machine:", selectedMachine)
     try {
       const response = await standardDashboardApi.getStandardOEE({
         plantNo: "",
@@ -215,7 +215,7 @@ export default function StandardOEE() {
       });
       if (response.data?.data?.[0]?.oeeDashboard) {
         const responseData = response.data.data[0].oeeDashboard;
-        console.log("oee data:", responseData);
+        //console.log("oee data:", responseData);
         setCardData({
           actualProduction: formatNumberWithCommas(
             findValue(responseData.oeeLatestData, "Actual Production")
@@ -256,11 +256,11 @@ export default function StandardOEE() {
           strokesPerShift: responseData.strokesPerShift || [],
           strokesPerMins: (responseData?.strokesPerMins || []).slice(80).reverse(),
         });
-        console.log("strokes per min:", (responseData?.strokesPerMins || []).slice(80).reverse())
-        console.log(
-          "energy per hr production:",
-          responseData.energyPerHourProduction
-        );
+        //console.log("strokes per min:", (responseData?.strokesPerMins || []).slice(80).reverse())
+        //console.log(
+        //   "energy per hr production:",
+        //   responseData.energyPerHourProduction
+        // );
         setDataFetched(true);
       } else {
         throw new Error("Unexpected API response structure");

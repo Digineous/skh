@@ -51,7 +51,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
         { id: 3, name: "Night" },
     ])
     function parseCustomDateTime(dateTimeString) {
-        console.log(dateTimeString)
+        //console.log(dateTimeString)
         const [datePart, timePart] = dateTimeString.split(' ');
         const [day, month, year] = datePart.split('/').map(Number);
         const [hours, minutes] = timePart.split(':').map(Number);
@@ -85,14 +85,14 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
     // Example usage
     const startDatetime = "25/12/2024 07:00";
     const endDatetime = "25/12/2024 08:30";
-    console.log(getTimeDifference(startDatetime, endDatetime)); // Output: "01:30:00"
+    //console.log(getTimeDifference(startDatetime, endDatetime)); // Output: "01:30:00"
 
     // Get Plants
     useEffect(() => {
         const getPlants = async () => {
             try {
                 const result = await apiGetPlant()
-                console.log("Plants:", result)
+                //console.log("Plants:", result)
                 setPlants(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -106,7 +106,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
         const getMachines = async () => {
             try {
                 const result = await apigetMachine()
-                console.log("Machines:", result)
+                //console.log("Machines:", result)
                 setMachines(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -120,7 +120,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
         const getLines = async () => {
             try {
                 const result = await apigetLines();
-                console.log("Lines:", result.data.data);
+                //console.log("Lines:", result.data.data);
                 setLines(result.data.data);
                 // setUpdatedLineData(result.data.data);
             } catch (error) {
@@ -160,17 +160,17 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
             // newEntry.startTime = newEntry.startDownDate
             formData.machineDownDate = formData.startTime
             // newEntry.totalDownTime = timediff
-            // console.log(newEntry);
-            console.log("api called")
+            // //console.log(newEntry);
+            //console.log("api called")
             const responce = await apiAddDownTime({
                 ...formData,
                 totalDownTime: timediff
 
             }
             );
-            console.log(responce)
+            //console.log(responce)
         } catch (error) {
-            console.log(error.message);
+            //console.log(error.message);
         }
     }
     const theme = useTheme();
@@ -196,7 +196,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
     };
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        console.log(name, value)
+        //console.log(name, value)
 
         setFormData((prevData) => ({
             ...prevData,

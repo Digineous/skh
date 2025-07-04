@@ -88,7 +88,7 @@ export default function WholeDayReportM1() {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data);
+        //console.log("Result data line:", result.data.data);
         setLineData(result.data.data); 
       } catch (error) {
         setError(error.message);
@@ -101,7 +101,7 @@ export default function WholeDayReportM1() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data); 
+        //console.log("Result data machine:", result.data.data); 
         setMachineData(result.data.data); 
       } catch (error) {
         setError(error.message);
@@ -113,7 +113,7 @@ export default function WholeDayReportM1() {
   useEffect(() => {
     if (location.state) {
       const { fromDate, lineNo, machineId } = location.state;
-      console.log("From Location State: ", fromDate, lineNo, machineId);  
+      //console.log("From Location State: ", fromDate, lineNo, machineId);  
   
       setRawData((prevData) => ({
         ...prevData,
@@ -124,12 +124,12 @@ export default function WholeDayReportM1() {
       const filteredMachines = machineData.filter(
         (machine) => machine.lineNo === lineNo
       );
-      console.log("Filtered Machines: ", filteredMachines);  
+      //console.log("Filtered Machines: ", filteredMachines);  
   
       const selectedMachine = filteredMachines.find(
         (machine) => parseInt(machine.machineId) === parseInt(machineId)
       );
-      console.log("Selected Machine: ", selectedMachine);
+      //console.log("Selected Machine: ", selectedMachine);
   
       if (selectedMachine) {
         setRawData((prevData) => ({
@@ -137,7 +137,7 @@ export default function WholeDayReportM1() {
           machineNo: selectedMachine.machineNo,
         }));
       } else {
-        console.log("Machine not found for machineNo:", machineId);
+        //console.log("Machine not found for machineNo:", machineId);
       }
     }
   }, [location.state, machineData]);
@@ -145,7 +145,7 @@ export default function WholeDayReportM1() {
 
   
   // const handleInputChange = (e) => {
-  //   console.log(e.target.name, e.target.value);
+  //   //console.log(e.target.name, e.target.value);
   //   const { name, value } = e.target;
   //   setRawData((prevData) => ({
   //     ...prevData,
@@ -161,7 +161,7 @@ export default function WholeDayReportM1() {
     }));
   };
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setRawData((prevData) => ({
       ...prevData,
@@ -187,13 +187,13 @@ export default function WholeDayReportM1() {
        
       };
       // setAddOpen(false);
-      console.log("formatted raw data:", formattedRawData);
+      //console.log("formatted raw data:", formattedRawData);
       const result = await apiWholeDayReportM1(formattedRawData);
 
       // await getmachine();
       handleSnackbarOpen(" whole day report m1 fetched successfully!", "success"); // Pass severity as "success"
       // setLoading(false);
-      console.log("Daily report m1", result.data);
+      //console.log("Daily report m1", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
@@ -213,9 +213,9 @@ export default function WholeDayReportM1() {
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-  console.log("Machine Data: ", machineData);
+  //console.log("Machine Data: ", machineData);
   const selectedMachine = filteredMachines.find(machine => machine.machineNo === rawData.machineNo);
-console.log("Selected Machine:", selectedMachine, "MachineNo from RawData:", rawData.machineNo); 
+//console.log("Selected Machine:", selectedMachine, "MachineNo from RawData:", rawData.machineNo); 
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));

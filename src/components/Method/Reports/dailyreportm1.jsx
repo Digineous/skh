@@ -87,7 +87,7 @@ useAuthCheck()
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data); 
+        //console.log("Result data machine:", result.data.data); 
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -100,7 +100,7 @@ useAuthCheck()
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data); 
+        //console.log("Result data line:", result.data.data); 
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -110,7 +110,7 @@ useAuthCheck()
     getLine();
   }, [refreshData]);
   // const handleInputChange = (e) => {
-  //   console.log(e.target.name, e.target.value);
+  //   //console.log(e.target.name, e.target.value);
   //   const { name, value } = e.target;
   //   setRawData((prevData) => ({
   //     ...prevData,
@@ -126,7 +126,7 @@ useAuthCheck()
     }));
   };
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setRawData((prevData) => ({
       ...prevData,
@@ -145,24 +145,24 @@ useAuthCheck()
         "dd-MMM-yyyy"
       );
       const formattedToDate = format(parseISO(rawData.toDate), "dd-MMM-yyyy");
-      console.log(
-        "todate,fromdate,machineid,lineid:",
-        formattedToDate,
-        formattedFromDate
-      );
+      //console.log(
+      //   "todate,fromdate,machineid,lineid:",
+      //   formattedToDate,
+      //   formattedFromDate
+      // );
       const formattedRawData = {
         ...rawData,
         fromDate: formattedFromDate,
         toDate: formattedToDate,
       };
       // setAddOpen(false);
-      console.log("formatted raw data:", formattedRawData);
+      //console.log("formatted raw data:", formattedRawData);
       const result = await apiDailyReportM1(formattedRawData);
 
       // await getmachine();
       handleSnackbarOpen("Daily report m1 fetched successfully!", "success");
       // setLoading(false);
-      console.log("Daily report m1", result.data);
+      //console.log("Daily report m1", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {

@@ -173,7 +173,7 @@ export default function GhaziabadOpe() {
   const fetchPartsNameByPartId = async (mid, partId) => {
     try {
       const response = await apiGetPartsName({ mid, partId });
-      console.log("view parts name:", response.data.data);
+      //console.log("view parts name:", response.data.data);
       const partData = response.data.data[0];
       return partData.partNames || "N/A";
     } catch (error) {
@@ -182,17 +182,17 @@ export default function GhaziabadOpe() {
     }
   };
   const fetchAllPartsNames = async () => {
-    console.log("Fetching all parts names for partData:", partData);
+    //console.log("Fetching all parts names for partData:", partData);
     const newPartsNames = {};
     for (const row of partData) {
-      console.log("Fetching part name for:", row.mid, row.partId);
+      //console.log("Fetching part name for:", row.mid, row.partId);
       const partName = await fetchPartsNameByPartId(row.mid, row.partId);
-      console.log("Received part name:", partName);
+      //console.log("Received part name:", partName);
       if (partName) {
         newPartsNames[`${row.mid}-${row.partId}`] = partName;
       }
     }
-    console.log("All parts names fetched:", newPartsNames);
+    //console.log("All parts names fetched:", newPartsNames);
     setPartsNames(newPartsNames);
   };
   useEffect(() => {

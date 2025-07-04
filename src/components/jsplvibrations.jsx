@@ -68,10 +68,10 @@ export default function JSPLVibration() {
         if (!vibrationResult || !currentResult || !hydraulicResult) {
           throw new Error("Failed to fetch data from APIs");
         }
-        console.log("Vibration Data:", vibrationResult.data);
-        console.log("Current Data:", currentResult.data.data);
-        console.log("Hydraulic Data:", hydraulicResult.data);
-        console.log("blast furnace data:",blastFurnaceResult.data.data)
+        //console.log("Vibration Data:", vibrationResult.data);
+        //console.log("Current Data:", currentResult.data.data);
+        //console.log("Hydraulic Data:", hydraulicResult.data);
+        //console.log("blast furnace data:",blastFurnaceResult.data.data)
         const transformedData = transformApiData(
           vibrationResult.data.slice(0, 20),
           currentResult.data.data.slice(0, 20),
@@ -93,8 +93,8 @@ export default function JSPLVibration() {
   }, [selectedSensor, selectedLine,selectedMachine]);
 
   const transformApiData = (vibrationData, currentData, hydraulicData,blastFurnaceData) => {
-    console.log("vibration data:", vibrationData);
-    console.log("current data:", currentData);
+    //console.log("vibration data:", vibrationData);
+    //console.log("current data:", currentData);
     let data=[]
     if (selectedSensor === "11") {
    
@@ -273,7 +273,7 @@ export default function JSPLVibration() {
   };
 
   const handleSensorChange = (event) => {
-    console.log("Selected Sensor:", event.target.value); 
+    //console.log("Selected Sensor:", event.target.value); 
     setSelectedSensor(event.target.value);
   };
 

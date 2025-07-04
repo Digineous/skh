@@ -9,7 +9,7 @@ export const apiGetHolidays = async () => {
     const data = await axios.get(url, {headers:{
         Authorization:`Bearer ${token}`
     }});
-    console.log("frdcs",data)
+    //console.log("frdcs",data)
     return data;
   } catch (error) {
     console.error("Error during adding line:", error);

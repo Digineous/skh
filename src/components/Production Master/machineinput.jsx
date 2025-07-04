@@ -155,7 +155,7 @@ export default function MachineInput() {
   const getParts = async () => {
     try {
       const result = await apiGetPart();
-      console.log("part data:",result.data.data);
+      //console.log("part data:",result.data.data);
       setPartData(result.data.data);
     } catch (error) {
       setError(error.message);
@@ -166,9 +166,9 @@ export default function MachineInput() {
   const getMachineInput = async () => {
     try {
       const result = await apiGetMachineInput();
-      console.log(result?.data.data);
+      //console.log(result?.data.data);
       setMachineInputData(result?.data.data);
-      console.log("machine", result.data.data);
+      //console.log("machine", result.data.data);
     } catch (error) {
       setError(error.message);
       handleSnackbarOpen(error.message, "error");
@@ -205,14 +205,14 @@ export default function MachineInput() {
       cycleTime: cycleTime,
         }
 
-        console.log("body:", body);
+        //console.log("body:", body);
     event.preventDefault(); 
     try {
       const result = await apiUpdateMachineInput(body);
       setAddOpen(false);
       getMachineInput();
       handleSnackbarOpen("Machine input updated successfully!", "success");
-      console.log("response", result.data);
+      //console.log("response", result.data);
       getParts();
     } catch (error) {
       console.error("Error adding machine:", error);
@@ -223,7 +223,7 @@ export default function MachineInput() {
     setAddOpen(true);
     setUpdatedData(row);
     setSelectedPlant(row.plantName); 
-    console.log("selected plant:",selectedPlant)
+    //console.log("selected plant:",selectedPlant)
   };
 
   const handleModalClose = () => {

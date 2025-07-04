@@ -26,7 +26,7 @@ export const apiUpdateULoss = async ({ id, machineId, dateTime, filledULoss,reas
         },
       }
     );
-    console.log("API response data:", data.data);
+    //console.log("API response data:", data.data);
     return data.data; 
   } catch (error) {
     console.error("Error during updating unknown loss  data:", error);

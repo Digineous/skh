@@ -25,13 +25,13 @@ export const apiGetGensetData = async (locationId, dataType, deviceNo) => {
   const url = `${baseUrl}/common/gensetDetails`;
   try {
     const token = localStorage.getItem("token");
-    console.log("loc id,datatype ,deviceno:",locationId,dataType,deviceNo)
+    //console.log("loc id,datatype ,deviceno:",locationId,dataType,deviceNo)
     const body = {
       locationId: locationId,
       intervalCode: dataType,
       deviceNo: deviceNo,
     };
-    console.log(body)
+    //console.log(body)
     const data = await axios.post(url, body, {
       headers: {
         Authorization: `Bearer ${token}`,

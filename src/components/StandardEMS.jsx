@@ -109,7 +109,7 @@ export default function StandardEMS() {
     try {
       const response =
         await standardDashboardApi.getStandardEMSConsumptionPerDay();
-      console.log("Raw consumption data:", response.data.data);
+      //console.log("Raw consumption data:", response.data.data);
 
       if (!response.data.data || !Array.isArray(response.data.data)) {
         console.error("Invalid data format received");
@@ -125,7 +125,7 @@ export default function StandardEMS() {
 
       const sortedData = sortDataByTimeDesc(validData, "dateTime");
 
-      console.log("Processed consumption data:", sortedData);
+      //console.log("Processed consumption data:", sortedData);
       setConsumptionData(sortedData);
     } catch (error) {
       console.error("consumption error:", error);

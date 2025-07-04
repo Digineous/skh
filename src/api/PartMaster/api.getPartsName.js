@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../baseUrl";
 
 export const apiGetPartsName = async (data) => {
-  console.log(data);
+  //console.log(data);
   const url = baseUrl + "/common/partsByMachineAndPartId";
   try {
     const token = localStorage.getItem("token");

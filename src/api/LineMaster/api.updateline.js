@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../baseUrl";
 
 export const apiUpdateLine = async (updatedLineData) => {
-  console.log(updatedLineData);
+  //console.log(updatedLineData);
     const url = baseUrl + `/line/updateLine/${updatedLineData.lineNo}`;
     try {
       const token=localStorage.getItem("token")

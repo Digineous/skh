@@ -143,7 +143,7 @@ export default function HourlyBucketM1() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data);
+        //console.log("Result data machine:", result.data.data);
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -156,7 +156,7 @@ export default function HourlyBucketM1() {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data);
+        //console.log("Result data line:", result.data.data);
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -169,7 +169,7 @@ export default function HourlyBucketM1() {
     const getShift = async () => {
       try {
         const result = await apiGetShift();
-        console.log("shiftdata", result.data.data);
+        //console.log("shiftdata", result.data.data);
         setShiftData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -180,7 +180,7 @@ export default function HourlyBucketM1() {
   }, [refreshData]);
 
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setHourlyBucket((prevData) => ({
       ...prevData,
@@ -203,7 +203,7 @@ export default function HourlyBucketM1() {
       shiftName: hourlyBucket.shiftNo,
     }
     try {
-      console.log("hourly 1 data:", body);
+      //console.log("hourly 1 data:", body);
       const result = await apiHourlyBucketOEE(body);
 
       // await getmachine();
@@ -212,7 +212,39 @@ export default function HourlyBucketM1() {
         "success"
       );
       // setLoading(false);
-      console.log("hourly1 response", result.data);
+      //console.log("hourly1 response", result.data);
+      setData(result.data);
+      setRefreshData((prev) => !prev);
+    } catch (error) {
+      console.error("Error getting hourly bucket 1 data:", error);
+      handleSnackbarOpen(
+        "Error fetching hourly bucket 1  data. Please try again.",
+        "error"
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+    const handleSubmitWholeDay = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    const body = {
+      deviceNo: hourlyBucket.deviceNo,
+      fromDate: hourlyBucket.fromDate,
+      toDate: hourlyBucket.toDate,
+    }
+    try {
+      //console.log("hourly 1 data:", body);
+      const result = await apiHourlyBucketOEE(body);
+
+      // await getmachine();
+      handleSnackbarOpen(
+        "Hourly bucket for whole day data fetched successfully!",
+        "success"
+      );
+      // setLoading(false);
+      //console.log("hourly1 response", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
@@ -265,17 +297,17 @@ export default function HourlyBucketM1() {
     }));
   };
 
-  const handleNavigateWholeDayM1 = () => {
-    const { fromDate, lineNo, machineId } = hourlyBucket;
-    const selectedMachine = machineData.find(
-      (machine) => machine.machineId === machineId
-    );
-    const machineNo = selectedMachine ? selectedMachine.machineNo : "";
+  // const handleNavigateWholeDayM1 = () => {
+  //   const { fromDate, lineNo, machineId } = hourlyBucket;
+  //   const selectedMachine = machineData.find(
+  //     (machine) => machine.machineId === machineId
+  //   );
+  //   const machineNo = selectedMachine ? selectedMachine.machineNo : "";
 
-    navigate("/reportm1/wholedayreportm1", {
-      state: { fromDate, lineNo, machineId, machineNo },
-    });
-  };
+  //   navigate("/reportm1/wholedayreportm1", {
+  //     state: { fromDate, lineNo, machineId, machineNo },
+  //   });
+  // };
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -384,7 +416,7 @@ export default function HourlyBucketM1() {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleNavigateWholeDayM1}
+          onClick={handleSubmitWholeDay}
         >
           Whole Day
         </Button>

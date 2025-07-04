@@ -54,7 +54,7 @@ export default function JSPLEManagement() {
     const getJindalData = async () => {
       try {
         const result = await apiGetElectricalMeasurements(selectedSensor);
-        console.log("Result data em jindal:", result.data.data);
+        //console.log("Result data em jindal:", result.data.data);
         const transformedData = transformApiData(result.data.data.slice(0, 20));
         setGraphData(transformedData);
       } catch (error) {

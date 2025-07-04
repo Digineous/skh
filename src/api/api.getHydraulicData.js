@@ -17,7 +17,7 @@ export const apiGetHydraulicData = async () => {
       },
     });
 
-    console.log(`hydraulic vibration sensor ${11}`, response.data);
+    //console.log(`hydraulic vibration sensor ${11}`, response.data);
     return response.data;
   } catch (error) {
     console.error(`Error getting hydraulic vibration sensor ${11}:`, error.message);

@@ -58,7 +58,7 @@ const VehicleTracking = () => {
       
     
         result = await apiGetCBMDetail(selectedLine);
-        console.log(result.data.data);
+        //console.log(result.data.data);
         setCbmData(result.data.data);
         setEnergyData([]);
      

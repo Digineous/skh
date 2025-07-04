@@ -10,7 +10,7 @@ export const apiGetRawData = async ({
   const url = baseUrl + "/common/rawDataByMachine";
   try {
     const token = localStorage.getItem("token");
-    // console.log("req body in ui api   ", machineNo," fd  ",      fromDate,"  td  ",      endDate);      
+    // //console.log("req body in ui api   ", machineNo," fd  ",      fromDate,"  td  ",      endDate);      
     machineNo = ""+machineNo;
     const data = await axios.post(
       url,

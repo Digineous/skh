@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../baseUrl";
 
 export const apiAddPart = async (data) => {
-  console.log(data);
+  //console.log(data);
   const url = baseUrl + "/part/addPart";
   try {
     const token = localStorage.getItem("token");

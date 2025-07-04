@@ -45,7 +45,7 @@ export default function LinamarDashboard() {
       });
 
       const data = response.data.data;
-      console.log("Electrical measurements data:", data);
+      //console.log("Electrical measurements data:", data);
 
       if (Array.isArray(data)) {
         setGraphData(data);
@@ -167,7 +167,7 @@ export default function LinamarDashboard() {
 //           Authorization:`Bearer ${token}`
 //       }});
 //       setGraphData(data.data.kwh)
-//       console.log("Electrical measurements data in linamar :",data.data.kwh)
+//       //console.log("Electrical measurements data in linamar :",data.data.kwh)
 //       return data;
 //     } catch (error) {
 //       console.error("Error during getting em data in linamar :", error);

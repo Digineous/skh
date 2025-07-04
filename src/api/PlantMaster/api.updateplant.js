@@ -5,7 +5,7 @@ export const apiUpdatePlant = async (plantNo,plantName, segment,location,state,c
     const url = baseUrl + `/plant/updatePlant/${plantNo}`;
     try {
       const token=localStorage.getItem("token")
-      console.log(" plantName, segment,location,state,country")
+      //console.log(" plantName, segment,location,state,country")
       const data = await axios.put(url, {
             plantNo:plantNo,
             plantName:plantName,

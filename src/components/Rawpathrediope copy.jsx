@@ -247,9 +247,9 @@ export default function Rawpathrediope() {
       try {
         const result = await apigetMachine(
         );
-        console.log("result of api machine data",result);
+        //console.log("result of api machine data",result);
         
-        console.log(result.data.data, "machine data:");
+        //console.log(result.data.data, "machine data:");
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -265,7 +265,7 @@ export default function Rawpathrediope() {
   // const fetchBlastFuranceDetail = async () => {
   //   try {
   //     const response = await apiGetBlastFurnaceDetail();
-  //     console.log("blast furance detail", response.data.data);
+  //     //console.log("blast furance detail", response.data.data);
   //     setBlastFurnaceData(response.data.data);
   //     setData(response.data.data);
   //   } catch (error) {
@@ -284,7 +284,7 @@ export default function Rawpathrediope() {
         fromDate: formattedFromDate,
         endDate: formattedToDate,
       };
-      console.log("formated data: ",formattedRawData);
+      //console.log("formated data: ",formattedRawData);
       
       const result = await apiGetRawData(formattedRawData);
 
@@ -299,17 +299,17 @@ export default function Rawpathrediope() {
       //     formattedRawData.fromDate,
       //     formattedRawData.toDate
       //   );
-      //   console.log(result.data.data);
+      //   //console.log(result.data.data);
       //   setTotalThresholdData(result.data.data);
       // } else {
-      //   console.log("hydraulic data:", formattedRawData.deviceNo);
+      //   //console.log("hydraulic data:", formattedRawData.deviceNo);
       //   result = await apiGetCBMRawData(
       //     formattedRawData.deviceNo,
       //     formattedRawData.fromDate,
       //     formattedRawData.toDate
       //   );
       // }
-      console.log("result of api ",result);
+      //console.log("result of api ",result);
       
       handleSnackbarOpen("Data fetched successfully!", "success");
       setData(result.data);
@@ -330,7 +330,7 @@ export default function Rawpathrediope() {
     setPage(0);
   };
   const handleSensorChange = (event) => {
-    console.log("Selected Sensor:", event.target.value); // Debugging line
+    //console.log("Selected Sensor:", event.target.value); // Debugging line
     setSelectedSensor(event.target.value);
   };
   const emptyRows =
@@ -359,7 +359,7 @@ export default function Rawpathrediope() {
   //       endDate: formattedToDate,
   //     };
   //   const apiCall = () =>
-  //     console.log("formatted data from downloadbutton",formattedRawData)
+  //     //console.log("formatted data from downloadbutton",formattedRawData)
   //     apiGetRawData(formattedRawData);
   //   const formatData = (data) => {
   //     const dataArray = Array.isArray(data) ? data : [data];

@@ -26,7 +26,7 @@ export const apiAddAvailabilityLoss = async ({ reportId, machineId, dateTime, aL
         },
       }
     );
-    console.log("API response data:", data.data);
+    //console.log("API response data:", data.data);
     return data.data; 
   } catch (error) {
     console.error("Error during adding availability loss  data:", error);

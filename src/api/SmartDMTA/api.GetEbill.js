@@ -4,7 +4,7 @@ export const eBillInsightApi = {
     getEBill: async (data) => {
         try {
             for (let pair of data.entries()) {
-                console.log(pair[0] + ': ', pair[1]);
+                //console.log(pair[0] + ': ', pair[1]);
             }
 
             const response = await client.post('/ebill', data, {

@@ -7,12 +7,12 @@ const DownloadReport = ({ apiCall, formatData, fileName }) => {
   const handleDownload = async () => {
     try {
       const result = await apiCall();
-      console.log("Result from API call:", result.data.data);
+      //console.log("Result from API call:", result.data.data);
 
       const data = result?.data || result;
 
       const formattedData = formatData(data);
-      console.log("formatted data:",formattedData)
+      //console.log("formatted data:",formattedData)
 
       const ws = XLSX.utils.json_to_sheet(formattedData);
       const wb = XLSX.utils.book_new();

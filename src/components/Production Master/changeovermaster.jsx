@@ -109,7 +109,7 @@ export default function ChangeOverMaster() {
     const getPlant = async () => {
       try {
         const result = await apiGetPlant();
-        console.log("Result data plant:", result.data.data);
+        //console.log("Result data plant:", result.data.data);
         setPlantData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -123,7 +123,7 @@ export default function ChangeOverMaster() {
     const getline = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data);
+        //console.log("Result data line:", result.data.data);
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -137,7 +137,7 @@ export default function ChangeOverMaster() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data);
+        //console.log("Result data machine:", result.data.data);
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -151,7 +151,7 @@ export default function ChangeOverMaster() {
     const getFrdcs = async () => {
       try {
         const result = await apiGetFRDC();
-        console.log("frdc result:", result.data.data)
+        //console.log("frdc result:", result.data.data)
         setFRDCData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -162,7 +162,7 @@ export default function ChangeOverMaster() {
   }, [refreshData]);
 
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setUpdatedFRDCData((prevData) => ({
       ...prevData,
@@ -172,7 +172,7 @@ export default function ChangeOverMaster() {
 
   const handleEditSubmit = (row) => {
     // alert("ehllo")
-    console.log("editt data", row);
+    //console.log("editt data", row);
     setUpdatedFRDCData(row);
     setOpen(true);
   };
@@ -200,7 +200,7 @@ export default function ChangeOverMaster() {
       const result = await apiAddFrdc(updatedFRDCData);
       handleSnackbarOpen("FRDC added successfully!", "success");
       setAddOpen(false);
-      console.log("response", result.data);
+      //console.log("response", result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error adding Frdc:", error);
@@ -212,7 +212,7 @@ export default function ChangeOverMaster() {
     const getFrdcs = async () => {
       try {
         const result = await apiGetFRDC();
-        console.log("Frdc data:", result?.data.data);
+        //console.log("Frdc data:", result?.data.data);
         setFRDCData(result?.data.data);
       } catch (error) {
         setError(error.message);
@@ -226,7 +226,7 @@ export default function ChangeOverMaster() {
       setOpen(false);
       await getFrdcs();
       handleSnackbarOpen("FRDC updated successfully!", "success");
-      console.log("response", result.data);
+      //console.log("response", result.data);
       setUpdatedFRDCData({
         plantNo: "",
         plantName: "",

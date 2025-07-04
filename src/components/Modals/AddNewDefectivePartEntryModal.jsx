@@ -42,11 +42,11 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
             newEntry.endTime = newEntry.endDownDate
             newEntry.startTime = newEntry.startDownDate
             newEntry.machineDownDate = newEntry.startDownDate
-            console.log(newEntry);
+            //console.log(newEntry);
 
             const responce = await apiAddDownTime(newEntry);
         } catch (error) {
-            console.log(error.message);
+            //console.log(error.message);
         }
     }
     const theme = useTheme();

@@ -84,7 +84,7 @@ export default function QuaterlyReportM1() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data); 
+        //console.log("Result data machine:", result.data.data); 
         setMachineData(result.data.data); 
       } catch (error) {
         setError(error.message);
@@ -97,7 +97,7 @@ export default function QuaterlyReportM1() {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data); 
+        //console.log("Result data line:", result.data.data); 
         setLineData(result.data.data); 
       } catch (error) {
         setError(error.message);
@@ -107,7 +107,7 @@ export default function QuaterlyReportM1() {
     getLine();
   }, [refreshData]);
   // const handleInputChange = (e) => {
-  //   console.log(e.target.name, e.target.value);
+  //   //console.log(e.target.name, e.target.value);
   //   const { name, value } = e.target;
   //   setRawData((prevData) => ({
   //     ...prevData,
@@ -123,7 +123,7 @@ export default function QuaterlyReportM1() {
     }));
   };
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setRawData((prevData) => ({
       ...prevData,
@@ -142,24 +142,24 @@ export default function QuaterlyReportM1() {
         "dd-MMM-yyyy"
       );
       const formattedToDate = format(parseISO(rawData.toDate), "dd-MMM-yyyy");
-      console.log(
-        "todate,fromdate,machineid,lineid:",
-        formattedToDate,
-        formattedFromDate
-      );
+      //console.log(
+      //   "todate,fromdate,machineid,lineid:",
+      //   formattedToDate,
+      //   formattedFromDate
+      // );
       const formattedRawData = {
         ...rawData,
         fromDate: formattedFromDate,
         toDate: formattedToDate,
       };
       // setAddOpen(false);
-      console.log("formatted raw data:", formattedRawData);
+      //console.log("formatted raw data:", formattedRawData);
       const result = await apigetRawData(formattedRawData);
 
       // await getmachine();
       handleSnackbarOpen("Raw Data fetched successfully!", "success"); // Pass severity as "success"
       // setLoading(false);
-      console.log("Raw response", result.data);
+      //console.log("Raw response", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {

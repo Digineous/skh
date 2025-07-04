@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "../baseUrl";
 
 export const apiUpdateHourly = async (updateHourly) => {
-  console.log(updateHourly);
+  //console.log(updateHourly);
     const url = baseUrl + `/hourly/updateRejectNo/${updateHourly.id}`;
     try {
       const token=localStorage.getItem("token")

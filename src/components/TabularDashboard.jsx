@@ -40,7 +40,7 @@ const TabularDashboard = () => {
         } else {
           result = await apiGetEnergyDetail();
         }
-        console.log("Data:", result.data.data);
+        //console.log("Data:", result.data.data);
         setData(result.data.data);
       } catch (error) {
         setError(error.message);

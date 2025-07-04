@@ -73,10 +73,10 @@ function EditDefectivePartEntryModal({ defectivePartEditModal, setDefectivePartE
     const updateDownTimeApiCaller = async (reqData) => {
         try {
             const response = await apiUpdateDTime(reqData);
-            console.log(response.data);
+            //console.log(response.data);
 
         } catch (error) {
-            console.log(error.message);
+            //console.log(error.message);
 
         }
     }
@@ -92,7 +92,7 @@ function EditDefectivePartEntryModal({ defectivePartEditModal, setDefectivePartE
         defectivePartToEdit.plantNo = formData.plantNo
         defectivePartToEdit.reason = formData.reason
         defectivePartToEdit.processDate = formData.processDate
-        // console.log("defectivepart for edit body....", defectivePartToEdit);
+        // //console.log("defectivepart for edit body....", defectivePartToEdit);
         // defectivePartToEdit.startTime = formData.startDownDate;
         // defectivePartToEdit.endTime = formData.endDownDate;
         // defectivePartToEdit.totalDownTime = "00:30:00";

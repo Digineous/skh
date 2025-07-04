@@ -106,7 +106,7 @@ export default function WeeklyReportM1() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data); 
+        //console.log("Result data machine:", result.data.data); 
         setMachineData(result.data.data); 
       } catch (error) {
         setError(error.message);
@@ -119,7 +119,7 @@ export default function WeeklyReportM1() {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data); 
+        //console.log("Result data line:", result.data.data); 
         setLineData(result.data.data); 
       } catch (error) {
         setError(error.message);
@@ -129,7 +129,7 @@ export default function WeeklyReportM1() {
     getLine();
   }, [refreshData]);
   // const handleInputChange = (e) => {
-  //   console.log(e.target.name, e.target.value);
+  //   //console.log(e.target.name, e.target.value);
   //   const { name, value } = e.target;
   //   setRawData((prevData) => ({
   //     ...prevData,
@@ -164,7 +164,7 @@ export default function WeeklyReportM1() {
     }));
   };
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setRawData((prevData) => ({
       ...prevData,
@@ -185,12 +185,12 @@ export default function WeeklyReportM1() {
         toDate,
       };
 
-      console.log("formatted raw data:", formattedRawData);
+      //console.log("formatted raw data:", formattedRawData);
       const result = await apiWeeklyReportsM1(formattedRawData);
   
       handleSnackbarOpen("Weekly report m1 fetched successfully!", "success"); 
  
-      console.log("Weekly report m1", result.data);
+      //console.log("Weekly report m1", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {

@@ -9,7 +9,7 @@ export const apiGetEnergyDetail = async () => {
     const data = await axios.get(url, {headers:{
         Authorization:`Bearer ${token}`
     }});
-    console.log("energy detail:",data)
+    //console.log("energy detail:",data)
     return data;
   } catch (error) {
     console.error("Error during getting energy detail:", error);

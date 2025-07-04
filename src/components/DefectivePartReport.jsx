@@ -47,7 +47,7 @@ function DefectivePartsReport() {
   const getDefectiveApiCaller = async ()=>{
     try {
       const response = await apiGetQualityRejection();
-      console.log("array ",response.data.data);
+      //console.log("array ",response.data.data);
       if(response.data.data.length > 0)
       {
         setTableData(response.data.data)
@@ -57,7 +57,7 @@ function DefectivePartsReport() {
       }
     } catch (error) {
       setTableData([]) 
-      console.log(error.message);
+      //console.log(error.message);
     }
   }
 //   const [addOpen, setAddOpen] = useState(false);

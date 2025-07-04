@@ -22,7 +22,7 @@ export const apiQLossHourly = async ({ lineNo, machineNo, shiftNo }) => {
         },
       }
     );
-    console.log("Hourly  report data:", data.data);
+    //console.log("Hourly  report data:", data.data);
     return data.data; 
   } catch (error) {
     console.error("Error during getting hourly report:", error);

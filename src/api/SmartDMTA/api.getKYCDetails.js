@@ -4,7 +4,7 @@ export const KYCAPI={
         try {
            
             for (let pair of data.entries()) {
-                console.log(pair[0] + ': ', pair[1]);
+                //console.log(pair[0] + ': ', pair[1]);
             }
 
             const response = await client.post('/common/uploadKYC', data, {

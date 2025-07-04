@@ -5,7 +5,7 @@ export const apiUpdateQualityRejection = async (qRejectionData) => {
     const url = baseUrl + `/quality/updateQuality/${qRejectionData.id}`;
     try {
       const token=localStorage.getItem("token")
-      console.log(" plantName, segment,location,state,country")
+      //console.log(" plantName, segment,location,state,country")
       const data = await axios.put(url, {
         id:qRejectionData.id,
         machineNo: qRejectionData.machineNo,

@@ -5,8 +5,8 @@ export const apiAddLineMaster = async (plantNo, lineName, segmentName) => {
   const url = baseUrl + "/line/addline";
   try {
     const token = localStorage.getItem("token");
-    console.log(token);
-    console.log(plantNo, lineName, segmentName);
+    //console.log(token);
+    //console.log(plantNo, lineName, segmentName);
     const data = await axios.post(
       url,
       {

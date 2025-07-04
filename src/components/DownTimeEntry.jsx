@@ -58,7 +58,7 @@ function DownTimesEntry() {
       }
     } catch (error) {
       setTableData([])
-      console.log(error.message);
+      //console.log(error.message);
     }
   }
   const [downTimeReasons, setDownTimeReasons] = useState([])

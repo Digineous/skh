@@ -2,12 +2,12 @@ import axios from "axios";
 import { baseUrl } from "./baseUrl";
 
 export const apiUpdateMachineInput = async (body) => {
-//   console.log(updatedDtimeData);
+//   //console.log(updatedDtimeData);
   const url = baseUrl + `/partproduction/updatePartProductionAndCycleTime/`;
 
   try {
     const token = localStorage.getItem("token");
-    // console.log("payload:",updatedMachineInput);
+    // //console.log("payload:",updatedMachineInput);
     const datas = await axios.put(
       url, body,
       {

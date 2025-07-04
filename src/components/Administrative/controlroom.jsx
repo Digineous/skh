@@ -54,7 +54,7 @@ import { apiGetControlRoom } from "../../api/api.getcontrolroom";
       try {
         const [machineInputResult] = await Promise.all([apiGetControlRoom()]);
         const machineInputData1 = machineInputResult.data.data;
-        console.log("control room data:", machineInputData1);
+        //console.log("control room data:", machineInputData1);
         setMachineInputData(machineInputData1);
       } catch (error) {
         handleSnackbarOpen(error.message, "error");

@@ -151,7 +151,7 @@ const PartMaster = () => {
     const getPlant = async () => {
       try {
         const result = await apiGetPlant();
-        console.log("Result data plant:", result.data.data);
+        //console.log("Result data plant:", result.data.data);
         setPlantData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -168,7 +168,7 @@ const PartMaster = () => {
     const getline = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data);
+        //console.log("Result data line:", result.data.data);
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -182,7 +182,7 @@ const PartMaster = () => {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data);
+        //console.log("Result data machine:", result.data.data);
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -195,7 +195,7 @@ const PartMaster = () => {
   const getParts = async () => {
     try {
       const result = await apiGetPart();
-      console.log("Get Part:", result.data.data);
+      //console.log("Get Part:", result.data.data);
       setPartData(result.data.data);
     } catch (error) {
       setError(error.message);
@@ -204,7 +204,7 @@ const PartMaster = () => {
   };
 
   const handleEditSubmit = (row) => {
-    console.log("edit data", row);
+    //console.log("edit data", row);
     setUpdatedPartData(row);
 
     setOpen(true);
@@ -268,7 +268,7 @@ const PartMaster = () => {
     setLoading(true);
     try {
       const result = await apiViewMultipleParts(mPartsData);
-      console.log("multiple parts data:", result.data);
+      //console.log("multiple parts data:", result.data);
       handleSnackbarOpen(
         "Multiple parts data fetched successfully!",
         "success"
@@ -301,7 +301,7 @@ const PartMaster = () => {
 
       const result = await apiUpdatePart(payload);
       await getParts();
-      console.log("Part updated successfully:", result.data);
+      //console.log("Part updated successfully:", result.data);
       handleSnackbarOpen("Part updated successfully!", "success");
       setRefreshData((prev) => !prev);
       setOpen(false);
@@ -315,7 +315,7 @@ const PartMaster = () => {
   // const fetchPartsNameByPartId = async (machineId, partId) => {
   //   try {
   //     const response = await apiGetPartsName({ machineId, partId });
-  //     console.log("view parts name:", response.data.data);
+  //     //console.log("view parts name:", response.data.data);
   //     const partData = response.data.data[0];
   //     setPartData(response.data.data);
   //     return partData.partNames || "N/A";
@@ -325,22 +325,22 @@ const PartMaster = () => {
   //   }
   // };
 
-  const fetchAllPartsNames = async () => {
-    const newPartsNames = {};
-    for (const row of partData) {
-      const partName = await fetchPartsNameByPartId(
-        row.machineId,
-        row.partName
-      );
-      if (partName) {
-        newPartsNames[`${row.machineNo}-${row.partNo}`] = partName;
-      }
-    }
-    setPartsNames(newPartsNames);
-  };
-  useEffect(() => {
-    fetchAllPartsNames();
-  }, [partData]);
+  // const fetchAllPartsNames = async () => {
+  //   const newPartsNames = {};
+  //   for (const row of partData) {
+  //     const partName = await fetchPartsNameByPartId(
+  //       row.machineId,
+  //       row.partName
+  //     );
+  //     if (partName) {
+  //       newPartsNames[`${row.machineNo}-${row.partNo}`] = partName;
+  //     }
+  //   }
+  //   setPartsNames(newPartsNames);
+  // };
+  // useEffect(() => {
+  //   fetchAllPartsNames();
+  // }, [partData]);
   const handleAddSubmit = async () => {
     try {
       // const { cycleTime, multipleFactor, ctReduction, ...data } =
@@ -363,11 +363,11 @@ const PartMaster = () => {
       //   upperBound: upperBound,
       //   lowerBound: lowerBound,
       // };
-      console.log("part DAta:", updatedPartData)
+      //console.log("part DAta:", updatedPartData)
       const result = await apiAddPart(updatedPartData);
-      console.log("Part added successfully:", result.data);
+      //console.log("Part added successfully:", result.data);
       setAddOpen(false);
-      console.log("response", result.data);
+      //console.log("response", result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error adding part:", error);
@@ -382,17 +382,19 @@ const PartMaster = () => {
   const handleFileChange = async (event) => {
     const file = event.target.files[0];
     if (file) {
-      console.log("Selected file:", file);
+      //console.log("Selected file:", file);
 
       const formData = new FormData();
       formData.append("file", file);
 
       try {
         const response = await apiUploadPart(formData);
-        console.log("Upload File Response:", response);
+        //console.log("Upload File Response:", response);
+
         await getParts();
       } catch (err) {
         console.error("Error uploading part:", err);
+        handleSnackbarOpen(err.message,"error");
       }
     }
   };
@@ -562,7 +564,7 @@ const PartMaster = () => {
                 marginBottom: "5px",
               }}
               component="a"
-              href="/assets/skh_part_master_format.xlsx"
+              href="../../../public/assets/skh_part_master_format.xlsx"
               download>
               Download Template
             </Button>

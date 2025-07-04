@@ -50,20 +50,20 @@ function DefectivePartEntry() {
 
   const getDefctiveApiCaller = async () => {
     try {
-      console.log("get defective caller run");
+      //console.log("get defective caller run");
 
       const response = await apiGetQualityRejection();
-      console.log("array ", response.data.data);
+      //console.log("array ", response.data.data);
       if (response.data.data.length > 0) {
         setTableData(response.data.data);
-        console.log(response.data.data);
+        //console.log(response.data.data);
       }
       else {
         setTableData([])
       }
     } catch (error) {
       setTableData([])
-      console.log(error.message);
+      //console.log(error.message);
     }
   }
 
@@ -235,10 +235,10 @@ const [refresh,setRefresh]=useState(false)
     try {
     const result=  await apiDeleteQualityRejection(id)
     if(result.status==="success"){
-      console.log("deleted successfully")
+      //console.log("deleted successfully")
     }
     } catch (error) {
-      console.log("error deleting ",error)
+      //console.log("error deleting ",error)
     }
   }
 

@@ -209,7 +209,7 @@ export default function OEEReport() {
         const getMachines = async () => {
             try {
                 const result = await apigetMachine();
-                console.log("result of api machine data", result.data.data);
+                //console.log("result of api machine data", result.data.data);
                 setMachineData(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -233,11 +233,11 @@ export default function OEEReport() {
                 toDate: formattedToDate,
             };
             let result;
-            // console.log("formated data: ",formattedRawData);
+            // //console.log("formated data: ",formattedRawData);
             if (selectedTab === 0) {
-                console.log("Formatted Data: ", formattedRawData);
+                //console.log("Formatted Data: ", formattedRawData);
                 result = await standardDashboardApi.getOeeReport(formattedRawData);
-                console.log("result of api: ", result.data.data);
+                //console.log("result of api: ", result.data.data);
                 handleSnackbarOpen("Data fetched successfully!", "success");
                 setData(result.data.data);
             }
@@ -258,7 +258,7 @@ export default function OEEReport() {
         setPage(0);
     };
     const handleSensorChange = (event) => {
-        console.log("Selected Sensor:", event.target.value);
+        //console.log("Selected Sensor:", event.target.value);
         setSelectedSensor(event.target.value);
     };
     const emptyRows =

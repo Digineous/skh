@@ -1,10 +1,10 @@
 import axios from "axios";
 import { baseUrl } from "../baseUrl";
 export const apiQualityRejection = async (qRejectionData) => {
-  console.log("add machine data:",qRejectionData)
+  //console.log("add machine data:",qRejectionData)
   const url = baseUrl + "/quality/addQuality";
   try {
-    console.log("qr data:",qRejectionData)
+    //console.log("qr data:",qRejectionData)
     const token = localStorage.getItem("token");
     const data = await axios.post(
       url,  

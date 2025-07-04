@@ -93,7 +93,7 @@ export default function MonthlyReportM1() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data);
+        //console.log("Result data machine:", result.data.data);
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -106,7 +106,7 @@ export default function MonthlyReportM1() {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data);
+        //console.log("Result data line:", result.data.data);
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -117,7 +117,7 @@ export default function MonthlyReportM1() {
   }, [refreshData]);
 
   const handleInputChange = (e) => {
-    console.log(e.target.name, e.target.value);
+    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
     setRawData((prevData) => ({
       ...prevData,
@@ -134,7 +134,7 @@ export default function MonthlyReportM1() {
       const formattedStartMonth = rawData.startMonth.format("MMM-YYYY");
       const formattedEndMonth = rawData.endMonth.format("MMM-YYYY");
       
-      console.log("startMonth, endMonth:", formattedStartMonth, formattedEndMonth);
+      //console.log("startMonth, endMonth:", formattedStartMonth, formattedEndMonth);
       
       const formattedRawData = {
         ...rawData,
@@ -145,7 +145,7 @@ export default function MonthlyReportM1() {
       const result = await apiMonthlyReportsM1(formattedRawData);
   
       handleSnackbarOpen("Monthly report m1 fetched successfully!", "success");
-      console.log("Monthly report m1", result.data);
+      //console.log("Monthly report m1", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
@@ -167,7 +167,7 @@ export default function MonthlyReportM1() {
   //       "dd-MMM-yyyy"
   //     );
   //     const formattedToDate = format(parseISO(rawData.toDate), "dd-MMM-yyyy");
-  //     console.log(
+  //     //console.log(
   //       "todate,fromdate,machineid,lineid:",
   //       formattedToDate,
   //       formattedFromDate
@@ -182,7 +182,7 @@ export default function MonthlyReportM1() {
   //     // await getmachine();
   //     handleSnackbarOpen("Monthly report m1 fetched successfully!", "success");
   //     // setLoading(false);
-  //     console.log("Monthly report m1", result.data);
+  //     //console.log("Monthly report m1", result.data);
   //     setData(result.data);
   //     setRefreshData((prev) => !prev);
   //   } catch (error) {

@@ -139,7 +139,7 @@ const DeviceMaster = () => {
         const getPlant = async () => {
             try {
                 const result = await apiGetPlant();
-                console.log("Result data plant:", result.data.data);
+                //console.log("Result data plant:", result.data.data);
                 setPlantData(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -171,7 +171,7 @@ const DeviceMaster = () => {
         const getline = async () => {
             try {
                 const result = await apigetLines();
-                console.log("Result data line:", result.data.data);
+                //console.log("Result data line:", result.data.data);
                 setLineData(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -185,7 +185,7 @@ const DeviceMaster = () => {
         const getmachine = async () => {
             try {
                 const result = await apigetMachine();
-                console.log("Result data machine:", result.data.data);
+                //console.log("Result data machine:", result.data.data);
                 setMachineData(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -223,7 +223,7 @@ const DeviceMaster = () => {
 
     //         const result = await apiUpdatePart(payload);
     //         await getParts();
-    //         console.log("Part updated successfully:", result.data);
+    //         //console.log("Part updated successfully:", result.data);
     //         handleSnackbarOpen("Part updated successfully!", "success");
     //         setRefreshData((prev) => !prev);
     //         setOpen(false);
@@ -236,7 +236,7 @@ const DeviceMaster = () => {
     // const fetchPartsNameByPartId = async (machineId, partId) => {
     //     try {
     //         const response = await apiGetPartsName({ machineId, partId });
-    //         console.log("view device name:", response.data.data);
+    //         //console.log("view device name:", response.data.data);
     //         const partData = response.data.data[0];
     //         return partData.partNames || "N/A";
     //     } catch (error) {
@@ -261,7 +261,7 @@ const DeviceMaster = () => {
     //     fetchAllPartsNames();
     // }, [partData]);
     const handleAddSubmit = async () => {
-        console.log(formData)
+        //console.log(formData)
     };
 
     const filteredLines = lineData.filter((line) => line.plantNo === 1);

@@ -54,7 +54,7 @@ import { apiGetHolidays } from "../../api/api.getholidaylist";
       try {
         const [machineInputResult] = await Promise.all([apiGetHolidays()]);
         const holidaysList1 = machineInputResult.data.data;
-        console.log("control room data:", holidaysList1);
+        //console.log("control room data:", holidaysList1);
         setHolidaysList(holidaysList1);
       } catch (error) {
         handleSnackbarOpen(error.message, "error");

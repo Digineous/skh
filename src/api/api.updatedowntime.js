@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "./baseUrl";
 
 export const apiUpdateDTime = async (updatedDtimeData) => {
-  console.log(updatedDtimeData);
+  //console.log(updatedDtimeData);
   const url = baseUrl + `/downtime/updateDownTime/${updatedDtimeData.id}`;
 
   try {

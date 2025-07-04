@@ -33,7 +33,7 @@ import { apiGetDownTimeReasons } from '../../api/MachineDownTimeReason/api.getDo
 
 
 function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }) {
-    console.log("hi", editOpen)
+    //console.log("hi", editOpen)
     const [plants, setPlants] = useState([])
     const [lines, setLines] = useState([])
     const [machines, setMachines] = useState([])
@@ -93,10 +93,10 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
     const updateDownTimeApiCaller = async (reqData) => {
         try {
             const response = await apiUpdateDTime(reqData);
-            console.log(response.data);
+            //console.log(response.data);
 
         } catch (error) {
-            console.log(error.message);
+            //console.log(error.message);
 
         }
     }
@@ -112,7 +112,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
         downTimeToEdit.reason = formData.reason
         downTimeToEdit.startDownDate = formData.startDownDate
         downTimeToEdit.endDownDate = formData.endDownDate
-        console.log("downtime for edit body....", downTimeToEdit);
+        //console.log("downtime for edit body....", downTimeToEdit);
         downTimeToEdit.startTime = formData.startDownDate;
         downTimeToEdit.endTime = formData.endDownDate;
         downTimeToEdit.totalDownTime = "00:30:00";
@@ -140,7 +140,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
         const getPlants = async () => {
             try {
                 const result = await apiGetPlant()
-                console.log("Plants:", result)
+                //console.log("Plants:", result)
                 setPlants(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -154,7 +154,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
         const getMachines = async () => {
             try {
                 const result = await apigetMachine()
-                console.log("Machines:", result)
+                //console.log("Machines:", result)
                 setMachines(result.data.data);
             } catch (error) {
                 setError(error.message);
@@ -168,7 +168,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
         const getLines = async () => {
             try {
                 const result = await apigetLines();
-                console.log("Lines:", result.data.data);
+                //console.log("Lines:", result.data.data);
                 setLines(result.data.data);
                 // setUpdatedLineData(result.data.data);
             } catch (error) {

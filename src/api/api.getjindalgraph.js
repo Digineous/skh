@@ -17,7 +17,7 @@ export const apiGetJindalGraph = async (sensorNumber) => {
       },
     });
 
-    console.log(`Jindal vibration sensor ${sensorNumber}`, response.data);
+    //console.log(`Jindal vibration sensor ${sensorNumber}`, response.data);
     return response.data;
   } catch (error) {
     console.error(`Error getting Jindal vibration sensor ${sensorNumber}:`, error.message);

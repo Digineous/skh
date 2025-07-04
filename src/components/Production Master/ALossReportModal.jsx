@@ -68,13 +68,13 @@ const ALossReportModal = ({ open, handleClose, data = [] }) => {
 
   const handleEditClick = async (row, rowIndex) => {
     const reason = reasons[rowIndex] || ''; 
-    console.log(`Updating row ${rowIndex}:`, {
-      reportId: row.reportId,
-      machineId: row.machineId,
-      dateTime: row.dateTime,
-      aLoss: row.unknownLoss,
-      aLossReason: reason
-    });
+    //console.log(`Updating row ${rowIndex}:`, {
+    //   reportId: row.reportId,
+    //   machineId: row.machineId,
+    //   dateTime: row.dateTime,
+    //   aLoss: row.unknownLoss,
+    //   aLossReason: reason
+    // });
 
     try {
       const response = await apiAddAvailabilityLoss({
@@ -84,7 +84,7 @@ const ALossReportModal = ({ open, handleClose, data = [] }) => {
         aLoss: row.unknownLoss,
         aLossReason: reason
       });
-      console.log("API response data:", response);
+      //console.log("API response data:", response);
       handleSnackbarOpen("A Loss reason added successfully!", "success"); 
 
     } catch (error) {

@@ -72,7 +72,7 @@ export default function LineMaster() {
     const getPlants = async () => {
       try {
         const result = await apiGetPlant();
-        console.log("Result data:", result.data.data);
+        //console.log("Result data:", result.data.data);
         setPlantData(result.data.data);
         //setUpdatedLineData(result.data.data); 
       } catch (error) {
@@ -86,7 +86,7 @@ export default function LineMaster() {
     const getLines = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data:", result.data.data);
+        //console.log("Result data:", result.data.data);
         setLineData(result.data.data);
         setUpdatedLineData(result.data.data);
       } catch (error) {
@@ -112,7 +112,7 @@ export default function LineMaster() {
   };
   const handleEditClick = (row) => {
     setUpdatedLineData(row);
-    // console.log("row data to update ",updatedLineData);
+    // //console.log("row data to update ",updatedLineData);
 
     setUpdateOpen(true);
   };
@@ -131,7 +131,7 @@ export default function LineMaster() {
         segment: "",
         lineName: "",
       });
-      // console.log("response", result.data);
+      // //console.log("response", result.data);
 
       setAddOpen(false);
       setRefreshData((prev) => !prev);
@@ -150,7 +150,7 @@ export default function LineMaster() {
         // updatedLineData.lineNo,
         // updatedLineData.lineName
       );
-      // console.log("response", result.data);
+      // //console.log("response", result.data);
       handleSnackbarOpen("Plant Updated successfully!", "success");
       setUpdatedLineData({
         plantNo: "",
@@ -166,10 +166,10 @@ export default function LineMaster() {
     }
   };
   const handleDelete = async (row) => {
-    // console.log(row);
+    // //console.log(row);
     try {
       const result = await apiDeleteLine(row.lineNo);
-      console.log("response", result.data);
+      //console.log("response", result.data);
       handleSnackbarOpen("Line Deleted successfully!", "success");
       setRefreshData((prev) => !prev);
 

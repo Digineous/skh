@@ -9,7 +9,7 @@ export const apiGetCBMDetail = async (id) => {
     const data = await axios.get(url, {headers:{
         Authorization:`Bearer ${token}`
     }});
-    console.log("cbm detail:",data)
+    //console.log("cbm detail:",data)
     return data;
   } catch (error) {
     console.error("Error during getting cbm detail:", error);

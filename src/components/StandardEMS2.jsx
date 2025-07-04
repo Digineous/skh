@@ -205,7 +205,7 @@ export default function StandardEMS2() {
 
   // const getUserId = () => {
   //   const userID = localStorage.getItem("userID");
-  //   console.log(userID);
+  //   //console.log(userID);
   //   if (userID === "aura_laser") {
   //     setDeviceNo(43);
   //   }
@@ -224,7 +224,7 @@ export default function StandardEMS2() {
   const getMachine = async () => {
     try {
       const result = await apigetMachine();
-      console.log("Machine Result:", result.data.data);
+      //console.log("Machine Result:", result.data.data);
       setMachineData(result.data.data);
     }
     catch (error) {
@@ -251,7 +251,7 @@ export default function StandardEMS2() {
       plantNo: "",
     }
     getStandardEMSData(data, machineNo);
-    console.log("Data:", data);
+    //console.log("Data:", data);
   };
 
   const handleRefresh = () => {
@@ -264,7 +264,7 @@ export default function StandardEMS2() {
       plantNo: "",
     }
     getStandardEMSData(data, machineNo);
-    console.log("Data:", data);
+    //console.log("Data:", data);
   };
 
   const handleDailyView = () => {
@@ -277,15 +277,15 @@ export default function StandardEMS2() {
     try {
       const response = await standardDashboardApi.getStandardEMS(data);
       const response2 = await standardDashboardApi.getMonthlyEnergyData(id)
-      console.log("Full Api:", response.data.data);
+      //console.log("Full Api:", response.data.data);
       const emsData = response.data.data[0].emsDashboard.hourlyConsumption;
       const energyData = response.data.data[0].emsDashboard.graphDetail;
       const box = response.data.data[0].emsDashboard.consumption;
-      console.log("EMS Data:", emsData);
+      //console.log("EMS Data:", emsData);
       setEMSData(emsData);
       setEnergyData(energyData);
       setBox(box);
-      console.log("Monthly Api:", response2.data.data)
+      //console.log("Monthly Api:", response2.data.data)
       setMonthlyEnergyData(response2.data.data)
       // const reverseApiData = emsData.slice().reverse();
       // setEMSDataNR(reverseApiData);

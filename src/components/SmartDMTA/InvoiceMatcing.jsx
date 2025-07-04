@@ -113,7 +113,7 @@ const InvoiceMatching = () => {
       }, 300);
 
       const response = await invoiceMacthingApi.getInvoiceMatching(formData);
-      console.log(invoiceMacthingApi);
+      //console.log(invoiceMacthingApi);
       clearInterval(uploadInterval);
       setComparisonData(response.data);
       setUploading(false);

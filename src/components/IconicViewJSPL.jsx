@@ -198,7 +198,7 @@ const IconicDashboard = () => {
     const getPlant = async () => {
       try {
         const result = await apiGetPlant();
-        console.log("Result data plant:", result.data.data);
+        //console.log("Result data plant:", result.data.data);
         setPlantData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -225,7 +225,7 @@ const IconicDashboard = () => {
     const getline = async () => {
       try {
         const result = await apigetLines();
-        console.log("Result data line:", result.data.data);
+        //console.log("Result data line:", result.data.data);
         setLineData(result.data.data);
         
       } catch (error) {
@@ -240,7 +240,7 @@ const IconicDashboard = () => {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        console.log("Result data machine:", result.data.data);
+        //console.log("Result data machine:", result.data.data);
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -263,7 +263,7 @@ const IconicDashboard = () => {
   const handleGetData = async() => {
     try {
       const result= await apiGetCockPitView(formData)
-      console.log("cock pit view data:",result.data.data)
+      //console.log("cock pit view data:",result.data.data)
       setCockPitData(result.data.data)
       setShowTables(result.data.data.length > 0);
       const machine1Params = [

@@ -11,7 +11,7 @@ export const apiGetThresholdParameters = async (plantId, lineId, machineId,devic
       machineNo: machineId,
       deviceNo:deviceNo
     };
-    console.log(body)
+    //console.log(body)
     const data = await axios.post(url, body, {
       headers: {
         Authorization: `Bearer ${token}`,

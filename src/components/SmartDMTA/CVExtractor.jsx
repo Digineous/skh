@@ -102,11 +102,11 @@ const CVExtractor = () => {
   const [modalData, setModalData] = useState({ education: [], experience: [] });
 
   const handleUploadResume = () => {
-    console.log("Resume uploaded.");
+    //console.log("Resume uploaded.");
   };
 
   const handleDownloadExcel = () => {
-    console.log("Downloaded as Excel.");
+    //console.log("Downloaded as Excel.");
   };
 
   const handleViewDetails = () => {

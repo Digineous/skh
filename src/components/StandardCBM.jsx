@@ -106,11 +106,11 @@ export default function StandardCBM() {
   ]);
 
   const handleGetOEEData = useCallback(async () => {
-    console.log("ok btn click for cbm data");
+    //console.log("ok btn click for cbm data");
 
     setIsLoading(true);
     setError(null);
-    console.log(cbmData);
+    //console.log(cbmData);
     const { Plant, Machine, Device, Line } = cbmData;
     try {
       const response = await standardDashboardApi.getStandardCBM({
@@ -119,11 +119,11 @@ export default function StandardCBM() {
         deviceNo: Device,
         lineNo: Line,
       });
-      console.log("api cbm data responce ", response);
+      //console.log("api cbm data responce ", response);
 
       if (response.data?.data) {
         const responseData = response.data.data[0].cbmDashboard;
-        console.log("CBM dashborad data by client", response.data.data[0]);
+        //console.log("CBM dashborad data by client", response.data.data[0]);
 
         setCardData({
           mttr: responseData?.mttrMtbf?.mttr,
@@ -154,7 +154,7 @@ export default function StandardCBM() {
 
         responseData.Spindle?.slice(0, 20).forEach((item) => {
           const time = new Date(item.datetimeRecvd).toLocaleTimeString();
-          console.log("time:", time);
+          //console.log("time:", time);
           processedChartData.velocity.push({
             time,
             horizontal: parseFloat(item.velocityX),
@@ -231,7 +231,7 @@ useEffect(()=>{
   }
     try {
       const response =await apiGetCockPitView(cockpitViewData)
-      console.log("cockpitview data",response.data.data)
+      //console.log("cockpitview data",response.data.data)
       setParameterTableData(response.data.data)
     } catch (error) {
     console.error("error getting cockpit view data:",error)

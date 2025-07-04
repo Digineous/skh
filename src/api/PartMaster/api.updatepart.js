@@ -1,7 +1,7 @@
 import axios from "axios";
 import { baseUrl } from "../baseUrl";
 export const apiUpdatePart = async (part) => {
- console.log(part,"check part id");
+ //console.log(part,"check part id");
   const url = baseUrl + `/part/updatePart/${part.partId}`;
   try {
     const token = localStorage.getItem("token");

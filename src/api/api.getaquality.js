@@ -7,13 +7,13 @@ export const apiGetAirQuality = async (locationId, dataType, deviceNo) => {
   const url = `${baseUrl}/common/postAirQualityDetails`;
   try {
     const token = localStorage.getItem("token");
-    console.log("loc id,datatype :",locationId,dataType)
+    //console.log("loc id,datatype :",locationId,dataType)
     const body = {
       locationId: locationId,
       intervalCode: 'shift',
       deviceNo: deviceNo,
     };
-    console.log(body)
+    //console.log(body)
     const data = await axios.post(url, body, {
       headers: {
         Authorization: `Bearer ${token}`,

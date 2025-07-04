@@ -36,9 +36,9 @@ function PowerReport() {
   const getDefectiveApiCaller = async () => {
     try {
       const response = await apiGetCBMRawData();
-      console.log("cbm api responce ",response);
+      //console.log("cbm api responce ",response);
       
-      console.log("array ", response.data.data);
+      //console.log("array ", response.data.data);
       if (response.data.data.length > 0) {
         setTableData(response.data.data);
       } else {
@@ -46,7 +46,7 @@ function PowerReport() {
       }
     } catch (error) {
       setTableData([]);
-      console.log(error.message);
+      //console.log(error.message);
     }
   };
   const [page, setPage] = useState(0);

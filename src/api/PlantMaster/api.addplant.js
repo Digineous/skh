@@ -12,7 +12,7 @@ export const apiAddPlant = async (
   const url = baseUrl + "/plant/addPlant";
   try {
     const token = localStorage.getItem("token");
-    console.log(" plantName, segment,location,state,country");
+    //console.log(" plantName, segment,location,state,country");
     const data = await axios.post(
       url,
       {

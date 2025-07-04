@@ -9,7 +9,7 @@ export const apiGetElectricalMeasurements = async () => {
     const data = await axios.get(url, {headers:{
         Authorization:`Bearer ${token}`
     }});
-    console.log("Electrical measurements data (sensor 2):",data)
+    //console.log("Electrical measurements data (sensor 2):",data)
     return data;
   } catch (error) {
     console.error("Error during getting em data (sensor 2):", error);

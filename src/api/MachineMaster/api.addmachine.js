@@ -1,7 +1,7 @@
 import axios from "axios";
 import { baseUrl } from "../baseUrl";
 export const apiMachineMaster = async (updatedMachineData) => {
-  console.log("add machine data:", updatedMachineData)
+  //console.log("add machine data:", updatedMachineData)
   const url = baseUrl + "/machine/addMachine";
   try {
     const token = localStorage.getItem("token");

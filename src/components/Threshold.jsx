@@ -240,9 +240,9 @@ export default function Threshold() {
     const getThresholdDetails = async () => {
       try {
         const result = await apiGetThreshold();
-        console.log("result of api",result);
+        //console.log("result of api",result);
         
-        console.log(result.data.data, "Threshold data:");
+        //console.log(result.data.data, "Threshold data:");
         setThreshold(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -256,7 +256,7 @@ export default function Threshold() {
     const getLineDetails = async () => {
       try {
         const result = await apigetLines();
-        console.log(result.data.data, "line data:");
+        //console.log(result.data.data, "line data:");
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -271,7 +271,7 @@ export default function Threshold() {
     const getPlantDetails = async () => {
       try {
         const result = await apiGetPlant();
-        console.log(result.data.data, "plant data:");
+        //console.log(result.data.data, "plant data:");
         setPlantData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -286,7 +286,7 @@ export default function Threshold() {
     const getMachineDetails = async () => {
       try {
         const result = await apigetMachine();
-        console.log(result.data.data, "machine data:");
+        //console.log(result.data.data, "machine data:");
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -300,7 +300,7 @@ export default function Threshold() {
     const getDeviceDetails = async () => {
       try {
         const result = await apiGetDevice();
-        console.log(result.data.data, "device data:");
+        //console.log(result.data.data, "device data:");
         setDeviceData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -332,7 +332,7 @@ export default function Threshold() {
         thresholdData.machineId,
         thresholdData.deviceNo
       );
-      console.log("parameter values:", response.data.data);
+      //console.log("parameter values:", response.data.data);
       if (response && response.data && Array.isArray(response.data.data)) {
         const parameterNames = response.data.data.map(
           (item) => item.parameterName

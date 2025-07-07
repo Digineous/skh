@@ -180,16 +180,31 @@ export default function HourlyBucketM1() {
   }, [refreshData]);
 
   const handleInputChange = (e) => {
-    //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
-    setHourlyBucket((prevData) => ({
-      ...prevData,
-      [name]: value,
-    }));
+
+    if (name === "shiftDetails") {
+      try {
+        const parsed = JSON.parse(value);
+        setHourlyBucket((prev) => ({
+          ...prev,
+          shiftName: parsed.shiftName,
+          deviceNo: parsed.deviceNo,
+        }));
+      } catch (error) {
+        console.error("Error parsing shiftDetails:", error);
+      }
+    } else {
+      setHourlyBucket((prevData) => ({
+        ...prevData,
+        [name]: value,
+      }));
+    }
+
     if (name === "lineNo") {
       setSelectedLine(value);
     }
   };
+
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
   );
@@ -200,7 +215,7 @@ export default function HourlyBucketM1() {
       deviceNo: hourlyBucket.deviceNo,
       fromDate: hourlyBucket.fromDate,
       toDate: hourlyBucket.toDate,
-      shiftName: hourlyBucket.shiftNo,
+      shiftName: hourlyBucket.shiftName,
     }
     try {
       //console.log("hourly 1 data:", body);
@@ -226,7 +241,7 @@ export default function HourlyBucketM1() {
     }
   };
 
-    const handleSubmitWholeDay = async (event) => {
+  const handleSubmitWholeDay = async (event) => {
     event.preventDefault();
     setLoading(true);
     const body = {
@@ -361,37 +376,32 @@ export default function HourlyBucketM1() {
           </ResponsiveFormControl>
         </Grid>
 
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={6} md={5}>
           <ResponsiveFormControl>
-            <InputLabel>Select Device</InputLabel>
+            <InputLabel>Select Shift and Device</InputLabel>
             <Select
-              name="deviceNo"
-              value={hourlyBucket?.deviceNo}
-              onChange={handleInputChange}
-              fullWidth
-            >
-              {machineData.map((machine) => (
-                <MenuItem key={machine.id} value={machine.machineId}>
-                  {machine.displayMachineName}
-                </MenuItem>
-              ))}
-            </Select>
-          </ResponsiveFormControl>
-        </Grid>
-
-        <Grid item xs={12} sm={6} md={2}>
-          <ResponsiveFormControl>
-            <InputLabel>Select Shift</InputLabel>
-            <Select
-              name="shiftNo"
-              value={hourlyBucket?.shiftNo}
+              name="shiftDetails"
+              value={
+                hourlyBucket.shiftName && hourlyBucket.deviceNo
+                  ? JSON.stringify({
+                    shiftName: hourlyBucket.shiftName,
+                    deviceNo: hourlyBucket.deviceNo,
+                  })
+                  : ""
+              }
               onChange={handleInputChange}
               fullWidth
             >
               {shiftData.map((shift) => (
-                <MenuItem key={shift.shiftId} value={shift.shiftName}>
-                  {shift.shiftName} - {shift.lineName}
-                  </MenuItem>
+                <MenuItem
+                  key={shift.shiftId}
+                  value={JSON.stringify({
+                    shiftName: shift.shiftName,
+                    deviceNo: shift.machineNo,
+                  })}
+                >
+                  {shift.shiftName} - {shift.startTime} - {shift.lineName}
+                </MenuItem>
               ))}
             </Select>
           </ResponsiveFormControl>

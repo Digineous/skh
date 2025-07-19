@@ -368,6 +368,19 @@ const PartMaster = () => {
       //console.log("Part added successfully:", result.data);
       setAddOpen(false);
       //console.log("response", result.data);
+      setUpdatedPartData({
+        partNo: "",
+        plantNo: "",
+        lineNo: "",
+        machineNo: "",
+        partName: "",
+        cycleTime: "",
+        plantProduction: "",
+        multipleFactor: "",
+        ctReduction: "",
+        lowerBound: "",
+        upperBound: "",
+      })
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error adding part:", error);
@@ -777,6 +790,16 @@ const PartMaster = () => {
             <Grid item xs={12}>
               <TextField
                 fullWidth
+                name="partNo"
+                label="Part Number"
+                value={updatedPartData?.partNo}
+                onChange={handleInputChange}
+                style={{ marginRight: "10px" }}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
                 name="partName"
                 label="Part Name"
                 value={updatedPartData?.partName}
@@ -949,6 +972,16 @@ const PartMaster = () => {
                   ))}
                 </Select>
               </FormControl>
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                fullWidth
+                name="partNo"
+                label="Part Number"
+                value={updatedPartData?.partNo}
+                onChange={handleInputChange}
+                style={{ marginRight: "10px" }}
+              />
             </Grid>
             <Grid item xs={12}>
               <TextField

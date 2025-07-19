@@ -11,7 +11,7 @@ export const apiAddPart = async (data) => {
       url,
       {
         plantNo: data.plantNo,
-        partNo: "1",
+        partNo: data.partNo,
         lineNo: data.lineNo,
         machineNo: data.machineNo,
         partName: data.partName,

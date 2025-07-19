@@ -651,7 +651,7 @@ const PartMaster = () => {
                       </StyledTableCell>
 
                       <StyledTableCell className="table-cell">
-                        {row.partId}
+                        {row.partNo}
                       </StyledTableCell>
 
                       <StyledTableCell className="table-cell">

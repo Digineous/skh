@@ -684,7 +684,7 @@ function NavBar() {
   return (
     <nav>
       <div>
-        <Link className="clogo" to="#">
+        <Link className="clogo" to="/welcome">
           <img
             src={brandlogo}
             style={{ height: "45px", width: "140px", objectFit: "contain" }}

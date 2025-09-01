@@ -1,5 +1,3 @@
-
-
 import React, { useEffect, useState } from "react";
 import {
   Select,
@@ -39,7 +37,10 @@ import { useAuthCheck } from "../../../utils/Auth";
 import { apigetMachine } from "../../../api/MachineMaster/apigetmachine";
 import { apigetLines } from "../../../api/LineMaster/api.getline";
 import { apiGetShift } from "../../../api/api.getshift";
-import { apiHourlyBucket1, apiHourlyBucketOEE } from "../../../api/ReportMaster/api.hourlybucket1";
+import {
+  apiHourlyBucket1,
+  apiHourlyBucketOEE,
+} from "../../../api/ReportMaster/api.hourlybucket1";
 import DownloadButton from "../../../utils/DownloadButton";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -49,16 +50,16 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     position: "sticky",
     top: 0,
     zIndex: 1,
-    [theme.breakpoints.down('sm')]: {
-      padding: '8px 4px',
-      fontSize: '0.8rem',
+    [theme.breakpoints.down("sm")]: {
+      padding: "8px 4px",
+      fontSize: "0.8rem",
     },
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-    [theme.breakpoints.down('sm')]: {
-      padding: '8px 4px',
-      fontSize: '0.75rem',
+    [theme.breakpoints.down("sm")]: {
+      padding: "8px 4px",
+      fontSize: "0.75rem",
     },
   },
 }));
@@ -70,27 +71,27 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:last-child td, &:last-child th": {
     border: 0,
   },
-  [theme.breakpoints.down('sm')]: {
-    '& > *': {
-      whiteSpace: 'nowrap',
+  [theme.breakpoints.down("sm")]: {
+    "& > *": {
+      whiteSpace: "nowrap",
     },
   },
 }));
 
 const ResponsiveFormControl = styled(FormControl)(({ theme }) => ({
-  width: '100%',
-  minWidth: 'unset',
+  width: "100%",
+  minWidth: "unset",
   marginBottom: theme.spacing(2),
 }));
 
 const ButtonContainer = styled(Box)(({ theme }) => ({
-  display: 'flex',
+  display: "flex",
   gap: theme.spacing(1),
   marginBottom: theme.spacing(2),
-  [theme.breakpoints.down('sm')]: {
-    flexDirection: 'column',
-    '& > button': {
-      width: '100%',
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    "& > button": {
+      width: "100%",
     },
   },
 }));
@@ -105,8 +106,8 @@ const getCurrentDate = () => {
 
 export default function HourlyBucketM1() {
   const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
-  const isTablet = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const isTablet = useMediaQuery(theme.breakpoints.down("md"));
 
   const [refreshData, setRefreshData] = useState(false);
   const [openSnackbar, setOpenSnackbar] = useState(false);
@@ -216,16 +217,13 @@ export default function HourlyBucketM1() {
       fromDate: hourlyBucket.fromDate,
       toDate: hourlyBucket.toDate,
       shiftName: hourlyBucket.shiftName,
-    }
+    };
     try {
       //console.log("hourly 1 data:", body);
       const result = await apiHourlyBucketOEE(body);
 
       // await getmachine();
-      handleSnackbarOpen(
-        "Hourly bucket data fetched successfully!",
-        "success"
-      );
+      handleSnackbarOpen("Hourly bucket data fetched successfully!", "success");
       // setLoading(false);
       //console.log("hourly1 response", result.data);
       setData(result.data);
@@ -244,11 +242,17 @@ export default function HourlyBucketM1() {
   const handleSubmitWholeDay = async (event) => {
     event.preventDefault();
     setLoading(true);
+    const now = new Date();
+
+    const fromDate = new Date();
+    fromDate.setDate(now.getDate() - 1);
+    fromDate.setHours(7, 0, 0, 0);
+
     const body = {
       deviceNo: hourlyBucket.deviceNo,
-      fromDate: hourlyBucket.fromDate,
-      toDate: hourlyBucket.toDate,
-    }
+      fromDate: fromDate.toISOString(),
+      toDate: now.toISOString(),
+    };
     try {
       //console.log("hourly 1 data:", body);
       const result = await apiHourlyBucketOEE(body);
@@ -331,20 +335,24 @@ export default function HourlyBucketM1() {
     rowsPerPage - Math.min(rowsPerPage, data.length - page * rowsPerPage);
 
   return (
-    <Box sx={{
-      padding: { xs: '10px', sm: '20px' },
-      width: '100%',
-      maxWidth: '100vw',
-      overflowX: 'hidden'
-    }}>
-      <Box sx={{
-        display: 'flex',
-        justifyContent: 'flex-start',
-        paddingY: { xs: 1, sm: 1 },
-        flexDirection: { xs: 'column', sm: 'row' },
-        alignItems: { xs: 'start', sm: 'center' },
-      }}>
-        <h2>Hour Bucket (M1)</h2>
+    <Box
+      sx={{
+        padding: { xs: "10px", sm: "20px" },
+        width: "100%",
+        maxWidth: "100vw",
+        overflowX: "hidden",
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "flex-start",
+          paddingY: { xs: 1, sm: 1 },
+          flexDirection: { xs: "column", sm: "row" },
+          alignItems: { xs: "start", sm: "center" },
+        }}
+      >
+        <h2>Hour Report</h2>
       </Box>
 
       <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center">
@@ -384,9 +392,9 @@ export default function HourlyBucketM1() {
               value={
                 hourlyBucket.shiftName && hourlyBucket.deviceNo
                   ? JSON.stringify({
-                    shiftName: hourlyBucket.shiftName,
-                    deviceNo: hourlyBucket.deviceNo,
-                  })
+                      shiftName: hourlyBucket.shiftName,
+                      deviceNo: hourlyBucket.deviceNo,
+                    })
                   : ""
               }
               onChange={handleInputChange}
@@ -434,11 +442,13 @@ export default function HourlyBucketM1() {
         </Button>
       </ButtonContainer>
 
-      <Box sx={{
-        width: '100%',
-        overflow: 'hidden',
-        mb: 0
-      }}>
+      <Box
+        sx={{
+          width: "100%",
+          overflow: "hidden",
+          mb: 0,
+        }}
+      >
         <TablePagination
           rowsPerPageOptions={[50, 100, 500, 1000]}
           component="div"
@@ -453,25 +463,24 @@ export default function HourlyBucketM1() {
       <TableContainer
         component={Paper}
         sx={{
-          maxHeight: { xs: '400px', sm: '500px' },
+          maxHeight: { xs: "400px", sm: "500px" },
           mb: 5,
-          overflow: 'auto'
+          overflow: "auto",
         }}
       >
         {loading ? (
-          <Box sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            height: '400px',
-          }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "400px",
+            }}
+          >
             <CircularProgress />
           </Box>
         ) : (
-          <Table
-            size={isMobile ? "small" : "medium"}
-            stickyHeader
-          >
+          <Table size={isMobile ? "small" : "medium"} stickyHeader>
             <TableHead>
               <TableRow>
                 <StyledTableCell>Device Name</StyledTableCell>
@@ -528,7 +537,7 @@ export default function HourlyBucketM1() {
         <MuiAlert
           onClose={() => setOpenSnackbar(false)}
           severity={severity}
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </MuiAlert>

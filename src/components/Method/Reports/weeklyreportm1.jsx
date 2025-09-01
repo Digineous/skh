@@ -23,15 +23,12 @@ import {
 } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-
-
-
-
 import { format, startOfMonth, endOfMonth, addDays } from "date-fns";
 import { useAuthCheck } from "../../../utils/Auth";
 import { apigetMachine } from "../../../api/MachineMaster/apigetmachine";
 import { apigetLines } from "../../../api/LineMaster/api.getline";
 import { apiWeeklyReportsM1 } from "../../../api/ReportMaster/api.weeklyreports";
+import { apiGetDevice } from "../../../api/DeviceMaster/api.getdevice";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -55,10 +52,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-
 const months = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const weeks = [
@@ -68,15 +74,16 @@ const weeks = [
   { label: "Week 4 ", value: 4 },
 ];
 const currentYear = new Date().getFullYear();
-const years = Array.from({ length: 11 }, (_, i) => currentYear - 5 + i);
+const years = Array.from({ length: 11 }, (_, i) => currentYear - 2 + i);
 export default function WeeklyReportM1() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [machineData, setMachineData] = useState([]);
+  const [deviceData, setDeviceData] = useState([]);
   const [lineData, setLineData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [error, setError] = useState(null);
   const [severity, setSeverity] = useState("success");
-  
+
   const [snackbarMessage, setSnackbarMessage] = useState("");
   // const [rawData, setRawData] = useState({
   //   lineNo: "",
@@ -103,24 +110,24 @@ export default function WeeklyReportM1() {
     setOpenSnackbar(true);
   };
   useEffect(() => {
-    const getmachine = async () => {
+    const getDevice = async () => {
       try {
-        const result = await apigetMachine();
-        //console.log("Result data machine:", result.data.data); 
-        setMachineData(result.data.data); 
+        const result = await apiGetDevice();
+        //console.log("Result data machine:", result.data.data);
+        setDeviceData(result.data.data);
       } catch (error) {
         setError(error.message);
         handleSnackbarOpen(error.message, "error");
       }
     };
-    getmachine();
+    getDevice();
   }, [refreshData]);
   useEffect(() => {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        //console.log("Result data line:", result.data.data); 
-        setLineData(result.data.data); 
+        //console.log("Result data line:", result.data.data);
+        setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
         handleSnackbarOpen(error.message, "error");
@@ -137,7 +144,6 @@ export default function WeeklyReportM1() {
   //   }));
   // };
 
-  
   const getDateRangeForWeek = (year, month, week) => {
     const firstDayOfMonth = startOfMonth(new Date(year, month));
     let startDate, endDate;
@@ -178,28 +184,26 @@ export default function WeeklyReportM1() {
     event.preventDefault();
     setLoading(true);
     try {
-      const { fromDate, toDate } = getDateRangeForWeek(rawData.year, rawData.month, rawData.week);
-      const formattedRawData = {
-        ...rawData,
-        fromDate,
-        toDate,
+      const body = {
+        deviceNo: rawData.deviceNo,
+        year: rawData.year,
+        month: rawData.month,
+        week: rawData.week,
       };
 
-      //console.log("formatted raw data:", formattedRawData);
-      const result = await apiWeeklyReportsM1(formattedRawData);
-  
-      handleSnackbarOpen("Weekly report m1 fetched successfully!", "success"); 
- 
+      const result = await apiWeeklyReportsM1(body);
+
+      handleSnackbarOpen("Weekly report m1 fetched successfully!", "success");
+
       //console.log("Weekly report m1", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
-     
       console.error("Error getting Weekly report m1:", error);
       handleSnackbarOpen(
         "Error fetching Weekly report m1. Please try again.",
         "error"
-      ); 
+      );
     } finally {
       setLoading(false);
     }
@@ -213,8 +217,8 @@ export default function WeeklyReportM1() {
 
   const getUpcomingSaturday = () => {
     const today = new Date();
-    const dayOfWeek = today.getDay(); 
-    const daysUntilSaturday = 6 - dayOfWeek; 
+    const dayOfWeek = today.getDay();
+    const daysUntilSaturday = 6 - dayOfWeek;
     const nextSaturday = new Date(today);
     nextSaturday.setDate(today.getDate() + daysUntilSaturday);
     return nextSaturday;
@@ -243,7 +247,7 @@ export default function WeeklyReportM1() {
           paddingBottom: "20px",
         }}
       >
-        <h2>Weekly Report M1 </h2>
+        <h2>Weekly Report</h2>
       </div>
       <Grid
         container
@@ -251,8 +255,7 @@ export default function WeeklyReportM1() {
         style={{ width: "100%", alignItems: "center", marginBottom: "10px" }}
       >
         {" "}
-       
-        <Grid item xs={6} sm={2}>
+        {/* <Grid item xs={6} sm={2}>
           {" "}
         
           <FormControl sx={{ minWidth: 200 }}>
@@ -269,31 +272,30 @@ export default function WeeklyReportM1() {
               ))}
             </Select>
           </FormControl>
-        </Grid>
-        <Grid item xs={6} sm={2}>
-        
+        </Grid> */}
+        <Grid item xs={6} sm={3}>
           <FormControl sx={{ minWidth: 200 }}>
-            <InputLabel>Select Machine</InputLabel>
+            <InputLabel>Select Device</InputLabel>
 
             <Select
-              name="machineId"
-              value={rawData?.machineNo}
+              name="deviceNo"
+              value={rawData?.deviceNo}
               onChange={handleInputChange}
             >
-              {filteredMachines.map((machine) => (
-                <MenuItem key={machine.id} value={machine.machineNo}>
-                  {machine.displayMachineName}
+              {deviceData.map((device) => (
+                <MenuItem key={device.deviceNo} value={device.deviceNo}>
+                  {device.deviceName}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={6} sm={2}>
+        <Grid item xs={6} sm={3}>
           <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Select Year</InputLabel>
             <Select
               name="year"
-              value={rawData.year}
+              value={rawData.year || currentYear}
               onChange={handleInputChange}
             >
               {years.map((year) => (
@@ -304,7 +306,7 @@ export default function WeeklyReportM1() {
             </Select>
           </FormControl>
         </Grid>
-        <Grid item xs={6} sm={2}>
+        <Grid item xs={6} sm={3}>
           <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Select Month</InputLabel>
             <Select
@@ -343,34 +345,34 @@ export default function WeeklyReportM1() {
           </Button>
         </Grid>
       </Grid>
-      
-           <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="Rows per page:"
-          nextIconButtonProps={{
-            onClick: () => handleChangePage(null, page + 1),
-            disabled: page === Math.ceil(data.length / rowsPerPage) - 1,
-          }}
-          backIconButtonProps={{
-            onClick: () => handleChangePage(null, page - 1),
-            disabled: page === 0,
-          }}
-          SelectProps={{
-            native: true,
-            SelectDisplayProps: { "aria-label": "Rows per page" },
-          }}
-          labelDisplayedRows={({ from, to, count }) =>
-            `${from}-${to} of ${count}`
-          }
-          nextIconButtonText="Next"
-          backIconButtonText="Previous"
-        />
+
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={data.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Rows per page:"
+        nextIconButtonProps={{
+          onClick: () => handleChangePage(null, page + 1),
+          disabled: page === Math.ceil(data.length / rowsPerPage) - 1,
+        }}
+        backIconButtonProps={{
+          onClick: () => handleChangePage(null, page - 1),
+          disabled: page === 0,
+        }}
+        SelectProps={{
+          native: true,
+          SelectDisplayProps: { "aria-label": "Rows per page" },
+        }}
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}-${to} of ${count}`
+        }
+        nextIconButtonText="Next"
+        backIconButtonText="Previous"
+      />
       <Box sx={{ maxHeight: "500px", overflow: "auto" }}>
         {loading ? (
           <Box
@@ -392,32 +394,63 @@ export default function WeeklyReportM1() {
           >
             <TableHead>
               <TableRow>
-                <StyledTableCell className="table-cell">MId</StyledTableCell>
                 <StyledTableCell className="table-cell">
                   Date Time
                 </StyledTableCell>
-                <StyledTableCell className="table-cell">Total</StyledTableCell>
-                <StyledTableCell className="table-cell">VAT</StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Avg Sct
+                  Plant Name
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Revised U Loss
-                </StyledTableCell>{" "}
-                <StyledTableCell className="table-cell">U%</StyledTableCell>
-                <StyledTableCell className="table-cell">P Loss</StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  P%
-                </StyledTableCell>{" "}
-                <StyledTableCell className="table-cell">A Loss</StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Revised A Loss
+                  Line Name
                 </StyledTableCell>
-                <StyledTableCell className="table-cell">A%</StyledTableCell>
-                <StyledTableCell className="table-cell">Q Loss</StyledTableCell>
-                <StyledTableCell className="table-cell">Q%</StyledTableCell>
-                <StyledTableCell className="table-cell">OPE%</StyledTableCell>
-                <StyledTableCell className="table-cell">OEE%</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Machine Name
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Actual Production
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">Gap</StyledTableCell>
+                <StyledTableCell className="table-cell">Target</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Cycle Time
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Quality
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Availability
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Performance
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">OEE</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Utilization
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Downtime
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">Uptime</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Defects
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Runtime In Mins
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Planned Production Time
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">MTBF</StyledTableCell>
+                <StyledTableCell className="table-cell">MTTR</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Standard Cycletime
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Setup Time
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Breakdown Time
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -425,29 +458,40 @@ export default function WeeklyReportM1() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => (
                   <StyledTableRow key={index}>
-                    <StyledTableCell>{row.machineId}</StyledTableCell>
                     <StyledTableCell>{row.dateTime}</StyledTableCell>
-                    <StyledTableCell>{row.total}</StyledTableCell>
-                    <StyledTableCell>{row.vat}</StyledTableCell>
-                    <StyledTableCell>{row.avgSct}</StyledTableCell>
-                    <StyledTableCell>{row.revisedULoss}</StyledTableCell>
-                    <StyledTableCell>{row.uPer}</StyledTableCell>
-                    <StyledTableCell>{row.pLoss}</StyledTableCell>
-                    <StyledTableCell>{row.pPer}</StyledTableCell>
-                    <StyledTableCell>{row.aLoss}</StyledTableCell>
-                    <StyledTableCell>{row.revisedALoss}</StyledTableCell>
-                    <StyledTableCell>{row.aPer}</StyledTableCell>
-                    <StyledTableCell>{row.qLoss}</StyledTableCell>
-                    <StyledTableCell>{row.qPer}</StyledTableCell>
-                    <StyledTableCell>{row.opeC1}</StyledTableCell>
-                    
+                    <StyledTableCell>{row.plantName}</StyledTableCell>
+                    <StyledTableCell>{row.lineName}</StyledTableCell>
+                    <StyledTableCell>{row.displayMachineName}</StyledTableCell>
+                    <StyledTableCell>{row.actualproduction}</StyledTableCell>
+                    <StyledTableCell>{row.gap}</StyledTableCell>
+                    <StyledTableCell>{row.target}</StyledTableCell>
+                    <StyledTableCell>{row.cycleTime}</StyledTableCell>
+                    <StyledTableCell>{row.quality}</StyledTableCell>
+                    <StyledTableCell>{row.availability}</StyledTableCell>
+                    <StyledTableCell>{row.performance}</StyledTableCell>
                     <StyledTableCell>{row.oee}</StyledTableCell>
+                    <StyledTableCell>{row.utilization}</StyledTableCell>
+                    <StyledTableCell>{row.downtime}</StyledTableCell>
+                    <StyledTableCell>{row.uptime}</StyledTableCell>
+                    <StyledTableCell>{row.defects}</StyledTableCell>
+                    <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
+                    <StyledTableCell>
+                      {row.plannedProductionTime}
+                    </StyledTableCell>
+                    <StyledTableCell>{row.mtbf}</StyledTableCell>
+                    <StyledTableCell>{row.mttr}</StyledTableCell>
+                    <StyledTableCell>{row.standardCycletime}</StyledTableCell>
+                    <StyledTableCell>{row.setupTime}</StyledTableCell>
+                    <StyledTableCell>{row.breakdownTime}</StyledTableCell>
                   </StyledTableRow>
                 ))}
               {emptyRows > 0 && (
                 <StyledTableRow style={{ height: 53 }}>
-                  <StyledTableCell colSpan={17} style={{ position: "relative" }}>
-                  <div
+                  <StyledTableCell
+                    colSpan={17}
+                    style={{ position: "relative" }}
+                  >
+                    <div
                       style={{
                         position: "absolute",
                         top: "50%",
@@ -455,7 +499,7 @@ export default function WeeklyReportM1() {
                         transform: "translateY(-50%)",
                       }}
                     >
-                    Next report will be on {nextSaturdayFormatted}
+                      Next report will be on {nextSaturdayFormatted}
                     </div>
                     <div
                       style={{
@@ -473,7 +517,6 @@ export default function WeeklyReportM1() {
             </TableBody>
           </Table>
         )}
-       
       </Box>
 
       <Snackbar

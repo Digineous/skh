@@ -23,18 +23,12 @@ import {
 } from "@mui/material";
 import Snackbar from "@mui/material/Snackbar";
 import MuiAlert from "@mui/material/Alert";
-
-
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { parseISO } from "date-fns";
+import { format, startOfMonth, endOfMonth, addDays } from "date-fns";
 import { useAuthCheck } from "../../../utils/Auth";
 import { apigetMachine } from "../../../api/MachineMaster/apigetmachine";
 import { apigetLines } from "../../../api/LineMaster/api.getline";
 import { apiMonthlyReportsM1 } from "../../../api/ReportMaster/api.mothlyreportm1";
-
-
+import { apiGetDevice } from "../../../api/DeviceMaster/api.getdevice";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -52,55 +46,81 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   "&:nth-of-type(odd)": {
     backgroundColor: theme.palette.action.hover,
   },
-  // hide last border
+
   "&:last-child td, &:last-child th": {
     border: 0,
   },
 }));
-const getCurrentDate = () => {
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, "0");
-  const dd = String(today.getDate()).padStart(2, "0");
-  return `${yyyy}-${mm}-${dd}`;
-};
-export default function MonthlyReportM1() {
+
+const months = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+const weeks = [
+  { label: "Week 1 ", value: 1 },
+  { label: "Week 2 ", value: 2 },
+  { label: "Week 3 ", value: 3 },
+  { label: "Week 4 ", value: 4 },
+];
+const currentYear = new Date().getFullYear();
+const years = Array.from({ length: 11 }, (_, i) => currentYear - 2 + i);
+export default function WeeklyReportM1() {
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [machineData, setMachineData] = useState([]);
+  const [deviceData, setDeviceData] = useState([]);
   const [lineData, setLineData] = useState([]);
   const [refreshData, setRefreshData] = useState(false);
   const [error, setError] = useState(null);
   const [severity, setSeverity] = useState("success");
+
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  // const [rawData, setRawData] = useState({
+  //   lineNo: "",
+  //   machineId: "",
+  //   fromDate: getCurrentDate(),
+  //   toDate: getCurrentDate(),
+  // });
   const [rawData, setRawData] = useState({
     lineNo: "",
     machineId: "",
-    startMonth: null,
-    endMonth: null,
+    year: currentYear,
+    month: new Date().getMonth(),
+    week: 1,
   });
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(25);
   const [selectedLine, setSelectedLine] = useState("");
   const [loading, setLoading] = useState(false);
- useAuthCheck()
+  useAuthCheck();
   const handleSnackbarOpen = (message, severity) => {
     setSnackbarMessage(message);
     setSeverity(severity);
     setOpenSnackbar(true);
   };
   useEffect(() => {
-    const getmachine = async () => {
+    const getDevice = async () => {
       try {
-        const result = await apigetMachine();
+        const result = await apiGetDevice();
         //console.log("Result data machine:", result.data.data);
-        setMachineData(result.data.data);
+        setDeviceData(result.data.data);
       } catch (error) {
         setError(error.message);
         handleSnackbarOpen(error.message, "error");
       }
     };
-    getmachine();
+    getDevice();
   }, [refreshData]);
   useEffect(() => {
     const getLine = async () => {
@@ -115,7 +135,40 @@ export default function MonthlyReportM1() {
     };
     getLine();
   }, [refreshData]);
+  // const handleInputChange = (e) => {
+  //   //console.log(e.target.name, e.target.value);
+  //   const { name, value } = e.target;
+  //   setRawData((prevData) => ({
+  //     ...prevData,
+  //     [name]: value,
+  //   }));
+  // };
 
+  const getDateRangeForWeek = (year, month, week) => {
+    const firstDayOfMonth = startOfMonth(new Date(year, month));
+    let startDate, endDate;
+
+    if (week === 4) {
+      startDate = addDays(firstDayOfMonth, 21);
+      endDate = endOfMonth(new Date(year, month));
+    } else {
+      startDate = addDays(firstDayOfMonth, (week - 1) * 7);
+      endDate = addDays(startDate, 6);
+    }
+
+    return {
+      fromDate: format(startDate, "dd-MMM-yyyy"),
+      toDate: format(endDate, "dd-MMM-yyyy"),
+    };
+  };
+
+  const formatData = (data) => {
+    return data.map((row) => ({
+      "Machine Id": row.machineId,
+      "Date Time": row.dateTime,
+      "Cycle Time": row.cycleTime,
+    }));
+  };
   const handleInputChange = (e) => {
     //console.log(e.target.name, e.target.value);
     const { name, value } = e.target;
@@ -131,71 +184,29 @@ export default function MonthlyReportM1() {
     event.preventDefault();
     setLoading(true);
     try {
-      const formattedStartMonth = rawData.startMonth.format("MMM-YYYY");
-      const formattedEndMonth = rawData.endMonth.format("MMM-YYYY");
-      
-      //console.log("startMonth, endMonth:", formattedStartMonth, formattedEndMonth);
-      
-      const formattedRawData = {
-        ...rawData,
-        startMonth: formattedStartMonth,
-        endMonth: formattedEndMonth,
+      const body = {
+        deviceNo: rawData.deviceNo,
+        year: rawData.year,
+        month: rawData.month,
       };
-      
-      const result = await apiMonthlyReportsM1(formattedRawData);
-  
-      handleSnackbarOpen("Monthly report m1 fetched successfully!", "success");
-      //console.log("Monthly report m1", result.data);
+
+      const result = await apiMonthlyReportsM1(body);
+
+      handleSnackbarOpen("Weekly report m1 fetched successfully!", "success");
+
+      //console.log("Weekly report m1", result.data);
       setData(result.data);
       setRefreshData((prev) => !prev);
     } catch (error) {
-      console.error("Error getting Monthly report m1:", error);
+      console.error("Error getting Weekly report m1:", error);
       handleSnackbarOpen(
-        "Error fetching Monthly report m1. Please try again.",
+        "Error fetching Weekly report m1. Please try again.",
         "error"
       );
     } finally {
       setLoading(false);
     }
   };
-  // const handleAddSubmit = async (event) => {
-  //   event.preventDefault();
-  //   setLoading(true);
-  //   try {
-  //     const formattedFromDate = format(
-  //       parseISO(rawData.fromDate),
-  //       "dd-MMM-yyyy"
-  //     );
-  //     const formattedToDate = format(parseISO(rawData.toDate), "dd-MMM-yyyy");
-  //     //console.log(
-  //       "todate,fromdate,machineid,lineid:",
-  //       formattedToDate,
-  //       formattedFromDate
-  //     );
-  //     const formattedRawData = {
-  //       ...rawData,
-  //       fromDate: formattedFromDate,
-  //       toDate: formattedToDate,
-  //     };
-  //     const result = await apiMonthlyReportsM1(formattedRawData);
-
-  //     // await getmachine();
-  //     handleSnackbarOpen("Monthly report m1 fetched successfully!", "success");
-  //     // setLoading(false);
-  //     //console.log("Monthly report m1", result.data);
-  //     setData(result.data);
-  //     setRefreshData((prev) => !prev);
-  //   } catch (error) {
-  //     // setLoading(false);
-  //     console.error("Error getting Monthly report m1:", error);
-  //     handleSnackbarOpen(
-  //       "Error fetching Monthly report m1. Please try again.",
-  //       "error"
-  //     );
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
   );
@@ -203,28 +214,22 @@ export default function MonthlyReportM1() {
     setPage(newPage);
   };
 
-  const getNextReportMessage = () => {
-    const currentDate = new Date();
-    const currentMonth = currentDate.getMonth();
-    const currentYear = currentDate.getFullYear();
-    const lastDayOfCurrentMonth = new Date(
-      currentYear,
-      currentMonth + 1,
-      0
-    ).getDate();
-    const lastDayOfNextMonth = new Date(
-      currentYear,
-      currentMonth + 2,
-      0
-    ).getDate();
-
-    return `Next report will be on ${lastDayOfCurrentMonth} ${
-      currentMonth === 11 ? currentYear + 1 : currentYear
-    } or ${lastDayOfNextMonth} ${currentMonth === 11 ? 1 : currentMonth + 2} ${
-      currentMonth === 11 ? currentYear + 1 : currentYear
-    }`;
+  const getUpcomingSaturday = () => {
+    const today = new Date();
+    const dayOfWeek = today.getDay();
+    const daysUntilSaturday = 6 - dayOfWeek;
+    const nextSaturday = new Date(today);
+    nextSaturday.setDate(today.getDate() + daysUntilSaturday);
+    return nextSaturday;
   };
 
+  const nextSaturday = getUpcomingSaturday();
+  const nextSaturdayFormatted = nextSaturday.toLocaleDateString("en-US", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
@@ -237,11 +242,11 @@ export default function MonthlyReportM1() {
         style={{
           display: "flex",
           justifyContent: "flex-start",
-          paddingTop: "5px",
-          paddingBottom: "10px",
+          paddingTop: "20px",
+          paddingBottom: "20px",
         }}
       >
-        <h2>Monthly Report M1</h2>
+        <h2>Monthly Report</h2>
       </div>
       <Grid
         container
@@ -249,9 +254,10 @@ export default function MonthlyReportM1() {
         style={{ width: "100%", alignItems: "center", marginBottom: "10px" }}
       >
         {" "}
-        <Grid item xs={6} sm={3}>
+        {/* <Grid item xs={6} sm={2}>
           {" "}
-          <FormControl sx={{ minWidth: 250 }}>
+        
+          <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Select Plant</InputLabel>
             <Select
               name="lineNo"
@@ -265,52 +271,72 @@ export default function MonthlyReportM1() {
               ))}
             </Select>
           </FormControl>
-        </Grid>
+        </Grid> */}
         <Grid item xs={6} sm={3}>
-          {" "}
-          <FormControl sx={{ minWidth: 250 }}>
-            <InputLabel>Select Machine</InputLabel>
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Select Device</InputLabel>
 
             <Select
-              name="machineId"
-              value={rawData?.machineNo}
+              name="deviceNo"
+              value={rawData?.deviceNo}
               onChange={handleInputChange}
             >
-              {filteredMachines.map((machine) => (
-                <MenuItem key={machine.id} value={machine.machineNo}>
-                  {machine.displayMachineName}
+              {deviceData.map((device) => (
+                <MenuItem key={device.deviceNo} value={device.deviceNo}>
+                  {device.deviceName}
                 </MenuItem>
               ))}
             </Select>
           </FormControl>
         </Grid>
-  
         <Grid item xs={6} sm={3}>
-  <FormControl sx={{ minWidth: 250 }}>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker
-        label="Start Month"
-        views={['month', 'year']}
-        format="MMM-YYYY"
-        value={rawData.startMonth}
-        onChange={(newValue) => handleInputChange({ target: { name: 'startMonth', value: newValue } })}
-      />
-    </LocalizationProvider>
-  </FormControl>
-</Grid>
-<Grid item xs={6} sm={3}>
-  <FormControl sx={{ minWidth: 250 }}>
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <DatePicker
-        label="End Month"
-        views={['month', 'year']}
-        format="MMM-YYYY"
-        value={rawData.endMonth}
-        onChange={(newValue) => handleInputChange({ target: { name: 'endMonth', value: newValue } })}
-      />
-    </LocalizationProvider>
-  </FormControl>
-</Grid>
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Select Year</InputLabel>
+            <Select
+              name="year"
+              value={rawData.year || currentYear}
+              onChange={handleInputChange}
+            >
+              {years.map((year) => (
+                <MenuItem key={year} value={year}>
+                  {year}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        <Grid item xs={6} sm={3}>
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Select Month</InputLabel>
+            <Select
+              name="month"
+              value={rawData.month}
+              onChange={handleInputChange}
+            >
+              {months.map((month, index) => (
+                <MenuItem key={index} value={index}>
+                  {month}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+        {/* <Grid item xs={6} sm={3}>
+          <FormControl sx={{ minWidth: 200 }}>
+            <InputLabel>Select Week</InputLabel>
+            <Select
+              name="week"
+              value={rawData.week}
+              onChange={handleInputChange}
+            >
+              {weeks.map((week) => (
+                <MenuItem key={week.value} value={week.value}>
+                  {week.label}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid> */}
         <Grid item>
           {" "}
           <Button variant="contained" color="primary" onClick={handleAddSubmit}>
@@ -318,34 +344,35 @@ export default function MonthlyReportM1() {
           </Button>
         </Grid>
       </Grid>
-      {/* <DownloadButton apiCall={apigetRawData} formatData={formatData} fileName="RawDataReport.xlsx"/> */}
-      {/* <div style={{  display: "flex", justifyContent: "flex-start", alignItems: "center", marginTop: "20px"}}>
-      
-      <FormControl sx={{ minWidth: 250 }}>
 
-            <TextField
-              label="Search"
-              type="search"
-              id="fullWidth"
-              placeholder="Search"
-              fullWidth
-              InputProps={{
-                startAdornment: (
-                  <FontAwesomeIcon icon={faSearch} />
-                ),
-              }}
-              variant="outlined"
-         
-              //   value={searchTerm}
-              //   onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            {"   "}
-            </FormControl>
-          <Button sx={{ marginLeft: "10px",}} variant="contained" color="primary" >
-            GO
-          </Button>
-          </div> */}
-      <Box sx={{ marginTop: "20px", maxHeight: "500px", overflow: "auto" }}>
+      <TablePagination
+        rowsPerPageOptions={[5, 10, 25]}
+        component="div"
+        count={data.length}
+        rowsPerPage={rowsPerPage}
+        page={page}
+        onPageChange={handleChangePage}
+        onRowsPerPageChange={handleChangeRowsPerPage}
+        labelRowsPerPage="Rows per page:"
+        nextIconButtonProps={{
+          onClick: () => handleChangePage(null, page + 1),
+          disabled: page === Math.ceil(data.length / rowsPerPage) - 1,
+        }}
+        backIconButtonProps={{
+          onClick: () => handleChangePage(null, page - 1),
+          disabled: page === 0,
+        }}
+        SelectProps={{
+          native: true,
+          SelectDisplayProps: { "aria-label": "Rows per page" },
+        }}
+        labelDisplayedRows={({ from, to, count }) =>
+          `${from}-${to} of ${count}`
+        }
+        nextIconButtonText="Next"
+        backIconButtonText="Previous"
+      />
+      <Box sx={{ maxHeight: "500px", overflow: "auto" }}>
         {loading ? (
           <Box
             sx={{
@@ -366,32 +393,63 @@ export default function MonthlyReportM1() {
           >
             <TableHead>
               <TableRow>
-                <StyledTableCell className="table-cell">MId</StyledTableCell>
                 <StyledTableCell className="table-cell">
                   Date Time
                 </StyledTableCell>
-                <StyledTableCell className="table-cell">Total</StyledTableCell>
-                <StyledTableCell className="table-cell">VAT</StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Avg Sct
+                  Plant Name
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Revised U Loss
-                </StyledTableCell>{" "}
-                <StyledTableCell className="table-cell">U%</StyledTableCell>
-                <StyledTableCell className="table-cell">P Loss</StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  P%
-                </StyledTableCell>{" "}
-                <StyledTableCell className="table-cell">A Loss</StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Revised A Loss
+                  Line Name
                 </StyledTableCell>
-                <StyledTableCell className="table-cell">A%</StyledTableCell>
-                <StyledTableCell className="table-cell">Q Loss</StyledTableCell>
-                <StyledTableCell className="table-cell">Q%</StyledTableCell>
-                <StyledTableCell className="table-cell">OPE%</StyledTableCell>
-                <StyledTableCell className="table-cell">OEE%</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Machine Name
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Actual Production
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">Gap</StyledTableCell>
+                <StyledTableCell className="table-cell">Target</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Cycle Time
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Quality
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Availability
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Performance
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">OEE</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Utilization
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Downtime
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">Uptime</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Defects
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Runtime In Mins
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Planned Production Time
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">MTBF</StyledTableCell>
+                <StyledTableCell className="table-cell">MTTR</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Standard Cycletime
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Setup Time
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Breakdown Time
+                </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -399,23 +457,31 @@ export default function MonthlyReportM1() {
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => (
                   <StyledTableRow key={index}>
-                    <StyledTableCell>{row.machineId}</StyledTableCell>
                     <StyledTableCell>{row.dateTime}</StyledTableCell>
-                    <StyledTableCell>{row.total}</StyledTableCell>
-                    <StyledTableCell>{row.vat}</StyledTableCell>
-                    <StyledTableCell>{row.avgSct}</StyledTableCell>
-                    <StyledTableCell>{row.revisedULoss}</StyledTableCell>
-                    <StyledTableCell>{row.uPer}</StyledTableCell>
-                    <StyledTableCell>{row.pLoss}</StyledTableCell>
-                    <StyledTableCell>{row.pPer}</StyledTableCell>
-                    <StyledTableCell>{row.aLoss}</StyledTableCell>
-                    <StyledTableCell>{row.revisedALoss}</StyledTableCell>
-                    <StyledTableCell>{row.aPer}</StyledTableCell>
-                    <StyledTableCell>{row.qLoss}</StyledTableCell>
-                    <StyledTableCell>{row.qPer}</StyledTableCell>
-                    <StyledTableCell>{row.opeC1}</StyledTableCell>
-
+                    <StyledTableCell>{row.plantName}</StyledTableCell>
+                    <StyledTableCell>{row.lineName}</StyledTableCell>
+                    <StyledTableCell>{row.displayMachineName}</StyledTableCell>
+                    <StyledTableCell>{row.actualProduction}</StyledTableCell>
+                    <StyledTableCell>{row.gap}</StyledTableCell>
+                    <StyledTableCell>{row.target}</StyledTableCell>
+                    <StyledTableCell>{row.cycleTime}</StyledTableCell>
+                    <StyledTableCell>{row.quality}</StyledTableCell>
+                    <StyledTableCell>{row.availability}</StyledTableCell>
+                    <StyledTableCell>{row.performance}</StyledTableCell>
                     <StyledTableCell>{row.oee}</StyledTableCell>
+                    <StyledTableCell>{row.utilization}</StyledTableCell>
+                    <StyledTableCell>{row.downtime}</StyledTableCell>
+                    <StyledTableCell>{row.uptime}</StyledTableCell>
+                    <StyledTableCell>{row.defects}</StyledTableCell>
+                    <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
+                    <StyledTableCell>
+                      {row.plannedProductionTime}
+                    </StyledTableCell>
+                    <StyledTableCell>{row.mtbf}</StyledTableCell>
+                    <StyledTableCell>{row.mttr}</StyledTableCell>
+                    <StyledTableCell>{row.standardCycletime}</StyledTableCell>
+                    <StyledTableCell>{row.setupTime}</StyledTableCell>
+                    <StyledTableCell>{row.breakdownTime}</StyledTableCell>
                   </StyledTableRow>
                 ))}
               {emptyRows > 0 && (
@@ -432,8 +498,7 @@ export default function MonthlyReportM1() {
                         transform: "translateY(-50%)",
                       }}
                     >
-                      Next report will be available on 1st-AUG-2024
-                      {getNextReportMessage}.
+                      Next report will be on {nextSaturdayFormatted}
                     </div>
                     <div
                       style={{
@@ -451,33 +516,6 @@ export default function MonthlyReportM1() {
             </TableBody>
           </Table>
         )}
-        <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
-          component="div"
-          count={data.length}
-          rowsPerPage={rowsPerPage}
-          page={page}
-          onPageChange={handleChangePage}
-          onRowsPerPageChange={handleChangeRowsPerPage}
-          labelRowsPerPage="Rows per page:"
-          nextIconButtonProps={{
-            onClick: () => handleChangePage(null, page + 1),
-            disabled: page === Math.ceil(data.length / rowsPerPage) - 1,
-          }}
-          backIconButtonProps={{
-            onClick: () => handleChangePage(null, page - 1),
-            disabled: page === 0,
-          }}
-          SelectProps={{
-            native: true,
-            SelectDisplayProps: { "aria-label": "Rows per page" },
-          }}
-          labelDisplayedRows={({ from, to, count }) =>
-            `${from}-${to} of ${count}`
-          }
-          nextIconButtonText="Next"
-          backIconButtonText="Previous"
-        />
       </Box>
 
       <Snackbar

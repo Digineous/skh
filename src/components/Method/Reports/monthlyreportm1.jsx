@@ -53,20 +53,19 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 const months = [
-  "January",
-  "February",
-  "March",
-  "April",
-  "May",
-  "June",
-  "July",
-  "August",
-  "September",
-  "October",
-  "November",
-  "December",
+  { label: "January", value: 1 },
+  { label: "February", value: 2 },
+  { label: "March", value: 3 },
+  { label: "April", value: 4 },
+  { label: "May", value: 5 },
+  { label: "June", value: 6 },
+  { label: "July", value: 7 },
+  { label: "August", value: 8 },
+  { label: "September", value: 9 },
+  { label: "October", value: 10 },
+  { label: "November", value: 11 },
+  { label: "December", value: 12 },
 ];
-
 const weeks = [
   { label: "Week 1 ", value: 1 },
   { label: "Week 2 ", value: 2 },
@@ -314,8 +313,8 @@ export default function WeeklyReportM1() {
               onChange={handleInputChange}
             >
               {months.map((month, index) => (
-                <MenuItem key={index} value={index}>
-                  {month}
+                <MenuItem key={month.value} value={month.value}>
+                  {month.label}
                 </MenuItem>
               ))}
             </Select>

@@ -130,6 +130,8 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
         };
         getLines();
     }, []);
+    //select machine 
+    
     // Get Reasons
     useEffect(() => {
         const getReasons = async () => {
@@ -149,6 +151,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
         setOpenSnackbar(true);
     };
     const addDownTimeApiCaller = async (formData) => {
+        console.log("form data:", formData)
         try {
 
             const timediff = await getTimeDifference(formData.startDownDate, formData.endDownDate)
@@ -183,11 +186,12 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
         plantName: "",
         lineNo: null,
         machineNo: null,
+        displayMachineName: "",
         shiftName: "",
         plantNo: 1,
         reason: "",
-        startDownDate: "",
-        endDownDate: "",
+        startDownDate: null,
+        endDownDate: null,
         createdAt: currentDate,
     });
 
@@ -207,18 +211,35 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
     const handleDateTimeChange = (newValue, fieldName) => {
         setFormData((prevData) => ({
             ...prevData,
-            [fieldName]: newValue?.format('DD/MM/YYYY HH:mm') || '', // Ensure proper format
+            [fieldName]: newValue, // Ensure proper format
         }));
     };
-    const handleAddSubmit = () => {
-        // setTableData((prevData) => [
-        //     ...prevData,
-        //     formData
-        // ])
-        addDownTimeApiCaller(formData)
+    // const handleAddSubmit = () => {
+    //     // setTableData((prevData) => [
+    //     //     ...prevData,
+    //     //     formData
+    //     // ])
+    //     addDownTimeApiCaller(formData)
+    //     setAddOpen(false);
+    //     setRefreshData(true)
+    // }
+    const handleAddSubmit = async () => {
+        if (!formData.startDownDate || !formData.endDownDate) {
+            handleSnackbarOpen("Please select both Start and End Date & Time", "error");
+            return;
+        }
+
+        const formattedData = {
+            ...formData,
+            startDownDate: formData.startDownDate.format("DD/MM/YYYY HH:mm"),
+            endDownDate: formData.endDownDate.format("DD/MM/YYYY HH:mm"),
+        };
+
+        await addDownTimeApiCaller(formattedData);
         setAddOpen(false);
-        setRefreshData(true)
-    }
+        setRefreshData(true);
+    };
+
     return (
         <>
 
@@ -295,9 +316,13 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
                                     value={formData.machineNo}
                                     onChange={handleInputChange}
                                 >
-                                    {machines.map((row) => (
-                                        <MenuItem key={row.machineNo} value={row.machineNo}>{row.machineName}</MenuItem>
-                                    ))}
+                                    {machines
+                                        .filter((machine) => machine.lineNo === formData.lineNo)
+                                        .map((row) => (
+                                            <MenuItem key={row.machineNo} value={row.machineNo}>
+                                                {row.displayMachineName}
+                                            </MenuItem>
+                                        ))}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -319,7 +344,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
                         </Grid>
 
                         {/* Plant No */}
-                        <Grid item xs={12} sm={6}>
+                        {/* <Grid item xs={12} sm={6}>
                             <FormControl fullWidth>
                                 <InputLabel>Plant No</InputLabel>
                                 <Select
@@ -333,7 +358,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
                                     </MenuItem>
                                 </Select>
                             </FormControl>
-                        </Grid>
+                        </Grid> */}
 
                         {/* Downtime Reason */}
                         <Grid item xs={12} sm={6}>
@@ -354,7 +379,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
                         </Grid>
 
                         {/* Start DateTime */}
-                        <Grid item xs={12} sm={6}>
+                        {/* <Grid item xs={12} sm={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DateTimePicker
                                     label="Start Time"
@@ -364,10 +389,21 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
                                     />}
                                 />
                             </LocalizationProvider>
+                        </Grid> */}
+                        <Grid item xs={12} sm={6}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                    label="Start Time"
+                                    value={formData.startDownDate}
+                                    onChange={(newValue) => handleDateTimeChange(newValue, "startDownDate")}
+                                    renderInput={(params) => <TextField {...params} fullWidth required />}
+                                />
+                            </LocalizationProvider>
                         </Grid>
 
+
                         {/* End DateTime */}
-                        <Grid item xs={12} sm={6}>
+                        {/* <Grid item xs={12} sm={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
                                 <DateTimePicker
                                     label="End Time"
@@ -376,8 +412,17 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
                                     renderInput={(params) => <TextField {...params} fullWidth />}
                                 />
                             </LocalizationProvider>
+                        </Grid> */}
+                        <Grid item xs={12} sm={6}>
+                            <LocalizationProvider dateAdapter={AdapterDayjs}>
+                                <DateTimePicker
+                                    label="End Time"
+                                    value={formData.endDownDate}
+                                    onChange={(newValue) => handleDateTimeChange(newValue, "endDownDate")}
+                                    renderInput={(params) => <TextField {...params} fullWidth required />}
+                                />
+                            </LocalizationProvider>
                         </Grid>
-
                         {/* Add Button */}
                         <Grid item xs={12}>
                             <Button

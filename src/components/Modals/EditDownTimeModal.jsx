@@ -1,4 +1,8 @@
 import React, { useEffect, useState } from 'react'
+import dayjs from 'dayjs';
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+dayjs.extend(customParseFormat);
+
 import {
     Table,
     TableBody,
@@ -191,6 +195,28 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
         };
         getReasons();
     }, []);
+
+
+useEffect(() => {
+    if (downTimeToEdit) {
+        // Try both possible formats
+        const startDate = dayjs(downTimeToEdit.startDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
+        const endDate = dayjs(downTimeToEdit.endDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
+
+        setFormData({
+            plantName: downTimeToEdit.plantName || "",
+            lineName: downTimeToEdit.lineName || "",
+            displayMachineName: downTimeToEdit.displayMachineName || "",
+            shiftName: downTimeToEdit.shiftName || "",
+            plantNo: downTimeToEdit.plantNo || "",
+            reason: downTimeToEdit.reason || "",
+            startDownDate: startDate.isValid() ? startDate : null,
+            endDownDate: endDate.isValid() ? endDate : null,
+        });
+    }
+}, [downTimeToEdit, downTimes]);
+
+
     return (
         <>
             <Modal open={editOpen} onClose={handleModalClose}>
@@ -273,8 +299,8 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
                                     onChange={handleInputChange}
                                 >
                                     {machines.map((row) => (
-                                        <MenuItem key={row.machineName} value={row.machineName}>
-                                            {row.machineName}
+                                        <MenuItem key={row.displayMachineName} value={row.displayMachineName}>
+                                            {row.displayMachineName}
                                         </MenuItem>
                                     ))}
                                 </Select>
@@ -307,7 +333,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
                                     onChange={handleInputChange}
                                 >
                                     {downTimeReasons.map(({ reason, id }) => (
-                                        <MenuItem key={id} value={id}>
+                                        <MenuItem key={id} value={reason}>
                                             {reason}
                                         </MenuItem>
                                     ))}
@@ -318,26 +344,40 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
                         {/* Start DateTime */}
                         <Grid item xs={12} sm={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateTimePicker
+                                {/* <DateTimePicker
                                     label="Start Time"
                                     onChange={(newValue) =>
                                         handleDateTimeChange(newValue, "startDownDate")
                                     }
                                     renderInput={(params) => <TextField {...params} fullWidth />}
-                                />
+                                /> */}
+                                <DateTimePicker
+    label="Start Time"
+    value={formData.startDownDate} // now Dayjs
+    onChange={(newValue) => handleDateTimeChange(newValue, "startDownDate")}
+    renderInput={(params) => <TextField {...params} fullWidth />}
+/>
                             </LocalizationProvider>
                         </Grid>
 
                         {/* End DateTime */}
                         <Grid item xs={12} sm={6}>
                             <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DateTimePicker
+                                {/* <DateTimePicker
                                     label="End Time"
                                     onChange={(newValue) =>
                                         handleDateTimeChange(newValue, "endDownDate")
                                     }
                                     renderInput={(params) => <TextField {...params} fullWidth />}
-                                />
+                                /> */}
+                                
+<DateTimePicker
+    label="End Time"
+    value={formData.endDownDate} // now Dayjs
+    onChange={(newValue) => handleDateTimeChange(newValue, "endDownDate")}
+    renderInput={(params) => <TextField {...params} fullWidth />}
+/>
+
                             </LocalizationProvider>
                         </Grid>
 

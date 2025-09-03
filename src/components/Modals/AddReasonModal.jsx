@@ -129,24 +129,32 @@ function AddReasonModal({ addReasonModalOpen, setAddReasonModalOpen, setDownTime
     const handleCancelDelete = () => {
         setReasonToDelete(null);
     };
+   
     // Confirm delete action
-    const handleConfirmDelete = async () => {
-        if (reasonToDelete !== null) {
-            setReasons(reasons.filter((reason) => reason.id !== reasonToDelete))
-            const result = await apiDeleteDownTimeReason(reasonToDelete)
-            if (result.status === 200) {
-                setSnackbarMessage("Reason deleted successfully");
-                setSeverity("success");
-                setOpenSnackbar(true);
-                setRefresh(true);
-            } else {
-                setError("Failed to delete reason");
-                setSeverity("error");
-                setOpenSnackbar(true);
-            }
-        }
-        setReasonToDelete(null)
-    };
+  const handleConfirmDelete = async () => {
+  if (reasonToDelete !== null) {
+    // close modal immediately
+    const idToDelete = reasonToDelete;
+    setReasonToDelete(null);
+
+    // update UI optimistically
+    setReasons(reasons.filter((reason) => reason.id !== idToDelete));
+
+    // call API
+    const result = await apiDeleteDownTimeReason(idToDelete);
+
+    if (result.status === 200) {
+      setSnackbarMessage("Reason deleted successfully");
+      setSeverity("success");
+      setOpenSnackbar(true);
+      setRefresh(true);
+    } else {
+      setError("Failed to delete reason");
+      setSeverity("error");
+      setOpenSnackbar(true);
+    }
+  }
+};
     const handleChangePage = (event, newPage) => {
         setPage(newPage);
     };

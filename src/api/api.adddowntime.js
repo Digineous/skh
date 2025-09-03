@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "./baseUrl";
 
 export const apiAddDownTime = async (data) => {
-  //console.log("Data", data);
+  console.log("Data", data);
   const url = baseUrl + "/downtime/addDownTime";
   try {
     const token = localStorage.getItem("token");
@@ -12,7 +12,7 @@ export const apiAddDownTime = async (data) => {
       {
         plantNo: data.plantNo,
         lineNo: Number(data.lineNo),
-        machineNo: data.machineNo,
+        machineNo: Number(data.machineNo),
         shiftId: '1',
         machineDownDate: data.startDownDate,
         totalDownTime: data.totalDownTime,

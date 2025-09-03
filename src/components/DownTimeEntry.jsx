@@ -196,9 +196,9 @@ function DownTimesEntry() {
             >
               <TableHead>
                 <TableRow sx={{ position: "sticky", top: 0, zIndex: 1 }}>
-                  <StyledTableCell className="table-cell">
+                  {/* <StyledTableCell className="table-cell">
                     Plant No
-                  </StyledTableCell>
+                  </StyledTableCell> */}
 
                   <StyledTableCell className="table-cell">
                     Plant Name
@@ -283,9 +283,9 @@ function DownTimesEntry() {
                     )
                     .map((row) => (
                       <StyledTableRow key={row.id}>
-                        <StyledTableCell className="table-cell">
+                        {/* <StyledTableCell className="table-cell">
                           {row.plantNo}
-                        </StyledTableCell>
+                        </StyledTableCell> */}
 
                         <StyledTableCell className="table-cell">
                           {row.plantName}

@@ -12,7 +12,7 @@ export const apiAddDownTime = async (data) => {
       {
         plantNo: data.plantNo,
         lineNo: Number(data.lineNo),
-        machineNo: data.machineNo,
+        machineNo: Number(data.machineNo),
         shiftId: '1',
         machineDownDate: data.startDownDate,
         totalDownTime: data.totalDownTime,

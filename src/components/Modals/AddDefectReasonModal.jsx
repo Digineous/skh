@@ -57,6 +57,7 @@ function AddDefectReasonModal({ addDefectReasonModalOpen, setAddDefectReasonModa
                 return [...prevData, { id: prevData.length + 1, reason: reason }]
             })
         }
+        setReason("");
     };
 
     const handleEditReason = (id) => {

@@ -2,7 +2,7 @@ import axios from "axios";
 import { baseUrl } from "./baseUrl";
 
 export const apiAddDownTime = async (data) => {
-  console.log("Data", data);
+  //console.log("Data", data);
   const url = baseUrl + "/downtime/addDownTime";
   try {
     const token = localStorage.getItem("token");

@@ -151,7 +151,7 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
         setOpenSnackbar(true);
     };
     const addDownTimeApiCaller = async (formData) => {
-        console.log("form data:", formData)
+        //console.log("form data:", formData)
         try {
 
             const timediff = await getTimeDifference(formData.startDownDate, formData.endDownDate)

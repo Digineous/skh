@@ -221,10 +221,10 @@ useAuthCheck()
                 Tea Break End1{" "}
               </StyledTableCell>
               <StyledTableCell className="table-cell">
-                Tea Break Start2{" "}
+             Tea Break Start2{""}
               </StyledTableCell>
               <StyledTableCell className="table-cell">
-                Tea Break End2{" "}
+              Tea Break End2{""}
               </StyledTableCell>
               <StyledTableCell className="table-cell">
                 Meal Break Start{" "}

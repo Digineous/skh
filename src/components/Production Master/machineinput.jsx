@@ -13,6 +13,7 @@ import { apiGetMachineInput } from "../../api/api.getmachineinput";
 import { apiGetPart } from "../../api/PartMaster/api.getpart";
 import { apiUpdateMachineInput } from "../../api/api.updatemachineinput";
 
+
 const staticData = [
   {
     plantName: "Head office",
@@ -357,7 +358,7 @@ export default function MachineInput() {
               }}
             >
               <FormControl sx={{ width: "26ch" }}>
-                <InputLabel>Part Name</InputLabel>
+                <InputLabel>Operation Name</InputLabel>
                 <Select
                   name="partId"
                   value={machineInput?.partId}
@@ -365,7 +366,7 @@ export default function MachineInput() {
                 >
                   {filteredParts.map((part, index) => (
                     <MenuItem key={part.partId} value={part?.partId}>
-                      {part?.partName}
+                     {part?.partNo}-{part?.partName}
                     </MenuItem>
                   ))}
                 </Select>

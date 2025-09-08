@@ -615,7 +615,7 @@ const PartMaster = () => {
                   Part No
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Part Name
+                Part Operation Name
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
                   Standard Cycle Time in secs
@@ -801,7 +801,7 @@ const PartMaster = () => {
               <TextField
                 fullWidth
                 name="partName"
-                label="Part Name"
+                label="Part Operation Name"
                 value={updatedPartData?.partName}
                 onChange={handleInputChange}
                 style={{ marginRight: "10px" }}
@@ -987,7 +987,7 @@ const PartMaster = () => {
               <TextField
                 fullWidth
                 name="partName"
-                label="Part Name"
+                label="Part Operaiton Name"
                 value={updatedPartData?.partName}
                 onChange={handleInputChange}
                 style={{ marginRight: "10px" }}

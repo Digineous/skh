@@ -578,6 +578,12 @@ export default function StandardOEE() {
       color: "#ff5722",
       chartType: "bar",
     },
+    {
+      title: "Strokes Per Person",
+      dataKey: "strokesPerPerson",
+      color: "#2196f3",
+      chartType: "bar",
+    }
   ];
 
   const renderStrokesPerShiftChart = useCallback(
@@ -687,6 +693,7 @@ export default function StandardOEE() {
       </BarChart>
     </ResponsiveContainer>
   ), []);
+  
   return (
     <div style={{ padding: "20px", background: "white" }}>
       <Grid

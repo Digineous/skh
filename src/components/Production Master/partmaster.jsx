@@ -620,6 +620,9 @@ const PartMaster = () => {
                 <StyledTableCell className="table-cell">
                   Standard Cycle Time in secs
                 </StyledTableCell>
+                <StyledTableCell className="table-cell">
+                 Number Of Person
+                </StyledTableCell>
                 <StyledTableCell className="table-cell">Action</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -673,6 +676,9 @@ const PartMaster = () => {
 
                       <StyledTableCell className="table-cell">
                         {row.cycleTime}
+                      </StyledTableCell>
+                      <StyledTableCell className="table-cell">
+                        {row.plantProduction}
                       </StyledTableCell>
 
                       <StyledTableCell
@@ -771,7 +777,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <InputLabel>Machine Name</InputLabel>
                 <Select
@@ -787,7 +793,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 name="partNo"
@@ -797,7 +803,7 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 name="partName"
@@ -807,12 +813,21 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 name="cycleTime"
                 label="Standard Cycle Time in secs"
                 value={updatedPartData?.cycleTime}
+                onChange={handleInputChange}
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                name="plantProduction"
+                label="Number Of Person"
+                value={updatedPartData?.plantProduction}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -938,7 +953,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <InputLabel>Line Name</InputLabel>
                 <Select
@@ -957,7 +972,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <FormControl fullWidth>
                 <InputLabel>Machine Name</InputLabel>
                 <Select
@@ -973,7 +988,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 name="partNo"
@@ -983,7 +998,7 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 name="partName"
@@ -993,12 +1008,22 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={12}>
+            <Grid item xs={6}>
               <TextField
                 fullWidth
                 name="cycleTime"
                 label="Standard Cycle Time in secs"
                 value={updatedPartData?.cycleTime}
+                onChange={handleInputChange}
+                type="number"
+              />
+            </Grid>
+            <Grid item xs={6}>
+              <TextField
+                fullWidth
+                name="plantProduction"
+                label="Standard Cycle Time in secs"
+                value={updatedPartData?.plantProduction}
                 onChange={handleInputChange}
                 type="number"
               />

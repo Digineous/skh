@@ -255,6 +255,8 @@ export default function StandardOEE() {
           downtimeDistribution: responseData.downtime || [],
           strokesPerShift: responseData.strokesPerShift || [],
           strokesPerMins: (responseData?.strokesPerMins || []).slice(80).reverse(),
+          strokesPerPerson: responseData.strokesPerPerson || [],
+
         });
         //console.log("strokes per min:", (responseData?.strokesPerMins || []).slice(80).reverse())
         //console.log(
@@ -578,6 +580,12 @@ export default function StandardOEE() {
       color: "#ff5722",
       chartType: "bar",
     },
+    {
+      title: "Strokes Per Person",
+      dataKey: "strokesPerPerson",
+      color: "#2196f3",
+      chartType: "bar",
+    }
   ];
 
   const renderStrokesPerShiftChart = useCallback(
@@ -687,6 +695,55 @@ export default function StandardOEE() {
       </BarChart>
     </ResponsiveContainer>
   ), []);
+  const renderStrokesPerPersonChart = useCallback((data, dataKey, color) => (
+    <ResponsiveContainer width="100%" height="100%">
+      <BarChart
+        data={data}
+        margin={{ top: 5, right: 20, bottom: 20, left: 25 }}
+      >
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis
+          dataKey="shiftName"
+          stroke="#000000"
+          label={{
+            value: "Shift",
+            position: "insideBottom",
+            offset: -10,
+            fontWeight: "bold",
+            fill: "#000000",
+          }}
+        />
+        <YAxis
+          stroke="#000000"
+          label={{
+            value: "Strokes / Person",
+            dy: 40,
+            dx: 17,
+            angle: -90,
+            fill: "#000000",
+            position: "insideLeft",
+            fontWeight: "bold",
+          }}
+        />
+        <Tooltip />
+        <Legend
+          layout="horizontal"
+          verticalAlign="top"
+          align="center"
+          wrapperStyle={{ paddingBottom: 5 }}
+        />
+        <Bar dataKey="strokesPerPerson" name="Strokes / Person" fill={color}>
+          <LabelList
+            dataKey="strokesPerPerson"
+            position="top"
+            fontSize={12}
+            fill="#000000"
+          />
+        </Bar>
+      </BarChart>
+    </ResponsiveContainer>
+  ), []);
+
   return (
     <div style={{ padding: "20px", background: "white" }}>
       <Grid
@@ -1117,17 +1174,25 @@ export default function StandardOEE() {
                   width="100%"
                   height="calc(100% - 30px)"
                 >
+
                   {data.title === "Strokes Per Shift"
                     ? renderStrokesPerShiftChart(
                       chartData[data.dataKey],
                       data.dataKey,
                       data.color
                     )
-                    : renderStrokesPerMinuteChart(
-                      chartData[data.dataKey],
-                      data.dataKey,
-                      data.color
-                    )}
+                    : data.title === "Strokes Per Person"
+                      ? renderStrokesPerPersonChart(
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )
+                      : renderStrokesPerMinuteChart(
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )}
+
                 </Box>
               </Box>
             </Grid>

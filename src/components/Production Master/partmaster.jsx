@@ -215,53 +215,61 @@ const PartMaster = () => {
     setOpenSnackbar(true);
   };
 
+  // const handleInputChange = (e) => {
+  //   const { name, value } = e.target;
+  //   const parsedValue =
+  //     name === "cycleTime" ||
+  //       name === "multipleFactor" ||
+  //       name === "ctReduction"
+  //       ? parseFloat(value) || 0
+  //       : value;
+
+  //   setUpdatedPartData((prevData) => ({
+  //     ...prevData,
+  //     [name]: parsedValue,
+  //   }));
+
+  //   if (
+  //     name === "cycleTime" ||
+  //     name === "multipleFactor" ||
+  //     name === "ctReduction"
+  //   ) {
+  //     const { cycleTime, multipleFactor, ctReduction } = {
+  //       ...updatedPartData,
+  //       [name]: parsedValue,
+  //     };
+
+  //     const parsedCycleTime = parseFloat(cycleTime) || 0;
+  //     const parsedMultipleFactor = parseFloat(multipleFactor) || 0;
+  //     const parsedCtReduction = parseFloat(ctReduction) || 0;
+
+  //     if (
+  //       !isNaN(parsedCycleTime) &&
+  //       !isNaN(parsedMultipleFactor) &&
+  //       !isNaN(parsedCtReduction)
+  //     ) {
+  //       const upperBound = (parsedCycleTime * parsedMultipleFactor).toFixed(2);
+  //       const lowerBound = (
+  //         parsedCycleTime -
+  //         (parsedCycleTime * parsedCtReduction) / 100
+  //       ).toFixed(2);
+
+  //       setUpdatedPartData((prevData) => ({
+  //         ...prevData,
+  //         upperBound,
+  //         lowerBound,
+  //       }));
+  //     }
+  //   }
+  // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    const parsedValue =
-      name === "cycleTime" ||
-        name === "multipleFactor" ||
-        name === "ctReduction"
-        ? parseFloat(value) || 0
-        : value;
+   
 
     setUpdatedPartData((prevData) => ({
       ...prevData,
-      [name]: parsedValue,
-    }));
-
-    if (
-      name === "cycleTime" ||
-      name === "multipleFactor" ||
-      name === "ctReduction"
-    ) {
-      const { cycleTime, multipleFactor, ctReduction } = {
-        ...updatedPartData,
-        [name]: parsedValue,
-      };
-
-      const parsedCycleTime = parseFloat(cycleTime) || 0;
-      const parsedMultipleFactor = parseFloat(multipleFactor) || 0;
-      const parsedCtReduction = parseFloat(ctReduction) || 0;
-
-      if (
-        !isNaN(parsedCycleTime) &&
-        !isNaN(parsedMultipleFactor) &&
-        !isNaN(parsedCtReduction)
-      ) {
-        const upperBound = (parsedCycleTime * parsedMultipleFactor).toFixed(2);
-        const lowerBound = (
-          parsedCycleTime -
-          (parsedCycleTime * parsedCtReduction) / 100
-        ).toFixed(2);
-
-        setUpdatedPartData((prevData) => ({
-          ...prevData,
-          upperBound,
-          lowerBound,
-        }));
-      }
-    }
-  };
+      [name]: value,
+    }))};
 
   const handlMultiplePartsClick = async (event) => {
     event.preventDefault();
@@ -363,9 +371,13 @@ const PartMaster = () => {
       //   upperBound: upperBound,
       //   lowerBound: lowerBound,
       // };
-      //console.log("part DAta:", updatedPartData)
-      const result = await apiAddPart(updatedPartData);
-      //console.log("Part added successfully:", result.data);
+      console.log("part DAta:", updatedPartData)
+      const payload = {
+        ...updatedPartData,plantProduction: Number(updatedPartData.plantProduction), // ✅ force number
+      };
+      console.log("part DAta:", payload)
+      const result = await apiAddPart(payload);
+      console.log("Part added successfully:", result.data);
       setAddOpen(false);
       //console.log("response", result.data);
       setUpdatedPartData({
@@ -1022,7 +1034,7 @@ const PartMaster = () => {
               <TextField
                 fullWidth
                 name="plantProduction"
-                label="Standard Cycle Time in secs"
+                label="Number Of Person"
                 value={updatedPartData?.plantProduction}
                 onChange={handleInputChange}
                 type="number"

@@ -215,61 +215,53 @@ const PartMaster = () => {
     setOpenSnackbar(true);
   };
 
-  // const handleInputChange = (e) => {
-  //   const { name, value } = e.target;
-  //   const parsedValue =
-  //     name === "cycleTime" ||
-  //       name === "multipleFactor" ||
-  //       name === "ctReduction"
-  //       ? parseFloat(value) || 0
-  //       : value;
-
-  //   setUpdatedPartData((prevData) => ({
-  //     ...prevData,
-  //     [name]: parsedValue,
-  //   }));
-
-  //   if (
-  //     name === "cycleTime" ||
-  //     name === "multipleFactor" ||
-  //     name === "ctReduction"
-  //   ) {
-  //     const { cycleTime, multipleFactor, ctReduction } = {
-  //       ...updatedPartData,
-  //       [name]: parsedValue,
-  //     };
-
-  //     const parsedCycleTime = parseFloat(cycleTime) || 0;
-  //     const parsedMultipleFactor = parseFloat(multipleFactor) || 0;
-  //     const parsedCtReduction = parseFloat(ctReduction) || 0;
-
-  //     if (
-  //       !isNaN(parsedCycleTime) &&
-  //       !isNaN(parsedMultipleFactor) &&
-  //       !isNaN(parsedCtReduction)
-  //     ) {
-  //       const upperBound = (parsedCycleTime * parsedMultipleFactor).toFixed(2);
-  //       const lowerBound = (
-  //         parsedCycleTime -
-  //         (parsedCycleTime * parsedCtReduction) / 100
-  //       ).toFixed(2);
-
-  //       setUpdatedPartData((prevData) => ({
-  //         ...prevData,
-  //         upperBound,
-  //         lowerBound,
-  //       }));
-  //     }
-  //   }
-  // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-   
+    const parsedValue =
+      name === "cycleTime" ||
+        name === "multipleFactor" ||
+        name === "ctReduction"
+        ? parseFloat(value) || 0
+        : value;
 
     setUpdatedPartData((prevData) => ({
       ...prevData,
-      [name]: value,
-    }))};
+      [name]: parsedValue,
+    }));
+
+    if (
+      name === "cycleTime" ||
+      name === "multipleFactor" ||
+      name === "ctReduction"
+    ) {
+      const { cycleTime, multipleFactor, ctReduction } = {
+        ...updatedPartData,
+        [name]: parsedValue,
+      };
+
+      const parsedCycleTime = parseFloat(cycleTime) || 0;
+      const parsedMultipleFactor = parseFloat(multipleFactor) || 0;
+      const parsedCtReduction = parseFloat(ctReduction) || 0;
+
+      if (
+        !isNaN(parsedCycleTime) &&
+        !isNaN(parsedMultipleFactor) &&
+        !isNaN(parsedCtReduction)
+      ) {
+        const upperBound = (parsedCycleTime * parsedMultipleFactor).toFixed(2);
+        const lowerBound = (
+          parsedCycleTime -
+          (parsedCycleTime * parsedCtReduction) / 100
+        ).toFixed(2);
+
+        setUpdatedPartData((prevData) => ({
+          ...prevData,
+          upperBound,
+          lowerBound,
+        }));
+      }
+    }
+  };
 
   const handlMultiplePartsClick = async (event) => {
     event.preventDefault();
@@ -371,13 +363,9 @@ const PartMaster = () => {
       //   upperBound: upperBound,
       //   lowerBound: lowerBound,
       // };
-      console.log("part DAta:", updatedPartData)
-      const payload = {
-        ...updatedPartData,plantProduction: Number(updatedPartData.plantProduction), // ✅ force number
-      };
-      console.log("part DAta:", payload)
-      const result = await apiAddPart(payload);
-      console.log("Part added successfully:", result.data);
+      //console.log("part DAta:", updatedPartData)
+      const result = await apiAddPart(updatedPartData);
+      //console.log("Part added successfully:", result.data);
       setAddOpen(false);
       //console.log("response", result.data);
       setUpdatedPartData({
@@ -632,9 +620,6 @@ const PartMaster = () => {
                 <StyledTableCell className="table-cell">
                   Standard Cycle Time in secs
                 </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                 Number Of Person
-                </StyledTableCell>
                 <StyledTableCell className="table-cell">Action</StyledTableCell>
               </TableRow>
             </TableHead>
@@ -688,9 +673,6 @@ const PartMaster = () => {
 
                       <StyledTableCell className="table-cell">
                         {row.cycleTime}
-                      </StyledTableCell>
-                      <StyledTableCell className="table-cell">
-                        {row.plantProduction}
                       </StyledTableCell>
 
                       <StyledTableCell
@@ -789,7 +771,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Machine Name</InputLabel>
                 <Select
@@ -805,7 +787,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 name="partNo"
@@ -815,7 +797,7 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 name="partName"
@@ -825,21 +807,12 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 name="cycleTime"
                 label="Standard Cycle Time in secs"
                 value={updatedPartData?.cycleTime}
-                onChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                name="plantProduction"
-                label="Number Of Person"
-                value={updatedPartData?.plantProduction}
                 onChange={handleInputChange}
               />
             </Grid>
@@ -965,7 +938,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Line Name</InputLabel>
                 <Select
@@ -984,7 +957,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <FormControl fullWidth>
                 <InputLabel>Machine Name</InputLabel>
                 <Select
@@ -1000,7 +973,7 @@ const PartMaster = () => {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 name="partNo"
@@ -1010,7 +983,7 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 name="partName"
@@ -1020,22 +993,12 @@ const PartMaster = () => {
                 style={{ marginRight: "10px" }}
               />
             </Grid>
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <TextField
                 fullWidth
                 name="cycleTime"
                 label="Standard Cycle Time in secs"
                 value={updatedPartData?.cycleTime}
-                onChange={handleInputChange}
-                type="number"
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                fullWidth
-                name="plantProduction"
-                label="Number Of Person"
-                value={updatedPartData?.plantProduction}
                 onChange={handleInputChange}
                 type="number"
               />

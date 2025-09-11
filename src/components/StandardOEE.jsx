@@ -191,21 +191,19 @@ export default function StandardOEE() {
     }
   };
   const handleMachineChange = (event) => {
-    const newSelectedMachine = event.target.value;
+    const newSelectedMachine = Number(event.target.value);
     setSelectedMachine(newSelectedMachine);
-    //console.log("new selected machine:", newSelectedMachine);
+    // console.log("new selected machine:", newSelectedMachine);
 
     const matchingPart = machineInputData.find(
       (input) => input.machineNo === newSelectedMachine
     );
     //console.log("Part Name:", matchingPart);
     setSelectedPartName(matchingPart?.partName || "");
-
   };
   const handleGetOEEData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
-    //console.log("selected machine:", selectedMachine)
     try {
       const response = await standardDashboardApi.getStandardOEE({
         plantNo: "",
@@ -215,7 +213,20 @@ export default function StandardOEE() {
       });
       if (response.data?.data?.[0]?.oeeDashboard) {
         const responseData = response.data.data[0].oeeDashboard;
-        //console.log("oee data:", responseData);
+
+        // Multiply by 31 for machineNo 2
+        let strokesPerShift = responseData?.strokesPerShift || [];
+        let strokesPerMins = (responseData?.strokesPerMins || [])
+          .slice(80)
+          .reverse();
+
+        if (selectedMachine === 2) {
+          strokesPerShift = strokesPerShift.map((item) => ({
+            ...item,
+            production: (item.production ?? 0) * 31,
+          }));
+        }
+
         setCardData({
           actualProduction: formatNumberWithCommas(
             findValue(responseData.oeeLatestData, "Actual Production")
@@ -239,6 +250,15 @@ export default function StandardOEE() {
         const partsProducedPerHour = Array.isArray(responseData.partsPerHour)
           ? [...responseData?.partsPerHour].reverse()
           : [];
+        const partsProducedPerHour2 = Array.isArray(responseData.partsPerHour)
+          ? [...responseData.partsPerHour]
+              .map((p) => ({
+                ...p,
+                actualProduction: (p.actualProduction ?? 0) * 31,
+                target: (p.target ?? 0) * 31,
+              }))
+              .reverse()
+          : [];
         const cycleTimeReverse = Array.isArray(responseData.cycleTime)
           ? [...responseData?.cycleTime].reverse()
           : [];
@@ -253,16 +273,12 @@ export default function StandardOEE() {
           quality: findValue(responseData.oeeLatestData, "Quality %"),
           utilization: findValue(responseData.oeeLatestData, "Utilization %"),
           downtimeDistribution: responseData.downtime || [],
-          strokesPerShift: responseData.strokesPerShift || [],
-          strokesPerMins: (responseData?.strokesPerMins || []).slice(80).reverse(),
+          strokesPerShift: strokesPerShift,
+          strokesPerMins: strokesPerMins,
+          partsProducedPerHour2: partsProducedPerHour2, // ✅ store separately
           strokesPerPerson: responseData.strokesPerPerson || [],
-
         });
-        //console.log("strokes per min:", (responseData?.strokesPerMins || []).slice(80).reverse())
-        //console.log(
-        //   "energy per hr production:",
-        //   responseData.energyPerHourProduction
-        // );
+
         setDataFetched(true);
       } else {
         throw new Error("Unexpected API response structure");
@@ -289,7 +305,6 @@ export default function StandardOEE() {
     setModalOpen(false);
     setModalContent(null);
   }, []);
-
 
   const renderLineChart = useCallback(
     (data, dataKey, color) => (
@@ -342,7 +357,7 @@ export default function StandardOEE() {
             strokeWidth={2.5}
             stroke="black"
             dot={false}
-          // strokeDasharray="5 5"
+            // strokeDasharray="5 5"
           />
         </ComposedChart>
       </ResponsiveContainer>
@@ -419,7 +434,7 @@ export default function StandardOEE() {
             label={{
               value: "Part Produce",
               dy: 40,
-              dx: 17,
+              dx: 0,
               angle: -90,
               fill: "#000000",
               position: "insideLeft",
@@ -445,6 +460,56 @@ export default function StandardOEE() {
               fill="#000000"
             />
           </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    ),
+    []
+  );
+
+    const renderBarChart2 = useCallback(
+    (data, dataKey, color) => (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 20, bottom: 20, left: 25 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="hourBucket"
+            stroke="#000000"
+            fontSize="14px"
+            label={{
+              value: "Time",
+              position: "insideBottom",
+              offset: -10,
+              fontWeight: "bold",
+              fill: "#000000",
+            }}
+          />
+          <YAxis
+            stroke="#000000"
+            label={{
+              value: "Part Produce",
+              dy: 40,
+              dx: 0,
+              angle: -90,
+              fill: "#000000",
+              position: "insideLeft",
+              fontWeight: "bold",
+            }}
+          />
+          <Tooltip />
+          <Legend
+            layout="horizontal"
+            verticalAlign="top"
+            align="center"
+            wrapperStyle={{ paddingBottom: 5 }}
+          />
+          <Bar
+            dataKey="actualProduction"
+            name="Time (In Hour)"
+            fill={"#0099ff"}
+          />
         </BarChart>
       </ResponsiveContainer>
     ),
@@ -567,26 +632,42 @@ export default function StandardOEE() {
       chartType: "bar",
     },
   ];
-  const chartsR3 = [
-    {
-      title: "Strokes Per Shift",
-      dataKey: "strokesPerShift",
-      color: "#2196f3",
-      chartType: "bar",
-    },
-    {
-      title: "Strokes Per Minute",
-      dataKey: "strokesPerMins",
-      color: "#ff5722",
-      chartType: "bar",
-    },
-    {
-      title: "Strokes Per Person",
-      dataKey: "strokesPerPerson",
-      color: "#2196f3",
-      chartType: "bar",
-    }
-  ];
+  const chartsR3 =
+    selectedMachine === 2
+      ? [
+          {
+            title: "Spots Per Shift",
+            dataKey: "strokesPerShift",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+          {
+            title: "Spots Per Hour", // ✅ same as normal chart
+            dataKey: "partsProducedPerHour2",
+            color: "#ff5722",
+            chartType: "bar",
+          },
+        ]
+      : [
+          {
+            title: "Strokes Per Shift",
+            dataKey: "strokesPerShift",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+          {
+            title: "Strokes Per Minute",
+            dataKey: "strokesPerMins",
+            color: "#ff5722",
+            chartType: "bar",
+          },
+          {
+            title: "Strokes Per Person",
+            dataKey: "strokesPerPerson",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+        ];
 
   const renderStrokesPerShiftChart = useCallback(
     (data, dataKey, color) => (
@@ -612,7 +693,7 @@ export default function StandardOEE() {
             label={{
               value: "Production",
               dy: 40,
-              dx: 17,
+              dx: -10,
               angle: -90,
               fill: "#000000",
               position: "insideLeft",
@@ -640,109 +721,111 @@ export default function StandardOEE() {
     []
   );
 
-  const renderStrokesPerMinuteChart = useCallback((data, dataKey, color) => (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        data={data}
-        margin={{ top: 5, right: 20, bottom: 20, left: 25 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="time"
-          stroke="#000000"
-          label={{
-            value: "Time",
-            position: "insideBottom",
-            offset: -10,
-            fontWeight: "bold",
-            fill: "#000000",
-          }}
-        />
-        <YAxis
-          stroke="#000000"
-          label={{
-            value: "Strokes",
-            dy: 30,
-            dx: 17,
-            angle: -90,
-            fill: "#000000",
-            position: "insideLeft",
-            fontWeight: "bold",
-          }}
-        />
-        <Tooltip />
-        <Legend
-          layout="horizontal"
-          verticalAlign="top"
-          align="center"
-          wrapperStyle={{ paddingBottom: 5 }}
-        />
-        <Bar
-          dataKey="noOfStrokes"
-          name="Strokes"
-          fill={color}
+  const renderStrokesPerMinuteChart = useCallback(
+    (data, dataKey, color) => (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 20, bottom: 20, left: 25 }}
         >
-          <LabelList
-            dataKey="noOfStrokes"
-            position={({ payload }) =>
-              payload.noOfStrokes < 0 ? 'bottom' : 'top'
-            }
-            fontSize={12}
-            fill="#000000"
-            formatter={(value) => Math.abs(value)}
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="time"
+            stroke="#000000"
+            label={{
+              value: "Time",
+              position: "insideBottom",
+              offset: -10,
+              fontWeight: "bold",
+              fill: "#000000",
+            }}
           />
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  ), []);
-  const renderStrokesPerPersonChart = useCallback((data, dataKey, color) => (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        data={data}
-        margin={{ top: 5, right: 20, bottom: 20, left: 25 }}
-      >
-        <CartesianGrid strokeDasharray="3 3" />
-        <XAxis
-          dataKey="shiftName"
-          stroke="#000000"
-          label={{
-            value: "Shift",
-            position: "insideBottom",
-            offset: -10,
-            fontWeight: "bold",
-            fill: "#000000",
-          }}
-        />
-        <YAxis
-          stroke="#000000"
-          label={{
-            value: "Strokes / Person",
-            dy: 40,
-            dx: 17,
-            angle: -90,
-            fill: "#000000",
-            position: "insideLeft",
-            fontWeight: "bold",
-          }}
-        />
-        <Tooltip />
-        <Legend
-          layout="horizontal"
-          verticalAlign="top"
-          align="center"
-          wrapperStyle={{ paddingBottom: 5 }}
-        />
-        <Bar dataKey="strokesPerPerson" name="Strokes / Person" fill={color}>
-          <LabelList
-            dataKey="strokesPerPerson"
-            position="top"
-            fontSize={12}
-            fill="#000000"
+          <YAxis
+            stroke="#000000"
+            label={{
+              value: "Strokes",
+              dy: 30,
+              dx: 17,
+              angle: -90,
+              fill: "#000000",
+              position: "insideLeft",
+              fontWeight: "bold",
+            }}
           />
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
-  ), []);
+          <Tooltip />
+          <Legend
+            layout="horizontal"
+            verticalAlign="top"
+            align="center"
+            wrapperStyle={{ paddingBottom: 5 }}
+          />
+          <Bar dataKey="noOfStrokes" name="Strokes" fill={color}>
+            <LabelList
+              dataKey="noOfStrokes"
+              position={({ payload }) =>
+                payload.noOfStrokes < 0 ? "bottom" : "top"
+              }
+              fontSize={12}
+              fill="#000000"
+              formatter={(value) => Math.abs(value)}
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    ),
+    []
+  );
+  const renderStrokesPerPersonChart = useCallback(
+    (data, dataKey, color) => (
+      <ResponsiveContainer width="100%" height="100%">
+        <BarChart
+          data={data}
+          margin={{ top: 5, right: 20, bottom: 20, left: 25 }}
+        >
+          <CartesianGrid strokeDasharray="3 3" />
+          <XAxis
+            dataKey="shiftName"
+            stroke="#000000"
+            label={{
+              value: "Shift",
+              position: "insideBottom",
+              offset: -10,
+              fontWeight: "bold",
+              fill: "#000000",
+            }}
+          />
+          <YAxis
+            stroke="#000000"
+            label={{
+              value: "Strokes / Person",
+              dy: 40,
+              dx: 17,
+              angle: -90,
+              fill: "#000000",
+              position: "insideLeft",
+              fontWeight: "bold",
+            }}
+          />
+          <Tooltip />
+          <Legend
+            layout="horizontal"
+            verticalAlign="top"
+            align="center"
+            wrapperStyle={{ paddingBottom: 5 }}
+          />
+          <Bar dataKey="strokesPerPerson" name="Strokes / Person" fill={color}>
+            <LabelList
+              dataKey="strokesPerPerson"
+              position="top"
+              fontSize={12}
+              fill="#000000"
+            />
+          </Bar>
+        </BarChart>
+      </ResponsiveContainer>
+    ),
+    []
+  );
 
   return (
     <div style={{ padding: "20px", background: "white" }}>
@@ -752,10 +835,10 @@ export default function StandardOEE() {
         sx={{
           marginBottom: "10px",
           display: "flex",
-          flexDirection: { xs: 'column', sm: 'row' },
+          flexDirection: { xs: "column", sm: "row" },
           alignItems: "center",
-          justifyContent: { xs: 'center', sm: 'flex-end' },
-          gap: 2
+          justifyContent: { xs: "center", sm: "flex-end" },
+          gap: 2,
         }}
       >
         <Typography
@@ -771,7 +854,12 @@ export default function StandardOEE() {
           Current Part Name: {selectedPartName}
         </Typography>
 
-        <Grid item xs={12} sm="auto" sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+        <Grid
+          item
+          xs={12}
+          sm="auto"
+          sx={{ display: "flex", gap: 2, alignItems: "center" }}
+        >
           <FormControl sx={{ minWidth: 200 }}>
             <InputLabel>Select Machine</InputLabel>
             <Select
@@ -786,19 +874,23 @@ export default function StandardOEE() {
               ))}
             </Select>
           </FormControl>
-          <Button variant="contained" style={{ color: 'white' }} onClick={handleGetOEEData}>
+          <Button
+            variant="contained"
+            style={{ color: "white" }}
+            onClick={handleGetOEEData}
+          >
             Ok
           </Button>
         </Grid>
 
-        <Grid item xs={12} sm="auto" sx={{ display: 'flex', gap: 2 }}>
+        <Grid item xs={12} sm="auto" sx={{ display: "flex", gap: 2 }}>
           <Link to="/machinestatus">
             <Button
               variant="contained"
               sx={{
                 backgroundColor: "#1FAEC5",
                 color: "white",
-                width: '100%'
+                width: "100%",
               }}
             >
               Machine Chart
@@ -811,7 +903,7 @@ export default function StandardOEE() {
               sx={{
                 backgroundColor: "#1FAEC5",
                 color: "white",
-                width: '100%'
+                width: "100%",
               }}
             >
               Cockpit View
@@ -918,8 +1010,8 @@ export default function StandardOEE() {
                       chartData[data.dataKey] <= 50
                         ? "#f44336"
                         : chartData[data.dataKey] <= 75
-                          ? "#ff9b00"
-                          : "#4caf50"
+                        ? "#ff9b00"
+                        : "#4caf50"
                     }
                   />
                 </Box>
@@ -1050,10 +1142,10 @@ export default function StandardOEE() {
                       chartData[data.dataKey] <= 50
                         ? "#f44336"
                         : chartData[data.dataKey] <= 75
-                          ? "#ff9b00"
-                          : "#4caf50"
+                        ? "#ff9b00"
+                        : "#4caf50"
                     }
-                  //color={data.color}
+                    //color={data.color}
                   />
                 </Box>
               </Box>
@@ -1089,15 +1181,15 @@ export default function StandardOEE() {
                         data.title,
                         data.title === "Energy Consumed Per Part"
                           ? energyChart(
-                            chartData[data.dataKey],
-                            data.dataKey,
-                            data.color
-                          )
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
                           : renderBarChart1(
-                            chartData[data.dataKey],
-                            data.dataKey,
-                            data.color
-                          )
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
                       )
                     }
                   />
@@ -1111,15 +1203,15 @@ export default function StandardOEE() {
                 >
                   {data.title === "Energy Consumed Per Part"
                     ? energyChart(
-                      chartData[data.dataKey],
-                      data.dataKey,
-                      data.color
-                    )
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )
                     : renderBarChart1(
-                      chartData[data.dataKey],
-                      data.dataKey,
-                      data.color
-                    )}
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )}
                 </Box>
               </Box>
             </Grid>
@@ -1152,17 +1244,30 @@ export default function StandardOEE() {
                     onClick={() =>
                       handleOpenModal(
                         data.title,
-                        data.title === "Strokes Per Shift"
+                        data.title === "Strokes Per Shift" ||
+                          data.title === "Spots Per Shift"
                           ? renderStrokesPerShiftChart(
-                            chartData[data.dataKey],
-                            data.dataKey,
-                            data.color
-                          )
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
+                          : data.title === "Strokes Per Person"
+                          ? renderStrokesPerPersonChart(
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
+                          : data.title === "Stops Per Hour"
+                          ? renderBarChart2(
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
                           : renderStrokesPerMinuteChart(
-                            chartData[data.dataKey],
-                            data.dataKey,
-                            data.color
-                          )
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
                       )
                     }
                   />
@@ -1174,25 +1279,30 @@ export default function StandardOEE() {
                   width="100%"
                   height="calc(100% - 30px)"
                 >
-
-                  {data.title === "Strokes Per Shift"
+                  {data.title === "Strokes Per Shift" ||
+                  data.title === "Spots Per Shift"
                     ? renderStrokesPerShiftChart(
-                      chartData[data.dataKey],
-                      data.dataKey,
-                      data.color
-                    )
-                    : data.title === "Strokes Per Person"
-                      ? renderStrokesPerPersonChart(
                         chartData[data.dataKey],
                         data.dataKey,
                         data.color
                       )
-                      : renderStrokesPerMinuteChart(
+                    : data.title === "Strokes Per Person"
+                    ? renderStrokesPerPersonChart(
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )
+                    : data.title === "Spots Per Hour"
+                    ? renderBarChart2(
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )
+                    : renderStrokesPerMinuteChart(
                         chartData[data.dataKey],
                         data.dataKey,
                         data.color
                       )}
-
                 </Box>
               </Box>
             </Grid>

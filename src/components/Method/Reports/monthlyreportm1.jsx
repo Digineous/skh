@@ -99,7 +99,7 @@ export default function WeeklyReportM1() {
   });
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(25);
+  const [rowsPerPage, setRowsPerPage] = useState(50);
   const [selectedLine, setSelectedLine] = useState("");
   const [loading, setLoading] = useState(false);
   useAuthCheck();
@@ -345,7 +345,7 @@ export default function WeeklyReportM1() {
       </Grid>
 
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[5, 10, 25, 50, 100]}
         component="div"
         count={data.length}
         rowsPerPage={rowsPerPage}
@@ -460,55 +460,165 @@ export default function WeeklyReportM1() {
                     <StyledTableCell>{row.plantName}</StyledTableCell>
                     <StyledTableCell>{row.lineName}</StyledTableCell>
                     <StyledTableCell>{row.displayMachineName}</StyledTableCell>
-                    <StyledTableCell>{row.actualProduction}</StyledTableCell>
-                    <StyledTableCell>{row.gap}</StyledTableCell>
-                    <StyledTableCell>{row.target}</StyledTableCell>
-                    <StyledTableCell>{row.cycleTime}</StyledTableCell>
-                    <StyledTableCell>{row.quality}</StyledTableCell>
-                    <StyledTableCell>{row.availability}</StyledTableCell>
-                    <StyledTableCell>{row.performance}</StyledTableCell>
-                    <StyledTableCell>{row.oee}</StyledTableCell>
-                    <StyledTableCell>{row.utilization}</StyledTableCell>
-                    <StyledTableCell>{row.downtime}</StyledTableCell>
-                    <StyledTableCell>{row.uptime}</StyledTableCell>
-                    <StyledTableCell>{row.defects}</StyledTableCell>
-                    <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
                     <StyledTableCell>
-                      {row.plannedProductionTime}
+                      {Number(row.actualProduction).toFixed(2)}
                     </StyledTableCell>
-                    <StyledTableCell>{row.mtbf}</StyledTableCell>
-                    <StyledTableCell>{row.mttr}</StyledTableCell>
-                    <StyledTableCell>{row.standardCycletime}</StyledTableCell>
-                    <StyledTableCell>{row.setupTime}</StyledTableCell>
-                    <StyledTableCell>{row.breakdownTime}</StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.gap).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.target).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.cycleTime).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.quality).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.availability).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.performance).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.oee).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.utilization).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.downtime).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.uptime).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.defects).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.runtimeInMins).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.plannedProductionTime).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.mtbf).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.mttr).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.standardCycletime).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.setupTime).toFixed(2)}
+                    </StyledTableCell>
+                    <StyledTableCell>
+                      {Number(row.breakdownTime).toFixed(2)}
+                    </StyledTableCell>
                   </StyledTableRow>
                 ))}
-              {emptyRows > 0 && (
-                <StyledTableRow style={{ height: 53 }}>
-                  <StyledTableCell
-                    colSpan={17}
-                    style={{ position: "relative" }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "10px",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      Next report will be on {nextSaturdayFormatted}
-                    </div>
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        right: "10px",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      {`No further data available`}
-                    </div>
+
+              {/* Totals row */}
+              {data.length > 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan={4} style={{ fontWeight: "bold" }}>
+                    Total
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.actualProduction), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data.reduce((sum, r) => sum + Number(r.gap), 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.target), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.cycleTime), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.quality), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.availability), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.performance), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data.reduce((sum, r) => sum + Number(r.oee), 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.utilization), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.downtime), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.uptime), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.defects), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.runtimeInMins), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce(
+                        (sum, r) => sum + Number(r.plannedProductionTime),
+                        0
+                      )
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.mtbf), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.mttr), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.standardCycletime), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.setupTime), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.breakdownTime), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                 </StyledTableRow>
               )}

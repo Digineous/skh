@@ -485,32 +485,121 @@ export default function WeeklyReportM1() {
                     <StyledTableCell>{row.breakdownTime}</StyledTableCell>
                   </StyledTableRow>
                 ))}
-              {emptyRows > 0 && (
-                <StyledTableRow style={{ height: 53 }}>
-                  <StyledTableCell
-                    colSpan={17}
-                    style={{ position: "relative" }}
-                  >
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        left: "10px",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      Next report will be on {nextSaturdayFormatted}
-                    </div>
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        right: "10px",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      {`No further data available`}
-                    </div>
+
+              {/* Totals Row */}
+              {data.length > 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan={4} sx={{ fontWeight: "bold" }}>
+                    Total
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.actualproduction) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce((sum, row) => sum + (Number(row.gap) || 0), 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.target) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.cycleTime) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.quality) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.availability) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.performance) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce((sum, row) => sum + (Number(row.oee) || 0), 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.utilization) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.downtime) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.uptime) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.defects) || 0),
+                      0
+                    )}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.runtimeInMins) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) =>
+                        sum + (Number(row.plannedProductionTime) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.mtbf) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.mttr) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.standardCycletime) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.setupTime) || 0),
+                      0
+                    ).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell sx={{ fontWeight: "bold" }}>
+                    {data.reduce(
+                      (sum, row) => sum + (Number(row.breakdownTime) || 0),
+                      0
+                    ).toFixed(2)}
                   </StyledTableCell>
                 </StyledTableRow>
               )}

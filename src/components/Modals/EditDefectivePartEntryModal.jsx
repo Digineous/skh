@@ -1,287 +1,332 @@
-import React, { useState } from 'react'
+// ./Modals/EditDefectivePartEntryModal.jsx
+import React, { useEffect, useState } from "react";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableContainer,
-    TableHead,
-    TableRow,
-    Paper,
-    Grid,
-    Button,
-    Modal,
-    TextField,
-    IconButton,
-    Box,
-    FormControl,
-    InputLabel,
-    Select,
-    MenuItem,
-    tableCellClasses,
-    styled,
-    TablePagination,
-    Tooltip,
+  Modal,
+  Button,
+  TextField,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  useTheme,
+  useMediaQuery,
 } from "@mui/material";
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { apiUpdateDTime } from '../../api/api.updatedowntime'
-import { DatePicker } from '@mui/x-date-pickers';
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
 
+import { apiGetPlant } from "../../api/PlantMaster/api.getplant";
+import { apigetLines } from "../../api/LineMaster/api.getline";
+import { apigetMachine } from "../../api/MachineMaster/apigetmachine";
+import { apiUpdateQualityRejection } from "../../api/QualityRejection/api.updateqrejection";
 
-function EditDefectivePartEntryModal({ defectivePartEditModal, setDefectivePartEditModal, defectiveParts, defectReasons }) {
+function EditDefectivePartEntryModal({
+  defectivePartEditModal,
+  setDefectivePartEditModal,
+  defectiveParts,
+  updateDownTime,
+  setTableRefresh,
+  defectReasons,
+}) {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
-    const defectivePartToEdit = defectiveParts.find(defectivepart => defectivepart.id === defectivePartEditModal.id);
-    const [formData, setFormData] = useState({
-        plantName: defectivePartToEdit?.plantName || "",
-        lineName: defectivePartToEdit?.lineName || "",
-        displayMachineName: defectivePartToEdit?.displayMachineName || "",
-        shiftName: defectivePartToEdit?.shiftName || "",
-        defectCount: defectivePartToEdit?.defectCount || "",
-        reason: defectivePartToEdit?.reason || "",
-        processDate: defectivePartToEdit?.processDate || "",
-    });
+  // find row to edit
+  const rowData = defectiveParts.find(
+    (item) => item.id === defectivePartEditModal.id
+  );
 
-    const [shifts, setShifts] = useState([
-        { id: 1, name: "Morning Shift" },
-        { id: 2, name: "Evening Shift" },
-        { id: 3, name: "Night Shift" },
-    ])
-    const handleModalClose = () => {
-        setDefectivePartEditModal({ flag: false });
-        setFormData({
-            plantName: "",
-            lineName: "",
-            displayMachineName: "",
-            shiftName: "",
-            plantNo: "",
-            reason: "",
-            startDownDate: "",
-            endDownDate: "",
-        });
-    };
-
-    const handleInputChange = (e) => {
-
-        const { name, value } = e.target;
-        setFormData((prevData) => ({
-            ...prevData, // Spread previous state
-            [name]: value, // Dynamically update the field based on `name`
-        }));
+  // form state (pre-filled with row data)
+  const [formData, setFormData] = useState(
+    rowData || {
+      id: "",
+      plantNo: "",
+      lineNo: "",
+      machineNo: "",
+      shiftId: "",
+      defectCount: "",
+      reason: "",
+      processDate: "",
     }
+  );
 
-    const updateDownTimeApiCaller = async (reqData) => {
-        try {
-            const response = await apiUpdateDTime(reqData);
-            //console.log(response.data);
+  const [plantData, setPlantData] = useState([]);
+  const [lineData, setLineData] = useState([]);
+  const [machineData, setMachineData] = useState([]);
 
-        } catch (error) {
-            //console.log(error.message);
+  const shifts = [
+    { id: 1, name: "Morning Shift" },
+    { id: 2, name: "Evening Shift" },
+    { id: 3, name: "Night Shift" },
+  ];
 
-        }
+  const filteredMachines = machineData.filter(
+    (m) => m.lineNo === formData.lineNo
+  );
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const plants = await apiGetPlant();
+        setPlantData(plants.data.data);
+        const lines = await apigetLines();
+        setLineData(lines.data.data);
+        const machines = await apigetMachine();
+        setMachineData(machines.data.data);
+      } catch (err) {
+        console.error("Error fetching master data:", err);
+      }
+    })();
+  }, []);
+
+  const handleClose = () => {
+    setDefectivePartEditModal({ flag: false, id: 0 });
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleDateChange = (newValue) => {
+    setFormData((prev) => ({
+      ...prev,
+      processDate: newValue ? newValue.format("DD/MM/YYYY") : "",
+    }));
+  };
+
+  const handleUpdate = async () => {
+    try {
+      await apiUpdateQualityRejection(formData);
+
+      // refresh parent
+      setTableRefresh((prev) => !prev);
+
+      // close modal
+      handleClose();
+    } catch (err) {
+      console.error("Update failed:", err);
     }
+  };
 
-    const date = new Date()
-    const currentDate = date.toLocaleDateString()
-    const handleEditDefectivePart = () => {
-        defectivePartToEdit.plantName = formData.plantName
-        defectivePartToEdit.lineName = formData.lineName
-        defectivePartToEdit.displayMachineName = formData.displayMachineName
-        defectivePartToEdit.shiftName = formData.shiftName
-        defectivePartToEdit.defectCount = formData.defectCount
-        defectivePartToEdit.plantNo = formData.plantNo
-        defectivePartToEdit.reason = formData.reason
-        defectivePartToEdit.processDate = formData.processDate
-        // //console.log("defectivepart for edit body....", defectivePartToEdit);
-        // defectivePartToEdit.startTime = formData.startDownDate;
-        // defectivePartToEdit.endTime = formData.endDownDate;
-        // defectivePartToEdit.totalDownTime = "00:30:00";
-        // defectivePartToEdit.machineDownDate = formData.startDownDate;
+  if (!rowData) return null;
 
-        // const callerRes = updateDownTimeApiCaller(defectivePartToEdit)
+  return (
+    <Modal
+      open={defectivePartEditModal.flag}
+      onClose={handleClose}
+      aria-labelledby="edit-modal"
+    >
+      <div
+        style={{
+          borderRadius: "10px",
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-50%, -50%)",
+          backgroundColor: "white",
+          padding: "20px",
+          width: isMobile ? "90%" : "500px",
+        }}
+      >
+        <button
+          onClick={handleClose}
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "10px",
+            cursor: "pointer",
+            backgroundColor: "transparent",
+            border: "none",
+            fontSize: "30px",
+          }}
+        >
+          &times;
+        </button>
 
-        setDefectivePartEditModal({ flag: false })
-    }
+        <h2>Edit Defective Part</h2>
+        <hr />
+        <br />
 
+        <Grid container spacing={2}>
+          {/* Plant */}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Plant</InputLabel>
+              <Select
+                name="plantNo"
+                value={formData.plantNo}
+                onChange={(e) => {
+                  const selected = plantData.find(
+                    (p) => p.plantNo === e.target.value
+                  );
+                  setFormData((prev) => ({
+                    ...prev,
+                    plantNo: selected.plantNo,
+                    plantName: selected.plantName,
+                  }));
+                }}
+              >
+                {plantData.map((p) => (
+                  <MenuItem key={p.plantNo} value={p.plantNo}>
+                    {p.plantName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-    const handleDateTimeChange = (newValue, fieldName) => {
-        setFormData((prevData) => ({
-            ...prevData,
-            [fieldName]: newValue?.format('DD/MM/YYYY') || '', // Ensure proper format
-        }));
-    };
-    return (
-        <>
-            <Modal open={defectivePartEditModal.flag} onClose={handleModalClose}>
-                <div
-                    style={{
-                        borderRadius: "10px",
-                        position: "absolute",
-                        top: "50%",
-                        left: "50%",
-                        transform: "translate(-50%, -50%)",
-                        backgroundColor: "white",
-                        padding: "20px",
-                        width: "90%", // Responsive width
-                        maxWidth: "600px", // Maximum width for larger screens
-                        boxShadow: "0 5px 15px rgba(0,0,0,0.3)",
-                    }}
-                >
-                    <button
-                        onClick={handleModalClose}
-                        style={{
-                            position: "absolute",
-                            top: "10px",
-                            right: "10px",
-                            cursor: "pointer",
-                            backgroundColor: "transparent",
-                            border: "none",
-                            fontSize: "30px",
-                        }}
-                    >
-                        &times;
-                    </button>
-                    <h2>Edit Machine Defect</h2>
-                    <hr />
-                    <br />
+          {/* Line */}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Line</InputLabel>
+              <Select
+                name="lineNo"
+                value={formData.lineNo}
+                onChange={(e) => {
+                  const selected = lineData.find(
+                    (l) => l.lineNo === e.target.value
+                  );
+                  setFormData((prev) => ({
+                    ...prev,
+                    lineNo: selected.lineNo,
+                    lineName: selected.lineName,
+                    machineNo: "",
+                  }));
+                }}
+              >
+                {lineData.map((l) => (
+                  <MenuItem key={l.lineNo} value={l.lineNo}>
+                    {l.lineName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-                    <Grid container spacing={2}>
-                        {/* Plant Name */}
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>Plant Name</InputLabel>
-                                <Select
-                                    name="plantName"
-                                    value={formData.plantName}
-                                    onChange={handleInputChange}
-                                >
-                                    <MenuItem value={formData.plantName}>
-                                        {formData.plantName}
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
+          {/* Machine */}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Machine</InputLabel>
+              <Select
+                name="machineNo"
+                value={formData.machineNo}
+                onChange={(e) => {
+                  const selected = filteredMachines.find(
+                    (m) => m.machineNo === e.target.value
+                  );
+                  setFormData((prev) => ({
+                    ...prev,
+                    machineNo: selected.machineNo,
+                    displayMachineName: selected.displayMachineName,
+                  }));
+                }}
+              >
+                {filteredMachines.map((m) => (
+                  <MenuItem key={m.machineNo} value={m.machineNo}>
+                    {m.displayMachineName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-                        {/* Line Name */}
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>Line Name</InputLabel>
-                                <Select
-                                    name="lineName"
-                                    value={formData.lineName}
-                                    onChange={handleInputChange}
-                                >
-                                    <MenuItem value={formData.lineName}>
-                                        {formData.lineName}
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
+          {/* Shift */}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Shift</InputLabel>
+              <Select
+                name="shiftId"
+                value={formData.shiftId}
+                onChange={(e) => {
+                  const selected = shifts.find((s) => s.id === e.target.value);
+                  setFormData((prev) => ({
+                    ...prev,
+                    shiftId: selected.id,
+                    shiftName: selected.name,
+                  }));
+                }}
+              >
+                {shifts.map((s) => (
+                  <MenuItem key={s.id} value={s.id}>
+                    {s.name}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-                        {/* Machine Name */}
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>Machine Name</InputLabel>
-                                <Select
-                                    name="displayMachineName"
-                                    value={formData.displayMachineName}
-                                    onChange={handleInputChange}
-                                >
-                                    <MenuItem value={formData.displayMachineName}>
-                                        {formData.displayMachineName}
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
-                        </Grid>
+          {/* Defect Count */}
+          <Grid item xs={12} sm={6}>
+            <TextField
+              label="Defect Count"
+              fullWidth
+              value={formData.defectCount}
+              onChange={(e) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  defectCount: e.target.value,
+                }))
+              }
+            />
+          </Grid>
 
-                        {/* Shift Name */}
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>Shift Name</InputLabel>
-                                <Select
-                                    name="shiftName"
-                                    value={formData.shiftName}
-                                    onChange={handleInputChange}
-                                >
-                                    {shifts.map((row) => (
-                                        <MenuItem key={row.name} value={row.name}>
-                                            {row.name}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
+          {/* Reason */}
+          <Grid item xs={12} sm={6}>
+            <FormControl fullWidth>
+              <InputLabel>Reason</InputLabel>
+              <Select
+                name="reason"
+                value={formData.reason}
+                onChange={handleInputChange}
+              >
+                {defectReasons.map((r, idx) => (
+                  <MenuItem key={idx} value={r.reason}>
+                    {r.reason}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
 
-                        {/* Defect Count */}
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <TextField
-                                    label="Defect Count"
-                                    name="defectCount"
-                                    value={formData.defectCount}
-                                    onChange={handleInputChange}
+          {/* Process Date */}
+          <Grid item xs={12} sm={6}>
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DatePicker
+                label="Process Date"
+                value={
+                  formData.processDate
+                    ? dayjs(formData.processDate, "DD/MM/YYYY")
+                    : null
+                }
+                onChange={handleDateChange}
+                renderInput={(params) => <TextField {...params} fullWidth />}
+              />
+            </LocalizationProvider>
 
-                                />
-                                {/* <Select
-                                    name="defectCount"
-                                    value={formData.defectCount}
-                                    onChange={handleInputChange}
-                                >
-                                    <MenuItem value={formData.defectCount}>
-                                        {formData.defectCount}
-                                    </MenuItem>
-                                </Select> */}
-                            </FormControl>
-                        </Grid>
+          </Grid>
 
-                        {/* Downtime Reason */}
-                        <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>Downtime Reason</InputLabel>
-                                <Select
-                                    name="reason"
-                                    value={formData.reason}
-                                    onChange={handleInputChange}
-                                >
-                                    {defectReasons.map((reason, id) => (
-                                        <MenuItem key={id} value={reason.reason}>
-                                            {reason.reason}
-                                        </MenuItem>
-                                    ))}
-                                </Select>
-                            </FormControl>
-                        </Grid>
-
-                        {/* Process Date */}
-                        <Grid item xs={12} sm={6}>
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker
-                                    label="Process Date"
-                                    onChange={(newValue) =>
-                                        handleDateTimeChange(newValue, "processDate")
-                                    }
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
-                                />
-                            </LocalizationProvider>
-                        </Grid>
-
-                        {/* Update Button */}
-                        <Grid item xs={12}>
-                            <Button
-                                onClick={handleEditDefectivePart}
-                                variant="contained"
-                                color="primary"
-                                style={{ marginTop: "20px" }}
-                                fullWidth
-                            >
-                                Update
-                            </Button>
-                        </Grid>
-                    </Grid>
-                </div>
-            </Modal>
-        </>
-    )
+          {/* Update button */}
+          <Grid item xs={12}>
+            <Button
+              variant="contained"
+              color="primary"
+              fullWidth
+              onClick={handleUpdate}
+              style={{ marginTop: "20px" }}
+            >
+              Update
+            </Button>
+          </Grid>
+        </Grid>
+      </div>
+    </Modal>
+  );
 }
 
-export default EditDefectivePartEntryModal
+export default EditDefectivePartEntryModal;

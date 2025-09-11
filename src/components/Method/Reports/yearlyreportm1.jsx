@@ -185,7 +185,7 @@ export default function YearlyReportM1() {
           paddingBottom: "10px",
         }}
       >
-        <h2>Yearly Report M1 </h2>
+        <h2>Yearly Report</h2>
       </div>
       <Grid
         container
@@ -259,59 +259,67 @@ export default function YearlyReportM1() {
               boxShadow: "0px 0px 5px rgba(0, 0, 0, 0.3)",
             }}
           >
-            <TableHead>
-              <TableRow>
-                <StyledTableCell className="table-cell">
-                  MId
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Date Time
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Total
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  VAT
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Avg Sct
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Revised U Loss
-                </StyledTableCell>{" "}
-                <StyledTableCell className="table-cell">
-                  U%
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  P Loss
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  P% 
-                </StyledTableCell>{" "}
-                <StyledTableCell className="table-cell">
-                  A Loss
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Revised A Loss
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  A%
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Q Loss
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  Q% 
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
-                  OPE%
-                </StyledTableCell>
-               
-                <StyledTableCell className="table-cell">
-                  OEE% 
-                </StyledTableCell>
-              </TableRow>
-            </TableHead>
+             <TableHead>
+                                     <TableRow>
+                                       <StyledTableCell className="table-cell">
+                                         Date Time
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Plant Name
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Line Name
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Machine Name
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Actual Production
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">Gap</StyledTableCell>
+                                       <StyledTableCell className="table-cell">Target</StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Cycle Time
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Quality
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Availability
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Performance
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">OEE</StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Utilization
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Downtime
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">Uptime</StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Defects
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Runtime In Mins
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Planned Production Time
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">MTBF</StyledTableCell>
+                                       <StyledTableCell className="table-cell">MTTR</StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Standard Cycletime
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Setup Time
+                                       </StyledTableCell>
+                                       <StyledTableCell className="table-cell">
+                                         Breakdown Time
+                                       </StyledTableCell>
+                                     </TableRow>
+                                   </TableHead>
             <TableBody>
               {data
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)

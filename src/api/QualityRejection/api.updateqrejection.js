@@ -8,14 +8,14 @@ export const apiUpdateQualityRejection = async (qRejectionData) => {
       //console.log(" plantName, segment,location,state,country")
       const data = await axios.put(url, {
         id:qRejectionData.id,
-        machineNo: qRejectionData.machineNo,
+      machineNo: qRejectionData.machineNo,
         plantNo: qRejectionData.plantNo,
         lineNo: qRejectionData.lineNo,
-        reason: "rejected",
-        rejectionNo: qRejectionData.rejectionNo,
-        processDate: qRejectionData.date,
-        shiftId:qRejectionData.shiftNo,
-        partNo:"part1",
+        reason: qRejectionData.reason,
+        rejectionNo: qRejectionData.defectCount,
+        processDate: qRejectionData.createdAt,
+        shiftId: qRejectionData.shiftId,
+        partNo: "part1",
         sct:0
       },{headers:{
           Authorization:`Bearer ${token}`

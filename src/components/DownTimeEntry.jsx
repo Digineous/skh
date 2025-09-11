@@ -405,7 +405,7 @@ function DownTimesEntry() {
 
         {addReasonModalOpen && <AddReasonModal setAddReasonModalOpen={setAddReasonModalOpen} addReasonModalOpen={addReasonModalOpen} setDownTimeReasons={setDownTimeReasons} reasons={reasons} setReasons={setReasons} />}
 
-        {editOpen && <EditDownTimeModal editOpen={editOpen} setEditModal={setEditModal} downTimeToEdit={downTimeToEdit} downTimes={tableData} updateDownTime={setTableData} reasons={reasons} />}
+        {editOpen && <EditDownTimeModal editOpen={editOpen} setEditModal={setEditModal} downTimeToEdit={downTimeToEdit} downTimes={tableData} updateDownTime={setTableData} reasons={reasons}  setRefreshData={setRefreshData}/>}
 
       </div>
     </>

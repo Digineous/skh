@@ -20,7 +20,7 @@ export const apiAddPart = async (data) => {
         ctReduction: 0,
         lowerBound: 0,
         upperBound: 0,
-        plantProduction: 0,
+        plantProduction: data.plantProduction,
       },
       {
         headers: {

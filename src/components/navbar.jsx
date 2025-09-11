@@ -436,43 +436,6 @@ function NavBar() {
                 >
                   <ListItemText primary="Defective Part Entry" />
                 </ListItem>
-
-                <ListItem
-                  Button
-                  component={Link}
-                  to="/production/changeom"
-                  className={
-                    location.pathname === "/production/changeom"
-                      ? "activeListItem"
-                      : ""
-                  }
-                >
-                  <ListItemText primary="Change Over Master" />
-                </ListItem>
-                <ListItem
-                  Button
-                  component={Link}
-                  to="/production/unknownloss"
-                  className={
-                    location.pathname === "/production/unknownloss"
-                      ? "activeListItem"
-                      : ""
-                  }
-                >
-                  <ListItemText primary="Unkown Loss" />
-                </ListItem>
-                <ListItem
-                  Button
-                  component={Link}
-                  to="/production/qualityrejection"
-                  className={
-                    location.pathname === "/production/qualityrejection"
-                      ? "activeListItem"
-                      : ""
-                  }
-                >
-                  <ListItemText primary="Quality Rejection" />
-                </ListItem>
               </List>
             </Collapse>
             <ListItem

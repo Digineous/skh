@@ -486,7 +486,7 @@ export default function StandardOEE() {
             wrapperStyle={{ paddingBottom: 5 }}
           />
           <Bar
-            dataKey="total_downtime_in_mins"
+            dataKey="totalDowntimeMins"
             fill={color}
             name={"Types of Losses"}
             fontWeight={"600"}
@@ -531,7 +531,7 @@ export default function StandardOEE() {
 
   const radialChartsR1 = [
     { title: "Availability ", dataKey: "availability", color: "#0E2566" },
-    { title: "Productivity ", dataKey: "productivity", color: "#00423C" },
+    { title: "Performance ", dataKey: "productivity", color: "#00423C" },
   ];
 
   const radialChartsR2 = [

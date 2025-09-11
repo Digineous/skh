@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react';
 import {
     Table,
     TableBody,
@@ -31,6 +31,9 @@ import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
 // import { current } from '@reduxjs/toolkit';
 import { apiAddDownTime } from "../../api/api.adddowntime";
 import { DatePicker } from '@mui/x-date-pickers';
+import { apigetMachine } from '../../api/MachineMaster/apigetmachine';
+import { apigetLines } from '../../api/LineMaster/api.getline';
+import { apiGetPlant } from '../../api/PlantMaster/api.getplant';
 
 
 function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, defectReasons }) {
@@ -56,11 +59,11 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
     const currentDate = date.toLocaleDateString()
     const [formData, setFormData] = useState({
         id: tableData.length + 1,
-        plantName: "Plant-1",
-        lineName: "Line-1",
-        displayMachineName: "Machine-1",
+        plantName: "",
+        lineName: "",
+        displayMachineName: "",
         shiftName: "",
-        defectCount: 1,
+        defectCount: "",
         reason: "maintenance",
         processDate: "",
         createdAt: currentDate,
@@ -70,6 +73,10 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
         { id: 2, name: "Evening Shift" },
         { id: 3, name: "Night Shift" },
     ])
+    const [plantData, setPlantData] = useState([]);
+    const [lineData, setLineData] = useState([]);
+    const [machineData, setMachineData] = useState([]);
+    const [error, setError] = useState(null);
 
     const handleModalClose = () => {
         setAddOpen(false);
@@ -93,9 +100,51 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
             ...prevData,
             formData
         ])
-        addDownTimeApiCaller(formData)
+
+       console.log(tableData)
         setAddOpen(false);
     }
+
+    useEffect(() => {
+        const getPlant = async () => {
+            try {
+                const result = await apiGetPlant();
+                // console.log("Result data plant:", result.data.data);
+                setPlantData(result.data.data);
+            } catch (error) {
+                setError(error.message);
+                handleSnackbarOpen(error.message, "error");
+            }
+        };
+        getPlant();
+    }, []);
+    useEffect(() => {
+        const getline = async () => {
+            try {
+                const result = await apigetLines();
+                // console.log("Result data line:", result.data.data);
+                setLineData(result.data.data);
+            } catch (error) {
+                setError(error.message);
+                handleSnackbarOpen(error.message, "error");
+            }
+        };
+        getline();
+    }, []);
+    useEffect(() => {
+        const getmachine = async () => {
+            try {
+                // const result = await apigetMachine();
+                const result = await apigetMachine()
+                // console.log("Result data machine:", result.data.data);
+                setMachineData(result.data.data);
+            } catch (error) {
+                setError(error.message);
+                handleSnackbarOpen(error.message, "error");
+            }
+        };
+        getmachine();
+    }, []);
     return (
         <>
 
@@ -140,8 +189,14 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
                                     value={formData.plantName}
                                     onChange={handleInputChange}
                                 >
-                                    <MenuItem value={formData.plantName}>{formData.plantName}</MenuItem>
+                                    {plantData.map((plant) => (
+                                        <MenuItem key={plant.plantNo} value={plant.plantName}>
+                                            {plant.plantName}
+                                        </MenuItem>
+                                    ))}
+
                                 </Select>
+
                             </FormControl>
                         </Grid>
 
@@ -154,7 +209,13 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
                                     value={formData.lineName}
                                     onChange={handleInputChange}
                                 >
-                                    <MenuItem value={formData.lineName}>{formData.lineName}</MenuItem>
+                                    {lineData.map((line) => (
+                                        <MenuItem key={line.lineNo} value={line.lineName}>
+                                            {line.lineName}
+                                        </MenuItem>
+                                    ))}
+
+
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -168,7 +229,11 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
                                     value={formData.displayMachineName}
                                     onChange={handleInputChange}
                                 >
-                                    <MenuItem value={formData.displayMachineName}>{formData.displayMachineName}</MenuItem>
+                                    {machineData.map((machine) => (
+                                        <MenuItem key={machine.machineNo} value={machine.displayMachineName}>
+                                            {machine.displayMachineName}
+                                        </MenuItem>
+                                    ))}
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -191,20 +256,16 @@ function AddNewDefectPartsEntry({ addOpen, setAddOpen, setTableData, tableData, 
                         </Grid>
 
                         {/* Plant No */}
+                        
                         <Grid item xs={12} sm={6}>
-                            <FormControl fullWidth>
-                                <InputLabel>Defect Count</InputLabel>
-                                <Select
-                                    name="defectCount"
-                                    value={formData.defectCount}
-                                    type='number'
-                                    onChange={handleInputChange}
-                                >
-                                    <MenuItem value={formData.defectCount}>
-                                        {formData.defectCount}
-                                    </MenuItem>
-                                </Select>
-                            </FormControl>
+                            <TextField
+                            label="Defect Count"
+                            value={formData.defectCount}
+                            onChange={(e)=>(setFormData((prev)=>({
+                                ...prev,defectCount:e.target.value
+                            })))}
+                            type='number'
+                            />
                         </Grid>
 
                         {/* Downtime Reason */}

@@ -197,24 +197,24 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
     }, []);
 
 
-useEffect(() => {
-    if (downTimeToEdit) {
-        // Try both possible formats
-        const startDate = dayjs(downTimeToEdit.startDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
-        const endDate = dayjs(downTimeToEdit.endDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
+    useEffect(() => {
+        if (downTimeToEdit) {
+            // Try both possible formats
+            const startDate = dayjs(downTimeToEdit.startDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
+            const endDate = dayjs(downTimeToEdit.endDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
 
-        setFormData({
-            plantName: downTimeToEdit.plantName || "",
-            lineName: downTimeToEdit.lineName || "",
-            displayMachineName: downTimeToEdit.displayMachineName || "",
-            shiftName: downTimeToEdit.shiftName || "",
-            plantNo: downTimeToEdit.plantNo || "",
-            reason: downTimeToEdit.reason || "",
-            startDownDate: startDate.isValid() ? startDate : null,
-            endDownDate: endDate.isValid() ? endDate : null,
-        });
-    }
-}, [downTimeToEdit, downTimes]);
+            setFormData({
+                plantName: downTimeToEdit.plantName || "",
+                lineName: downTimeToEdit.lineName || "",
+                displayMachineName: downTimeToEdit.displayMachineName || "",
+                shiftName: downTimeToEdit.shiftName || "",
+                plantNo: downTimeToEdit.plantNo || "",
+                reason: downTimeToEdit.reason || "",
+                startDownDate: startDate.isValid() ? startDate : null,
+                endDownDate: endDate.isValid() ? endDate : null,
+            });
+        }
+    }, [downTimeToEdit, downTimes]);
 
 
     return (
@@ -316,9 +316,12 @@ useEffect(() => {
                                     value={formData.shiftName}
                                     onChange={handleInputChange}
                                 >
-                                    <MenuItem value={formData.shiftName}>
-                                        {formData.shiftName}
-                                    </MenuItem>
+                                    {["Morning Shift", "Evening Shift", "Night Shift"].map((shift) => (
+                                        <MenuItem key={shift} value={shift}>
+                                            {shift}
+                                        </MenuItem>
+                                    ))}
+
                                 </Select>
                             </FormControl>
                         </Grid>
@@ -352,11 +355,11 @@ useEffect(() => {
                                     renderInput={(params) => <TextField {...params} fullWidth />}
                                 /> */}
                                 <DateTimePicker
-    label="Start Time"
-    value={formData.startDownDate} // now Dayjs
-    onChange={(newValue) => handleDateTimeChange(newValue, "startDownDate")}
-    renderInput={(params) => <TextField {...params} fullWidth />}
-/>
+                                    label="Start Time"
+                                    value={formData.startDownDate} // now Dayjs
+                                    onChange={(newValue) => handleDateTimeChange(newValue, "startDownDate")}
+                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                />
                             </LocalizationProvider>
                         </Grid>
 
@@ -370,13 +373,13 @@ useEffect(() => {
                                     }
                                     renderInput={(params) => <TextField {...params} fullWidth />}
                                 /> */}
-                                
-<DateTimePicker
-    label="End Time"
-    value={formData.endDownDate} // now Dayjs
-    onChange={(newValue) => handleDateTimeChange(newValue, "endDownDate")}
-    renderInput={(params) => <TextField {...params} fullWidth />}
-/>
+
+                                <DateTimePicker
+                                    label="End Time"
+                                    value={formData.endDownDate} // now Dayjs
+                                    onChange={(newValue) => handleDateTimeChange(newValue, "endDownDate")}
+                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                />
 
                             </LocalizationProvider>
                         </Grid>

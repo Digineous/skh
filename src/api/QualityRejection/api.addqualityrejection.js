@@ -13,7 +13,7 @@ export const apiQualityRejection = async (qRejectionData) => {
         plantNo: qRejectionData.plantNo,
         lineNo: qRejectionData.lineNo,
         reason: "rejected",
-        rejectionNo: qRejectionData.rejectionNo,
+        rejectionNo: qRejectionData.defectCount,
         processDate: qRejectionData.date,
         shiftId:qRejectionData.shiftNo,
         partNo:"part1",
@@ -31,3 +31,4 @@ export const apiQualityRejection = async (qRejectionData) => {
     throw error;
   }
 };
+export default apiQualityRejection

@@ -19,7 +19,7 @@ export const apiUpdatePart = async (part) => {
         ctReduction: part.ctReduction,
         lowerBound: part.lowerBound,
         upperBound: part.upperBound,
-        plantProduction: 0,
+        plantProduction: part.plantProduction,
       },
       {
         headers: {

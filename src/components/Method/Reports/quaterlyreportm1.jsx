@@ -385,7 +385,7 @@ export default function QuaterlyReportM1() {
                 </StyledTableCell>
               </TableRow>
             </TableHead>
-            <TableBody>
+                       <TableBody>
               {data
                 .map((row, index) => (
                   <StyledTableRow key={index}>
@@ -414,13 +414,7 @@ export default function QuaterlyReportM1() {
                     <StyledTableCell>{row.breakdownTime}</StyledTableCell>
                   </StyledTableRow>
                 ))}
-              {data.length === 0 && !loading && (
-                <TableRow>
-                  <TableCell colSpan={23} align="center">
-                    No data available. Please check Line, Machine, Quarter.
-                  </TableCell>
-                </TableRow>
-              )}
+
             </TableBody>
 
 

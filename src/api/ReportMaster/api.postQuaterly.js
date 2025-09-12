@@ -1,23 +1,14 @@
 import axios from "axios";
 import { baseUrl } from "../baseUrl";
 
-export const postQuaterly = async ({
-    deviceNo,
-    year,
-    quarter,
-}) => {
+export const postQuaterly = async (body) => {
     const url = baseUrl + "/common/oeeQuarterYear";
     try {
         const token = localStorage.getItem("token");
 
         const data = await axios.post(
             url,
-            {
-                deviceNo: deviceNo,
-                year: year,
-                quarter: quarter,
-
-            },
+            body,
             {
                 headers: {
                     Authorization: `Bearer ${token}`,

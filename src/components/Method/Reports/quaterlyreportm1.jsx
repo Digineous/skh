@@ -385,7 +385,37 @@ export default function QuaterlyReportM1() {
                 </StyledTableCell>
               </TableRow>
             </TableHead>
-           
+                       <TableBody>
+              {data
+                .map((row, index) => (
+                  <StyledTableRow key={index}>
+                    <StyledTableCell>{row.dateTime}</StyledTableCell>
+                    <StyledTableCell>{row.plantName}</StyledTableCell>
+                    <StyledTableCell>{row.lineName}</StyledTableCell>
+                    <StyledTableCell>{row.displayMachineName}</StyledTableCell>
+                    <StyledTableCell>{row.actualProduction}</StyledTableCell>
+                    <StyledTableCell>{row.gap}</StyledTableCell>
+                    <StyledTableCell>{row.target}</StyledTableCell>
+                    <StyledTableCell>{row.cycleTime}</StyledTableCell>
+                    <StyledTableCell>{row.quality}</StyledTableCell>
+                    <StyledTableCell>{row.availability}</StyledTableCell>
+                    <StyledTableCell>{row.performance}</StyledTableCell>
+                    <StyledTableCell>{row.oee}</StyledTableCell>
+                    <StyledTableCell>{row.utilization}</StyledTableCell>
+                    <StyledTableCell>{row.downtime}</StyledTableCell>
+                    <StyledTableCell>{row.uptime}</StyledTableCell>
+                    <StyledTableCell>{row.defects}</StyledTableCell>
+                    <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
+                    <StyledTableCell>{row.plannedProductionTime}</StyledTableCell>
+                    <StyledTableCell>{row.mtbf}</StyledTableCell>
+                    <StyledTableCell>{row.mttr}</StyledTableCell>
+                    <StyledTableCell>{row.standardCycletime}</StyledTableCell>
+                    <StyledTableCell>{row.setupTime}</StyledTableCell>
+                    <StyledTableCell>{row.breakdownTime}</StyledTableCell>
+                  </StyledTableRow>
+                ))}
+
+            </TableBody>
 
 
           </Table>

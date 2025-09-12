@@ -64,7 +64,7 @@ export default function YearlyReportM1() {
   const [error, setError] = useState(null);
   const [severity, setSeverity] = useState("success");
   const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [tableData,setTableData]=useState({})
+  const [tableData, setTableData] = useState([])
   const [rawData, setRawData] = useState({
     lineNo: "",
     machineId: "",
@@ -163,28 +163,24 @@ export default function YearlyReportM1() {
   //     setLoading(false);
   //   }
   // };
-  const handleAddSubmit = async(event) => {
+  const handleAddSubmit = async (event) => {
     event.preventDefault();
-    // console.log("you Submited form...")
+    //console.log("you Submited form...")
     //console.log("cureent avaliable data are:",rawData);
-    const body={
+    const body = {
       deviceNo: Number(rawData.machineId),
       year: Number(rawData.year)
     }
-   // console.log("this paylaod we send:",body);
+    // console.log("this paylaod we send:",body);
     try {
-      const response=await postQuaterly(body);
-      // console.log("success:",response.data);
+      const response = await postQuaterly(body);
+     // console.log("success:", response.data);
       setTableData(response.data);
-      // console.log("data is store in useStateTable Data:",tableData);
-      
+
     } catch (error) {
-      console.error("Error We got:" ,error)
+     // console.error("Error We got:", error)
     }
   }
-
-
-
 
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
@@ -354,43 +350,35 @@ export default function YearlyReportM1() {
                 </StyledTableCell>
               </TableRow>
             </TableHead>
-             <TableBody>
-                          {tableData
-                            .map((row, index) => (
-                              <StyledTableRow key={index}>
-                                <StyledTableCell>{row.dateTime}</StyledTableCell>
-                                <StyledTableCell>{row.plantName}</StyledTableCell>
-                                <StyledTableCell>{row.lineName}</StyledTableCell>
-                                <StyledTableCell>{row.displayMachineName}</StyledTableCell>
-                                <StyledTableCell>{row.actualProduction}</StyledTableCell>
-                                <StyledTableCell>{row.gap}</StyledTableCell>
-                                <StyledTableCell>{row.target}</StyledTableCell>
-                                <StyledTableCell>{row.cycleTime}</StyledTableCell>
-                                <StyledTableCell>{row.quality}</StyledTableCell>
-                                <StyledTableCell>{row.availability}</StyledTableCell>
-                                <StyledTableCell>{row.performance}</StyledTableCell>
-                                <StyledTableCell>{row.oee}</StyledTableCell>
-                                <StyledTableCell>{row.utilization}</StyledTableCell>
-                                <StyledTableCell>{row.downtime}</StyledTableCell>
-                                <StyledTableCell>{row.uptime}</StyledTableCell>
-                                <StyledTableCell>{row.defects}</StyledTableCell>
-                                <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
-                                <StyledTableCell>{row.plannedProductionTime}</StyledTableCell>
-                                <StyledTableCell>{row.mtbf}</StyledTableCell>
-                                <StyledTableCell>{row.mttr}</StyledTableCell>
-                                <StyledTableCell>{row.standardCycletime}</StyledTableCell>
-                                <StyledTableCell>{row.setupTime}</StyledTableCell>
-                                <StyledTableCell>{row.breakdownTime}</StyledTableCell>
-                              </StyledTableRow>
-                            ))}
-                          {data.length === 0 && !loading && (
-                            <TableRow>
-                              <TableCell colSpan={23} align="center">
-                                No data available. Please check Line, Machine, Quarter.
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </TableBody>
+            <TableBody>
+              {tableData.map((row, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>{row.dateTime}</StyledTableCell>
+                  <StyledTableCell>{row.plantName}</StyledTableCell>
+                  <StyledTableCell>{row.lineName}</StyledTableCell>
+                  <StyledTableCell>{row.displayMachineName}</StyledTableCell>
+                  <StyledTableCell>{row.actualProduction}</StyledTableCell>
+                  <StyledTableCell>{row.gap}</StyledTableCell>
+                  <StyledTableCell>{row.target}</StyledTableCell>
+                  <StyledTableCell>{row.cycleTime}</StyledTableCell>
+                  <StyledTableCell>{row.quality}</StyledTableCell>
+                  <StyledTableCell>{row.availability}</StyledTableCell>
+                  <StyledTableCell>{row.performance}</StyledTableCell>
+                  <StyledTableCell>{row.oee}</StyledTableCell>
+                  <StyledTableCell>{row.utilization}</StyledTableCell>
+                  <StyledTableCell>{row.downtime}</StyledTableCell>
+                  <StyledTableCell>{row.uptime}</StyledTableCell>
+                  <StyledTableCell>{row.defects}</StyledTableCell>
+                  <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
+                  <StyledTableCell>{row.plannedProductionTime}</StyledTableCell>
+                  <StyledTableCell>{row.mtbf}</StyledTableCell>
+                  <StyledTableCell>{row.mttr}</StyledTableCell>
+                  <StyledTableCell>{row.standardCycletime}</StyledTableCell>
+                  <StyledTableCell>{row.setupTime}</StyledTableCell>
+                  <StyledTableCell>{row.breakdownTime}</StyledTableCell>
+                </StyledTableRow>
+              ))}
+            </TableBody>
           </Table>
         )}
         <TablePagination

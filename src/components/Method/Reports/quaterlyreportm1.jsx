@@ -32,8 +32,7 @@ import { useAuthCheck } from "../../../utils/Auth";
 import { apigetLines } from "../../../api/LineMaster/api.getline";
 import { apigetRawData } from "../../../api/ReportMaster/api.getrawdata";
 import { postQuaterly } from "../../../api/ReportMaster/api.postQuaterly";
-
-
+import DownloadButton from "../../../utils/DownloadButton";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -85,7 +84,7 @@ export default function QuaterlyReportM1() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        //console.log("Result data machine:", result.data.data); 
+        //console.log("Result data machine:", result.data.data);
         setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -98,7 +97,7 @@ export default function QuaterlyReportM1() {
     const getLine = async () => {
       try {
         const result = await apigetLines();
-        //console.log("Result data line:", result.data.data); 
+        //console.log("Result data line:", result.data.data);
         setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
@@ -173,33 +172,76 @@ export default function QuaterlyReportM1() {
   //   }
   // };
   useEffect(() => {
- // console.log("✅ Data updated in state:", data);
-}, [data]);
+    // console.log("✅ Data updated in state:", data);
+  }, [data]);
 
   const handleAddSubmit = async (event) => {
     event.preventDefault();
-    const data ={
-      "deviceNo": Number(rawData.deviceNo),
-      "year": rawData.year,
-      "quater":  rawData.quarter,
-    }
-   // console.log("Request Payload:", data);
+    const data = {
+      deviceNo: Number(rawData.deviceNo),
+      year: rawData.year,
+      quater: rawData.quarter,
+    };
+    // console.log("Request Payload:", data);
     setLoading(true);
     try {
       const result = await postQuaterly(data);
-    //  console.log("Quarterly API Response:", result.data);
+      //  console.log("Quarterly API Response:", result.data);
       setData(result?.data);
 
       handleSnackbarOpen("Quarterly data fetched successfully!", "success");
     } catch (error) {
-     // console.error("Error fetching quarterly data:", error);
-      handleSnackbarOpen("Error fetching quarterly data. Please try again.", "error");
+      // console.error("Error fetching quarterly data:", error);
+      handleSnackbarOpen(
+        "Error fetching quarterly data. Please try again.",
+        "error"
+      );
     } finally {
       setLoading(false);
     }
   };
 
+  const downloadApiCall = async () => {
+    const data = {
+      deviceNo: Number(rawData.deviceNo),
+      year: rawData.year,
+      quater: rawData.quarter,
+    };
 
+    const result = await postQuaterly(data);
+
+    return result;
+  };
+
+  const formatDataExcel = (data) => {
+    return data.map((row) => ({
+      "Date Time": row.dateTime,
+      "Plant Name": row.plantName,
+      "Line Name": row.lineName,
+      "Machine Name": row.displayMachineName,
+      "Actual Production": Number(row.actualProduction || 0).toFixed(2),
+      Gap: Number(row.gap || 0).toFixed(2),
+      Target: Number(row.target || 0).toFixed(2),
+      "Cycle Time": Number(row.cycleTime || 0).toFixed(2),
+      Quality: Number(row.quality || 0).toFixed(2),
+      Availability: Number(row.availability || 0).toFixed(2),
+      Performance: Number(row.performance || 0).toFixed(2),
+      OEE: Number(row.oee || 0).toFixed(2),
+      Utilization: Number(row.utilization || 0).toFixed(2),
+      Downtime: Number(row.downtime || 0).toFixed(2),
+      Uptime: Number(row.uptime || 0).toFixed(2),
+      Defects: Number(row.defects || 0).toFixed(2),
+      "Runtime In Mins": Number(row.runtimeInMins || 0).toFixed(2),
+      "Planned Production Time": Number(row.plannedProductionTime || 0).toFixed(
+        2
+      ),
+      MTBF: Number(row.mtbf || 0).toFixed(2),
+      MTTR: Number(row.mttr || 0).toFixed(2),
+      "Standard Cycletime": Number(row.standardCycletime || 0).toFixed(2),
+      "Setup Time": Number(row.setupTime || 0).toFixed(2),
+      "Breakdown Time": Number(row.breakdownTime || 0).toFixed(2),
+    }));
+  };
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
   );
@@ -258,7 +300,7 @@ export default function QuaterlyReportM1() {
 
             <Select
               name="deviceNo"
-              value={rawData.deviceNo || ""}   // ✅ use correct field
+              value={rawData.deviceNo || ""} // ✅ use correct field
               onChange={handleInputChange}
             >
               {filteredMachines.map((machine) => (
@@ -267,7 +309,6 @@ export default function QuaterlyReportM1() {
                 </MenuItem>
               ))}
             </Select>
-
           </FormControl>
         </Grid>
         <Grid item xs={6} sm={3}>
@@ -295,14 +336,18 @@ export default function QuaterlyReportM1() {
             fullWidth
           />
         </Grid>
-
-
-
         <Grid item>
           {" "}
           <Button variant="contained" color="primary" onClick={handleAddSubmit}>
             OK
           </Button>
+        </Grid>
+        <Grid item>
+          <DownloadButton
+            apiCall={downloadApiCall}
+            formatData={formatDataExcel}
+            fileName="QuaterlyBucket(M1).xlsx"
+          />
         </Grid>
       </Grid>
       <Box sx={{ marginTop: "20px", maxHeight: "500px", overflow: "auto" }}>
@@ -385,39 +430,186 @@ export default function QuaterlyReportM1() {
                 </StyledTableCell>
               </TableRow>
             </TableHead>
-                       <TableBody>
-              {data
-                .map((row, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>{row.dateTime}</StyledTableCell>
-                    <StyledTableCell>{row.plantName}</StyledTableCell>
-                    <StyledTableCell>{row.lineName}</StyledTableCell>
-                    <StyledTableCell>{row.displayMachineName}</StyledTableCell>
-                    <StyledTableCell>{row.actualProduction}</StyledTableCell>
-                    <StyledTableCell>{row.gap}</StyledTableCell>
-                    <StyledTableCell>{row.target}</StyledTableCell>
-                    <StyledTableCell>{row.cycleTime}</StyledTableCell>
-                    <StyledTableCell>{row.quality}</StyledTableCell>
-                    <StyledTableCell>{row.availability}</StyledTableCell>
-                    <StyledTableCell>{row.performance}</StyledTableCell>
-                    <StyledTableCell>{row.oee}</StyledTableCell>
-                    <StyledTableCell>{row.utilization}</StyledTableCell>
-                    <StyledTableCell>{row.downtime}</StyledTableCell>
-                    <StyledTableCell>{row.uptime}</StyledTableCell>
-                    <StyledTableCell>{row.defects}</StyledTableCell>
-                    <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
-                    <StyledTableCell>{row.plannedProductionTime}</StyledTableCell>
-                    <StyledTableCell>{row.mtbf}</StyledTableCell>
-                    <StyledTableCell>{row.mttr}</StyledTableCell>
-                    <StyledTableCell>{row.standardCycletime}</StyledTableCell>
-                    <StyledTableCell>{row.setupTime}</StyledTableCell>
-                    <StyledTableCell>{row.breakdownTime}</StyledTableCell>
-                  </StyledTableRow>
-                ))}
+            <TableBody>
+              {data.map((row, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>{row.dateTime}</StyledTableCell>
+                  <StyledTableCell>{row.plantName}</StyledTableCell>
+                  <StyledTableCell>{row.lineName}</StyledTableCell>
+                  <StyledTableCell>{row.displayMachineName}</StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.actualProduction || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.gap || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.target || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.cycleTime || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.quality || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.availability || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.performance || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.oee || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.utilization || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.downtime || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.uptime || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.defects || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.runtimeInMins || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.plannedProductionTime || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.mtbf || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.mttr || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.standardCycletime || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.setupTime || 0).toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {Number(row.breakdownTime || 0).toFixed(2)}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
 
+              {/* Totals Row */}
+              {data.length > 0 && (
+                <StyledTableRow>
+                  <StyledTableCell colSpan={4} style={{ fontWeight: "bold" }}>
+                    Total
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce(
+                        (sum, r) => sum + Number(r.actualProduction || 0),
+                        0
+                      )
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.gap || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.target || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.cycleTime || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.quality || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.availability || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.performance || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.oee || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.utilization || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.downtime || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.uptime || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.defects || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.runtimeInMins || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce(
+                        (sum, r) => sum + Number(r.plannedProductionTime || 0),
+                        0
+                      )
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.mtbf || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.mttr || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce(
+                        (sum, r) => sum + Number(r.standardCycletime || 0),
+                        0
+                      )
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.setupTime || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    {data
+                      .reduce((sum, r) => sum + Number(r.breakdownTime || 0), 0)
+                      .toFixed(2)}
+                  </StyledTableCell>
+                </StyledTableRow>
+              )}
             </TableBody>
-
-
           </Table>
         )}
         <TablePagination

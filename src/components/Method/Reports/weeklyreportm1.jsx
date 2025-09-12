@@ -29,6 +29,7 @@ import { apigetMachine } from "../../../api/MachineMaster/apigetmachine";
 import { apigetLines } from "../../../api/LineMaster/api.getline";
 import { apiWeeklyReportsM1 } from "../../../api/ReportMaster/api.weeklyreports";
 import { apiGetDevice } from "../../../api/DeviceMaster/api.getdevice";
+import DownloadButton from "../../../utils/DownloadButton";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -49,6 +50,18 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
   "&:last-child td, &:last-child th": {
     border: 0,
+  },
+}));
+
+const ButtonContainer = styled(Box)(({ theme }) => ({
+  display: "flex",
+  gap: theme.spacing(1),
+  marginBottom: theme.spacing(2),
+  [theme.breakpoints.down("sm")]: {
+    flexDirection: "column",
+    "& > button": {
+      width: "100%",
+    },
   },
 }));
 
@@ -208,6 +221,50 @@ export default function WeeklyReportM1() {
       setLoading(false);
     }
   };
+
+  const downloadApiCall = async () => {
+    const body = {
+      deviceNo: rawData.deviceNo,
+      year: rawData.year,
+      month: rawData.month,
+      week: rawData.week,
+    };
+
+    const result = await apiWeeklyReportsM1(body);
+
+    return result;
+  };
+
+  const formatDataExcel = (data) => {
+    if (!data || data.length === 0) return [];
+
+    return data.map((row) => ({
+      "Date Time": row.dateTime,
+      "Plant Name": row.plantName,
+      "Line Name": row.lineName,
+      "Machine Name": row.displayMachineName,
+      "Actual Production": row.actualproduction,
+      Gap: row.gap,
+      Target: row.target,
+      "Cycle Time": row.cycleTime,
+      Quality: row.quality,
+      Availability: row.availability,
+      Performance: row.performance,
+      OEE: row.oee,
+      Utilization: row.utilization,
+      Downtime: row.downtime,
+      Uptime: row.uptime,
+      Defects: row.defects,
+      "Runtime In Mins": row.runtimeInMins,
+      "Planned Production Time": row.plannedProductionTime,
+      MTBF: row.mtbf,
+      MTTR: row.mttr,
+      "Standard Cycletime": row.standardCycletime,
+      "Setup Time": row.setupTime,
+      "Breakdown Time": row.breakdownTime,
+    }));
+  };
+
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
   );
@@ -343,6 +400,13 @@ export default function WeeklyReportM1() {
           <Button variant="contained" color="primary" onClick={handleAddSubmit}>
             OK
           </Button>
+        </Grid>
+        <Grid item>
+          <DownloadButton
+            apiCall={downloadApiCall}
+            formatData={formatDataExcel}
+            fileName="WeeklyBucket(M1).xlsx"
+          />
         </Grid>
       </Grid>
 
@@ -493,64 +557,77 @@ export default function WeeklyReportM1() {
                     Total
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.actualproduction) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.actualproduction) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce((sum, row) => sum + (Number(row.gap) || 0), 0).toFixed(2)}
+                    {data
+                      .reduce((sum, row) => sum + (Number(row.gap) || 0), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.target) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce((sum, row) => sum + (Number(row.target) || 0), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.cycleTime) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.cycleTime) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.quality) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce((sum, row) => sum + (Number(row.quality) || 0), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.availability) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.availability) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.performance) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.performance) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce((sum, row) => sum + (Number(row.oee) || 0), 0).toFixed(2)}
+                    {data
+                      .reduce((sum, row) => sum + (Number(row.oee) || 0), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.utilization) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.utilization) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.downtime) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.downtime) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.uptime) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce((sum, row) => sum + (Number(row.uptime) || 0), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
                     {data.reduce(
@@ -559,47 +636,56 @@ export default function WeeklyReportM1() {
                     )}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.runtimeInMins) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.runtimeInMins) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) =>
-                        sum + (Number(row.plannedProductionTime) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) =>
+                          sum + (Number(row.plannedProductionTime) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.mtbf) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce((sum, row) => sum + (Number(row.mtbf) || 0), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.mttr) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce((sum, row) => sum + (Number(row.mttr) || 0), 0)
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.standardCycletime) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) =>
+                          sum + (Number(row.standardCycletime) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.setupTime) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.setupTime) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data.reduce(
-                      (sum, row) => sum + (Number(row.breakdownTime) || 0),
-                      0
-                    ).toFixed(2)}
+                    {data
+                      .reduce(
+                        (sum, row) => sum + (Number(row.breakdownTime) || 0),
+                        0
+                      )
+                      .toFixed(2)}
                   </StyledTableCell>
                 </StyledTableRow>
               )}

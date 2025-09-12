@@ -7,17 +7,17 @@ export const apiQualityRejection = async (qRejectionData) => {
     //console.log("qr data:",qRejectionData)
     const token = localStorage.getItem("token");
     const data = await axios.post(
-      url,  
+      url,
       {
         machineNo: qRejectionData.machineNo,
         plantNo: qRejectionData.plantNo,
         lineNo: qRejectionData.lineNo,
-        reason: "rejected",
+        reason: qRejectionData.reason,
         rejectionNo: qRejectionData.defectCount,
-        processDate: qRejectionData.date,
-        shiftId:qRejectionData.shiftNo,
-        partNo:"part1",
-        sct:0
+        processDate: qRejectionData.createdAt,
+        shiftId: qRejectionData.shiftId,
+        partNo: "part1",
+        sct: 0
       },
       {
         headers: {

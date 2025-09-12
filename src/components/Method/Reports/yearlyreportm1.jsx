@@ -31,6 +31,7 @@ import { useAuthCheck } from "../../../utils/Auth";
 import { apigetMachine } from "../../../api/MachineMaster/apigetmachine";
 import { apigetLines } from "../../../api/LineMaster/api.getline";
 import { apigetRawData } from "../../../api/ReportMaster/api.getrawdata";
+import { postQuaterly } from "../../../api/ReportMaster/api.postQuaterly";
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -63,11 +64,11 @@ export default function YearlyReportM1() {
   const [error, setError] = useState(null);
   const [severity, setSeverity] = useState("success");
   const [snackbarMessage, setSnackbarMessage] = useState("");
+  const [tableData, setTableData] = useState([])
   const [rawData, setRawData] = useState({
     lineNo: "",
     machineId: "",
-    fromDate: "23:01:1997",
-    toDate: "23:01:1997",
+    year: ""
   });
   const [data, setData] = useState([]);
   const [page, setPage] = useState(0);
@@ -85,7 +86,7 @@ export default function YearlyReportM1() {
       try {
         const result = await apigetMachine();
         //console.log("Result data machine:", result.data.data);
-        setMachineData(result.data.data); 
+        setMachineData(result.data.data);
       } catch (error) {
         setError(error.message);
         handleSnackbarOpen(error.message, "error");
@@ -98,7 +99,7 @@ export default function YearlyReportM1() {
       try {
         const result = await apigetLines();
         //console.log("Result data line:", result.data.data);
-        setLineData(result.data.data); 
+        setLineData(result.data.data);
       } catch (error) {
         setError(error.message);
         handleSnackbarOpen(error.message, "error");
@@ -125,43 +126,62 @@ export default function YearlyReportM1() {
       setSelectedLine(value);
     }
   };
+  // const handleAddSubmit = async (event) => {
+  //   event.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const formattedFromDate = format(
+  //       parseISO(rawData.fromDate),
+  //       "dd-MMM-yyyy"
+  //     );
+  //     const formattedToDate = format(parseISO(rawData.toDate), "dd-MMM-yyyy");
+  //     //console.log(
+  //     //   "todate,fromdate,machineid,lineid:",
+  //     //   formattedToDate,
+  //     //   formattedFromDate
+  //     // );
+  //     const formattedRawData = {
+  //       ...rawData,
+  //       fromDate: formattedFromDate,
+  //       toDate: formattedToDate,
+  //     };
+  //     // setAddOpen(false);
+  //     //console.log("formatted raw data:", formattedRawData);
+  //     const result = await apigetRawData(formattedRawData);
+
+  //     // await getmachine();
+  //     handleSnackbarOpen("Raw Data fetched successfully!", "success"); // Pass severity as "success"
+  //     // setLoading(false);
+  //     //console.log("Raw response", result.data);
+  //     setData(result.data);
+  //     setRefreshData((prev) => !prev);
+  //   } catch (error) {
+  //     // setLoading(false);
+  //     console.error("Error getting raw data:", error);
+  //     handleSnackbarOpen("Error fetching raw data. Please try again.", "error"); // Pass severity as "error"
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
   const handleAddSubmit = async (event) => {
     event.preventDefault();
-    setLoading(true);
-    try {
-      const formattedFromDate = format(
-        parseISO(rawData.fromDate),
-        "dd-MMM-yyyy"
-      );
-      const formattedToDate = format(parseISO(rawData.toDate), "dd-MMM-yyyy");
-      //console.log(
-      //   "todate,fromdate,machineid,lineid:",
-      //   formattedToDate,
-      //   formattedFromDate
-      // );
-      const formattedRawData = {
-        ...rawData,
-        fromDate: formattedFromDate,
-        toDate: formattedToDate,
-      };
-      // setAddOpen(false);
-      //console.log("formatted raw data:", formattedRawData);
-      const result = await apigetRawData(formattedRawData);
-
-      // await getmachine();
-      handleSnackbarOpen("Raw Data fetched successfully!", "success"); // Pass severity as "success"
-      // setLoading(false);
-      //console.log("Raw response", result.data);
-      setData(result.data);
-      setRefreshData((prev) => !prev);
-    } catch (error) {
-      // setLoading(false);
-      console.error("Error getting raw data:", error);
-      handleSnackbarOpen("Error fetching raw data. Please try again.", "error"); // Pass severity as "error"
-    } finally {
-      setLoading(false);
+    //console.log("you Submited form...")
+    //console.log("cureent avaliable data are:",rawData);
+    const body = {
+      deviceNo: Number(rawData.machineId),
+      year: Number(rawData.year)
     }
-  };
+    // console.log("this paylaod we send:",body);
+    try {
+      const response = await postQuaterly(body);
+     // console.log("success:", response.data);
+      setTableData(response.data);
+
+    } catch (error) {
+     // console.error("Error We got:", error)
+    }
+  }
+
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
   );
@@ -185,7 +205,7 @@ export default function YearlyReportM1() {
           paddingBottom: "10px",
         }}
       >
-        <h2>Yearly Report M1 </h2>
+        <h2>Yearly Report</h2>
       </div>
       <Grid
         container
@@ -231,7 +251,17 @@ export default function YearlyReportM1() {
             </Select>
           </FormControl>
         </Grid>
-        
+        <Grid item xs={6} sm={2}>
+          <TextField
+            label="Year"
+            name="year"
+            type="number"
+            value={rawData.year}
+            onChange={handleInputChange}
+            fullWidth
+          />
+        </Grid>
+
         <Grid item>
           {" "}
           <Button variant="contained" color="primary" onClick={handleAddSubmit}>
@@ -239,7 +269,7 @@ export default function YearlyReportM1() {
           </Button>
         </Grid>
       </Grid>
-     
+
       <Box sx={{ marginTop: "20px", maxHeight: "500px", overflow: "auto" }}>
         {loading ? (
           <Box
@@ -262,82 +292,92 @@ export default function YearlyReportM1() {
             <TableHead>
               <TableRow>
                 <StyledTableCell className="table-cell">
-                  MId
-                </StyledTableCell>
-                <StyledTableCell className="table-cell">
                   Date Time
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Total
+                  Plant Name
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  VAT
+                  Line Name
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Avg Sct
+                  Machine Name
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Revised U Loss
-                </StyledTableCell>{" "}
+                  Actual Production
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">Gap</StyledTableCell>
+                <StyledTableCell className="table-cell">Target</StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  U%
+                  Cycle Time
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  P Loss
+                  Quality
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  P% 
-                </StyledTableCell>{" "}
-                <StyledTableCell className="table-cell">
-                  A Loss
+                  Availability
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Revised A Loss
+                  Performance
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">OEE</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Utilization
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  A%
+                  Downtime
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">Uptime</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Defects
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Q Loss
+                  Runtime In Mins
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  Q% 
+                  Planned Production Time
+                </StyledTableCell>
+                <StyledTableCell className="table-cell">MTBF</StyledTableCell>
+                <StyledTableCell className="table-cell">MTTR</StyledTableCell>
+                <StyledTableCell className="table-cell">
+                  Standard Cycletime
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                  OPE%
+                  Setup Time
                 </StyledTableCell>
-               
                 <StyledTableCell className="table-cell">
-                  OEE% 
+                  Breakdown Time
                 </StyledTableCell>
               </TableRow>
             </TableHead>
             <TableBody>
-              {data
-                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-                .map((row, index) => (
-                  <StyledTableRow key={index}>
-                    <StyledTableCell>{row.machineId}</StyledTableCell>
-                    <StyledTableCell>{row.dateTime}</StyledTableCell>
-                    <StyledTableCell>{row.cycleTime}</StyledTableCell>
-                  </StyledTableRow>
-                ))}
-              {emptyRows > 0 && (
-                <StyledTableRow style={{ height: 53 }}>
-                  <StyledTableCell colSpan={17} style={{ position: "relative" }}>
-                    <div
-                      style={{
-                        position: "absolute",
-                        top: "50%",
-                        right: "10px",
-                        transform: "translateY(-50%)",
-                      }}
-                    >
-                      {`No further data available`}
-                    </div>
-                  </StyledTableCell>
+              {tableData.map((row, index) => (
+                <StyledTableRow key={index}>
+                  <StyledTableCell>{row.dateTime}</StyledTableCell>
+                  <StyledTableCell>{row.plantName}</StyledTableCell>
+                  <StyledTableCell>{row.lineName}</StyledTableCell>
+                  <StyledTableCell>{row.displayMachineName}</StyledTableCell>
+                  <StyledTableCell>{row.actualProduction}</StyledTableCell>
+                  <StyledTableCell>{row.gap}</StyledTableCell>
+                  <StyledTableCell>{row.target}</StyledTableCell>
+                  <StyledTableCell>{row.cycleTime}</StyledTableCell>
+                  <StyledTableCell>{row.quality}</StyledTableCell>
+                  <StyledTableCell>{row.availability}</StyledTableCell>
+                  <StyledTableCell>{row.performance}</StyledTableCell>
+                  <StyledTableCell>{row.oee}</StyledTableCell>
+                  <StyledTableCell>{row.utilization}</StyledTableCell>
+                  <StyledTableCell>{row.downtime}</StyledTableCell>
+                  <StyledTableCell>{row.uptime}</StyledTableCell>
+                  <StyledTableCell>{row.defects}</StyledTableCell>
+                  <StyledTableCell>{row.runtimeInMins}</StyledTableCell>
+                  <StyledTableCell>{row.plannedProductionTime}</StyledTableCell>
+                  <StyledTableCell>{row.mtbf}</StyledTableCell>
+                  <StyledTableCell>{row.mttr}</StyledTableCell>
+                  <StyledTableCell>{row.standardCycletime}</StyledTableCell>
+                  <StyledTableCell>{row.setupTime}</StyledTableCell>
+                  <StyledTableCell>{row.breakdownTime}</StyledTableCell>
                 </StyledTableRow>
-              )}
+              ))}
             </TableBody>
           </Table>
         )}

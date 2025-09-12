@@ -46,7 +46,7 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 }));
 
 function DefectivePartEntry() {
-  
+
 
   const getDefctiveApiCaller = async () => {
     try {
@@ -75,7 +75,7 @@ function DefectivePartEntry() {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [downtimeToDelete, setDowntimeToDelete] = useState(null);
   const [tableData, setTableData] = useState([]);
-const [refresh,setRefresh]=useState(false)
+  const [refresh, setRefresh] = useState(false)
 
   const [defectivePartEditModal, setDefectivePartEditModal] = useState({
     flag: false,
@@ -163,7 +163,7 @@ const [refresh,setRefresh]=useState(false)
                         <StyledTableCell className="table-cell">{row.plantName}</StyledTableCell>
                         <StyledTableCell className="table-cell">{row.lineName}</StyledTableCell>
                         <StyledTableCell className="table-cell">{row.displayMachineName}</StyledTableCell>
-                        <StyledTableCell className="table-cell">{row.defectCount}</StyledTableCell>
+                        <StyledTableCell className="table-cell">{row.rejectionNo}</StyledTableCell>
                         <StyledTableCell className="table-cell">{row.reason}</StyledTableCell>
                         <StyledTableCell className="table-cell">{row.processDate}</StyledTableCell>
                         <StyledTableCell className="table-cell">{row.createdAt}</StyledTableCell>
@@ -233,10 +233,10 @@ const [refresh,setRefresh]=useState(false)
 
   const deleteEntryApiCaller = async (id) => {
     try {
-    const result=  await apiDeleteQualityRejection(id)
-    if(result.status==="success"){
-      //console.log("deleted successfully")
-    }
+      const result = await apiDeleteQualityRejection(id)
+      if (result.status === "success") {
+        //console.log("deleted successfully")
+      }
     } catch (error) {
       //console.log("error deleting ",error)
     }
@@ -352,13 +352,14 @@ const [refresh,setRefresh]=useState(false)
         </Modal>
 
         {addOpen && <AddNewDefectivePartEntryModal
-          setAddOpen={setAddOpen}
           addOpen={addOpen}
+          setAddOpen={setAddOpen}
           setTableData={setTableData}
           tableData={tableData}
           defectReasons={defectReasons}
           setTableRefresh={setRefresh}
-        />}
+          
+          />}
 
         {addDefectReasonModalOpen && <AddDefectReasonModal
           setAddDefectReasonModalOpen={setAddDefectReasonModalOpen}
@@ -366,13 +367,14 @@ const [refresh,setRefresh]=useState(false)
           setDownTimeReasons={setDownTimeReasons}
           defectReasons={defectReasons}
           setDefectReasons={setDefectReasons}
-        />}
+          />}
 
         {defectivePartEditModal.flag && <EditDefectivePartEntryModal
           defectivePartEditModal={defectivePartEditModal}
           setDefectivePartEditModal={setDefectivePartEditModal}
           defectiveParts={tableData}
           updateDownTime={setTableData}
+          setTableRefresh={setRefresh}
           defectReasons={defectReasons}
         />}
       </div>

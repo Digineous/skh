@@ -36,7 +36,7 @@ import { apigetLines } from '../../api/LineMaster/api.getline';
 import { apiGetDownTimeReasons } from '../../api/MachineDownTimeReason/api.getDowntTimeReason';
 
 
-function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }) {
+function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,setRefreshData }) {
     //console.log("hi", editOpen)
     const [plants, setPlants] = useState([])
     const [lines, setLines] = useState([])
@@ -107,25 +107,44 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes }
 
     const date = new Date()
     const currentDate = date.toLocaleDateString()
-    const handleEditDowntime = () => {
-        downTimeToEdit.plantName = formData.plantName
-        downTimeToEdit.lineName = formData.lineName
-        downTimeToEdit.displayMachineName = formData.displayMachineName
-        downTimeToEdit.shiftName = formData.shiftName
-        downTimeToEdit.plantNo = formData.plantNo
-        downTimeToEdit.reason = formData.reason
-        downTimeToEdit.startDownDate = formData.startDownDate
-        downTimeToEdit.endDownDate = formData.endDownDate
-        //console.log("downtime for edit body....", downTimeToEdit);
-        downTimeToEdit.startTime = formData.startDownDate;
-        downTimeToEdit.endTime = formData.endDownDate;
-        downTimeToEdit.totalDownTime = "00:30:00";
-        downTimeToEdit.machineDownDate = formData.startDownDate;
+    const handleEditDowntime = async () => {
+  try {
+    // format dates
+    const formattedData = {
+      ...downTimeToEdit,
+      plantName: formData.plantName,
+      lineName: formData.lineName,
+      displayMachineName: formData.displayMachineName,
+      shiftName: formData.shiftName,
+      plantNo: formData.plantNo,
+      reason: formData.reason,
+      startDownDate: formData.startDownDate
+        ? dayjs(formData.startDownDate).format("DD/MM/YYYY HH:mm")
+        : "",
+      endDownDate: formData.endDownDate
+        ? dayjs(formData.endDownDate).format("DD/MM/YYYY HH:mm")
+        : "",
+      startTime: formData.startDownDate,
+      endTime: formData.endDownDate,
+    };
 
-        const callerRes = updateDownTimeApiCaller(downTimeToEdit)
+    // calculate totalDownTime like in Add
+    const timediff = await getTimeDifference(
+      formattedData.startDownDate,
+      formattedData.endDownDate
+    );
+    formattedData.totalDownTime = timediff;
+    formattedData.machineDownDate = formattedData.startDownDate;
 
-        setEditModal({ flag: false })
-    }
+    console.log("Edit payload:", formattedData);
+
+    await updateDownTimeApiCaller(formattedData);
+    setRefreshData(prev => !prev);
+    setEditModal(false);
+  } catch (error) {
+    console.error("Edit failed:", error);
+  }
+};
 
 
     const handleDateTimeChange = (newValue, fieldName) => {

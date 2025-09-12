@@ -6,6 +6,13 @@ export const apiAddDownTime = async (data) => {
   const url = baseUrl + "/downtime/addDownTime";
   try {
     const token = localStorage.getItem("token");
+     const shiftId = Number(
+    data.shiftName === "Morning Shift" ? 1 :
+      data.shiftName === "Evening Shift" ? 2 :
+        data.shiftName === "Night Shift" ? 3 : 0
+  )
+  
+  console.log("payload data:", shiftId);
 
     const datas = await axios.post(
       url,
@@ -13,7 +20,7 @@ export const apiAddDownTime = async (data) => {
         plantNo: data.plantNo,
         lineNo: Number(data.lineNo),
         machineNo: Number(data.machineNo),
-        shiftId: '1',
+        shiftId:shiftId,
         machineDownDate: data.startDownDate,
         totalDownTime: data.totalDownTime,
         reason: data.reason,

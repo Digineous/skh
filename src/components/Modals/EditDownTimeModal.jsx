@@ -47,15 +47,17 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, 
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [downTimeReasons, setDownTimeReasons] = useState([])
     const [formData, setFormData] = useState({
+        plantName: "",
         plantNo: "",
         lineNo: "",
+        machineNo: "",
         displayMachineName: "",
         shiftName: "",
-        plantNo: "",
         reason: "",
-        startDownDate: null, // keep as dayjs or null
+        startDownDate: null,
         endDownDate: null,
     });
+
 
     useEffect(() => {
         if (downTimeToEdit) {
@@ -79,14 +81,16 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, 
         setEditModal(false);
         setFormData({
             plantName: "",
-            lineName: "",
+            plantNo: "",
+            lineNo: "",
+            machineNo: "",
             displayMachineName: "",
             shiftName: "",
-            plantNo: "",
             reason: "",
-            startDownDate: "",
-            endDownDate: "",
+            startDownDate: null,
+            endDownDate: null,
         });
+
     };
 
     const handleInputChange = (e) => {
@@ -232,7 +236,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, 
         getReasons();
     }, []);
 
-
+    const [tempData, setTempdata] = useState({});
     useEffect(() => {
         if (downTimeToEdit) {
             // Try both possible formats
@@ -240,15 +244,16 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, 
             const endDate = dayjs(downTimeToEdit.endDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
 
             setFormData({
-                plantName: downTimeToEdit.plantName || "",
-                lineName: downTimeToEdit.lineName || "",
-                displayMachineName: downTimeToEdit.displayMachineName || "",
-                shiftName: downTimeToEdit.shiftName || "",
                 plantNo: downTimeToEdit.plantNo || "",
+                lineNo: downTimeToEdit.lineNo || "",
+                machineNo: downTimeToEdit.machineNo || "",   // ✅ here
+                shiftName: downTimeToEdit.shiftName || "",
                 reason: downTimeToEdit.reason || "",
                 startDownDate: startDate.isValid() ? startDate : null,
                 endDownDate: endDate.isValid() ? endDate : null,
             });
+
+
         }
     }, [downTimeToEdit, downTimes]);
 
@@ -294,16 +299,17 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, 
                             <FormControl fullWidth>
                                 <InputLabel>Plant Name</InputLabel>
                                 <Select
-                                    name="plantName"
-                                    value={formData.plantName}
+                                    name="plantNo"
+                                    value={formData.plantNo}
                                     onChange={handleInputChange}
                                 >
                                     {plants.map((row) => (
-                                        <MenuItem key={row.plantName} value={row.plantName}>
+                                        <MenuItem key={row.plantNo} value={row.plantNo}>
                                             {row.plantName}
                                         </MenuItem>
                                     ))}
                                 </Select>
+
                             </FormControl>
                         </Grid>
 
@@ -343,6 +349,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, 
                                             </MenuItem>
                                         ))}
                                 </Select>
+
                             </FormControl>
 
                         </Grid>
@@ -443,4 +450,4 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, 
     )
 }
 
-export default EditDownTimeModal
+export default EditDownTimeModal;

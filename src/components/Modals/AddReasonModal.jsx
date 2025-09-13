@@ -82,6 +82,7 @@ function AddReasonModal({ addReasonModalOpen, setAddReasonModalOpen, setDownTime
                 setSnackbarMessage("Reason added successfully");
                 setSeverity("success");
                 setOpenSnackbar(true);
+                setRefresh(!refresh)
 
             } else {
                 setError("Failed to add reason");
@@ -97,25 +98,31 @@ function AddReasonModal({ addReasonModalOpen, setAddReasonModalOpen, setDownTime
         setEditId(id);
     };
 
-    const handleUpdateReason = async () => {
-        const reasonToUpdate = reasons.find((r) => r.id === editId);
-        reasonToUpdate.reason = formData.reason;
-        const result = await apiUpdateDownTimeReason(reasonToUpdate)
-        if (result.status === 200) {
-            setFormData({
-                reason: "",
-                master: "DownTime"
-            })
-            setSnackbarMessage("Reason updated successfully");
-            setSeverity("success");
-            setOpenSnackbar(true);
-        } else {
-            setError("Failed to Update reason");
-            setSeverity("error");
-            setOpenSnackbar(true);
-        }
-        resetForm()
+  const handleUpdateReason = async () => {
+    if (!editId) return;
+
+    const reasonToUpdate = { ...reasons.find(r => r.id === editId), reason: formData.reason };
+    const result = await apiUpdateDownTimeReason(reasonToUpdate);
+
+    if (result.status === 200) {
+        // Update local state immutably
+        setReasons(prevReasons =>
+            prevReasons.map(r => (r.id === editId ? reasonToUpdate : r))
+        );
+
+        setFormData({ reason: "", master: "DownTime" });
+        setSnackbarMessage("Reason updated successfully");
+        setSeverity("success");
+        setOpenSnackbar(true);
+        setEditId(null);
+        setRefresh(!refresh);
+    } else {
+        setError("Failed to update reason");
+        setSeverity("error");
+        setOpenSnackbar(true);
     }
+};
+
 
 
     const resetForm = () => {

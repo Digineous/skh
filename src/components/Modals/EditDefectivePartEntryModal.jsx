@@ -20,7 +20,7 @@ import dayjs from "dayjs";
 import { apiGetPlant } from "../../api/PlantMaster/api.getplant";
 import { apigetLines } from "../../api/LineMaster/api.getline";
 import { apigetMachine } from "../../api/MachineMaster/apigetmachine";
-import { apiUpdateQualityRejection } from "../../api/QualityRejection/api.updateqrejection";
+import { apiUpdateDTime } from "../../api/api.updatedowntime";
 
 function EditDefectivePartEntryModal({
   defectivePartEditModal,
@@ -101,18 +101,16 @@ function EditDefectivePartEntryModal({
   };
 
   const handleUpdate = async () => {
-    try {
-      await apiUpdateQualityRejection(formData);
+  try {
+    await apiUpdateDTime(formData);
 
-      // refresh parent
-      setTableRefresh((prev) => !prev);
+    setTableRefresh((prev) => !prev);
+    handleClose();
+  } catch (err) {
+    console.error("Update failed:", err);
+  }
+};
 
-      // close modal
-      handleClose();
-    } catch (err) {
-      console.error("Update failed:", err);
-    }
-  };
 
   if (!rowData) return null;
 
@@ -242,13 +240,11 @@ function EditDefectivePartEntryModal({
               <InputLabel>Shift</InputLabel>
               <Select
                 name="shiftId"
-                value={formData.shiftId}
+                value={Number(formData.shiftId) || ""}   // normalize to number
                 onChange={(e) => {
-                  const selected = shifts.find((s) => s.id === e.target.value);
                   setFormData((prev) => ({
                     ...prev,
-                    shiftId: selected.id,
-                    shiftName: selected.name,
+                    shiftId: e.target.value,   // only store id
                   }));
                 }}
               >
@@ -258,6 +254,7 @@ function EditDefectivePartEntryModal({
                   </MenuItem>
                 ))}
               </Select>
+
             </FormControl>
           </Grid>
 

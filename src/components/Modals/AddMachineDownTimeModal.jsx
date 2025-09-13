@@ -46,10 +46,11 @@ function AddMachineDownTimeModal({ addOpen, setAddOpen, setTableData, tableData,
     const [openSnackbar, setOpenSnackbar] = useState(false);
     const [downTimeReasons, setDownTimeReasons] = useState([])
     const [shifts, setShifts] = useState([
-        { id: 1, name: "Morning" },
-        { id: 2, name: "Evening" },
-        { id: 3, name: "Night" },
+        { id: 1, name: "Morning Shift" },
+        { id: 2, name: "Evening Shift" },
+        { id: 3, name: "Night Shift" },
     ])
+    
     function parseCustomDateTime(dateTimeString) {
         //console.log(dateTimeString)
         const [datePart, timePart] = dateTimeString.split(' ');

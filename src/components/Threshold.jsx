@@ -775,7 +775,7 @@ export default function Threshold() {
               </TableBody>
             </Table>
             <TablePagination
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[25, 50,100]}
               component="div"
               count={machineData.length}
               rowsPerPage={rowsPerPage}

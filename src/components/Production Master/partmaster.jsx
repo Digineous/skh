@@ -598,7 +598,7 @@ const PartMaster = () => {
           </Grid>
         </Grid>
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[25,50,100]}
           component="div"
           count={partData.length}
           rowsPerPage={rowsPerPage}

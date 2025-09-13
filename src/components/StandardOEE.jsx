@@ -10,6 +10,7 @@ import {
   InputLabel,
   FormControl,
   Button,
+  CircularProgress,
 } from "@mui/material";
 import { Maximize2 } from "lucide-react";
 import {
@@ -71,6 +72,7 @@ const ChartModal = ({ open, handleClose, title, children }) => (
 
 const RadialBarChart = ({ percentage, color }) => {
   const hexToRgba = (hex) => {
+    if (!hex || typeof hex !== "string" || !hex.startsWith("#")) return "rgba(0,0,0,0.05)";
     let r = parseInt(hex.slice(1, 3), 16);
     let g = parseInt(hex.slice(3, 5), 16);
     let b = parseInt(hex.slice(5, 7), 16);
@@ -103,14 +105,14 @@ const RadialBarChart = ({ percentage, color }) => {
         },
       },
     },
-    colors: [color],
+    colors: [color || "#4caf50"],
     stroke: { lineCap: "round" },
   };
 
   return (
     <Chart
       options={options}
-      series={[percentage]}
+      series={[Number(percentage) || 0]}
       type="radialBar"
       height={220}
       width={220}
@@ -124,6 +126,7 @@ export default function StandardOEE() {
   const [modalContent, setModalContent] = useState(null);
   const [dataFetched, setDataFetched] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isSwitching, setIsSwitching] = useState(false);
   const [error, setError] = useState(null);
   const [selectedMachine, setSelectedMachine] = useState("");
   const [chartData, setChartData] = useState({
@@ -138,6 +141,9 @@ export default function StandardOEE() {
     downtimeDistribution: [],
     strokesPerShift: [],
     strokesPerMins: [],
+    partsProducedPerHour2: [],
+    strokesPerPerson: [],
+    oeeLatestData: [],
   });
 
   const [oeeData, setOeeData] = useState({
@@ -156,6 +162,7 @@ export default function StandardOEE() {
     oeePercentage: 0,
   });
   const [selectedPartName, setSelectedPartName] = useState("");
+
   const formatNumberWithCommas = (number) => {
     if (number === null || number === undefined || isNaN(number)) return "0.00";
 
@@ -170,8 +177,7 @@ export default function StandardOEE() {
     const getmachine = async () => {
       try {
         const result = await apigetMachine();
-        //console.log("Result data machine:", result.data.data);
-        setMachineData(result.data.data);
+        setMachineData(result.data.data || []);
       } catch (error) {
         setError(error.message);
       }
@@ -183,118 +189,169 @@ export default function StandardOEE() {
   const getMachineInput = async () => {
     try {
       const result = await apiGetMachineInput();
-      //console.log(result?.data.data);
-      setMachineInputData(result?.data.data);
-      //console.log("machine", result.data.data);
+      setMachineInputData(result?.data?.data || []);
     } catch (error) {
       setError(error.message);
     }
   };
-  const handleMachineChange = (event) => {
-    const newSelectedMachine = Number(event.target.value);
-    setSelectedMachine(newSelectedMachine);
-    // console.log("new selected machine:", newSelectedMachine);
 
-    const matchingPart = machineInputData.find(
-      (input) => input.machineNo === newSelectedMachine
-    );
-    //console.log("Part Name:", matchingPart);
-    setSelectedPartName(matchingPart?.partName || "");
-  };
-  const handleGetOEEData = useCallback(async () => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const response = await standardDashboardApi.getStandardOEE({
-        plantNo: "",
-        lineNo: "",
-        machineNo: selectedMachine,
-        deviceNo: "",
-      });
-      if (response.data?.data?.[0]?.oeeDashboard) {
-        const responseData = response.data.data[0].oeeDashboard;
-
-        // Multiply by 31 for machineNo 2
-        let strokesPerShift = responseData?.strokesPerShift || [];
-        let strokesPerMins = (responseData?.strokesPerMins || [])
-          .slice(80)
-          .reverse();
-
-        if (selectedMachine === 2) {
-          strokesPerShift = strokesPerShift.map((item) => ({
-            ...item,
-            production: (item.production ?? 0) * 31,
-          }));
-        }
-
-        setCardData({
-          actualProduction: formatNumberWithCommas(
-            findValue(responseData.oeeLatestData, "Actual Production")
-          ).slice(0, -3),
-          target: formatNumberWithCommas(
-            findValue(responseData.oeeLatestData, "Target")
-          ).slice(0, -3),
-          gap: formatNumberWithCommas(
-            findValue(responseData.oeeLatestData, "Gap")
-          ).slice(0, -3),
-          downtime: formatNumberWithCommas(
-            findValue(responseData.oeeLatestData, "Downtime in Mins")
-          ),
-          runtime: formatNumberWithCommas(
-            findValue(responseData.oeeLatestData, "Runtime in Min")
-          ),
-          oeePercentage: formatNumberWithCommas(
-            findValue(responseData.oeeLatestData, "OEE %")
-          ),
-        });
-        const partsProducedPerHour = Array.isArray(responseData.partsPerHour)
-          ? [...responseData?.partsPerHour].reverse()
-          : [];
-        const partsProducedPerHour2 = Array.isArray(responseData.partsPerHour)
-          ? [...responseData.partsPerHour]
-              .map((p) => ({
-                ...p,
-                actualProduction: (p.actualProduction ?? 0) * 31,
-                target: (p.target ?? 0) * 31,
-              }))
-              .reverse()
-          : [];
-        const cycleTimeReverse = Array.isArray(responseData.cycleTime)
-          ? [...responseData?.cycleTime].reverse()
-          : [];
-        setChartData({
-          partsProduced: partsProducedPerHour,
-          cycleTime: cycleTimeReverse,
-          downtime: responseData.downtime || [],
-          energyPerProduction:
-            responseData.energyPerHourProduction?.reverse() || [],
-          availability: findValue(responseData.oeeLatestData, "Availability %"),
-          productivity: findValue(responseData.oeeLatestData, "Performance %"),
-          quality: findValue(responseData.oeeLatestData, "Quality %"),
-          utilization: findValue(responseData.oeeLatestData, "Utilization %"),
-          downtimeDistribution: responseData.downtime || [],
-          strokesPerShift: strokesPerShift,
-          strokesPerMins: strokesPerMins,
-          partsProducedPerHour2: partsProducedPerHour2, // ✅ store separately
-          strokesPerPerson: responseData.strokesPerPerson || [],
-        });
-
-        setDataFetched(true);
-      } else {
-        throw new Error("Unexpected API response structure");
-      }
-    } catch (err) {
-      setError(err.message || "An error occurred while fetching data");
-      console.error("Error getting OEE data:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  });
   const findValue = useCallback((data, attributeName) => {
     if (!data || !Array.isArray(data)) return 0;
     const item = data.find((item) => item.attributeName === attributeName);
     return item ? parseFloat(item.value) || 0 : 0;
   }, []);
+
+  const fetchOEEForMachine = useCallback(
+    async (machineNo) => {
+      try {
+        const response = await standardDashboardApi.getStandardOEE({
+          plantNo: "",
+          lineNo: "",
+          machineNo: machineNo,
+          deviceNo: "",
+        });
+
+        if (response.data?.data?.[0]?.oeeDashboard) {
+          return response.data.data[0].oeeDashboard;
+        } else {
+          throw new Error("Unexpected API response structure");
+        }
+      } catch (err) {
+        throw err;
+      }
+    },
+    []
+  );
+
+  // Fixed function to update chart data properly
+  const updateChartDataFromResponse = useCallback(
+    (responseData, machineNo) => {
+      let strokesPerShift = responseData?.strokesPerShift || [];
+      let strokesPerMins = (responseData?.strokesPerMins || []).slice(80).reverse();
+
+      if (Number(machineNo) === 2) {
+        strokesPerShift = strokesPerShift.map((item) => ({
+          ...item,
+          production: (item.production ?? 0) * 31,
+        }));
+      }
+
+      setCardData({
+        actualProduction: formatNumberWithCommas(
+          findValue(responseData.oeeLatestData, "Actual Production")
+        ).slice(0, -3),
+        target: formatNumberWithCommas(
+          findValue(responseData.oeeLatestData, "Target")
+        ).slice(0, -3),
+        gap: formatNumberWithCommas(
+          findValue(responseData.oeeLatestData, "Gap")
+        ).slice(0, -3),
+        downtime: formatNumberWithCommas(
+          findValue(responseData.oeeLatestData, "Downtime in Mins")
+        ),
+        runtime: formatNumberWithCommas(
+          findValue(responseData.oeeLatestData, "Runtime in Min")
+        ),
+        oeePercentage: formatNumberWithCommas(
+          findValue(responseData.oeeLatestData, "OEE %")
+        ),
+      });
+
+      const partsProducedPerHour = Array.isArray(responseData.partsPerHour)
+        ? [...responseData?.partsPerHour].reverse()
+        : [];
+
+      const partsProducedPerHour2 = Array.isArray(responseData.partsPerHour)
+        ? [...responseData.partsPerHour]
+            .map((p) => ({
+              ...p,
+              actualProduction: (p.actualProduction ?? 0) * 31,
+              target: (p.target ?? 0) * 31,
+            }))
+            .reverse()
+        : [];
+
+      const cycleTimeReverse = Array.isArray(responseData.cycleTime)
+        ? [...responseData?.cycleTime].reverse()
+        : [];
+
+      // This is the key fix - completely replace the chartData state instead of merging
+      setChartData({
+        partsProduced: partsProducedPerHour,
+        cycleTime: cycleTimeReverse,
+        downtime: responseData.downtime || [],
+        energyPerProduction: responseData.energyPerHourProduction?.reverse() || [],
+        availability: findValue(responseData.oeeLatestData, "Availability %"),
+        productivity: findValue(responseData.oeeLatestData, "Performance %"),
+        quality: findValue(responseData.oeeLatestData, "Quality %"),
+        utilization: findValue(responseData.oeeLatestData, "Utilization %"),
+        downtimeDistribution: responseData.downtime || [],
+        strokesPerShift: strokesPerShift,
+        strokesPerMins: strokesPerMins,
+        partsProducedPerHour2: partsProducedPerHour2,
+        strokesPerPerson: responseData.strokesPerPerson || [],
+        oeeLatestData: responseData.oeeLatestData || [],
+      });
+
+      setDataFetched(true);
+    },
+    [findValue, formatNumberWithCommas]
+  );
+
+  const handleGetOEEData = useCallback(
+    async (e) => {
+      if (!selectedMachine) return;
+      setIsLoading(true);
+      setError(null);
+      try {
+        const responseData = await fetchOEEForMachine(selectedMachine);
+        updateChartDataFromResponse(responseData, selectedMachine);
+      } catch (err) {
+        setError(err.message || "An error occurred while fetching data");
+        console.error("Error getting OEE data:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedMachine, fetchOEEForMachine, updateChartDataFromResponse]
+  );
+
+  const handleMachineChange = useCallback(
+    async (event) => {
+      const newSelectedMachine = Number(event.target.value);
+      if (!newSelectedMachine || newSelectedMachine === Number(selectedMachine)) {
+        return;
+      }
+
+      if (isSwitching) return;
+
+      setIsSwitching(true);
+      setError(null);
+
+      try {
+        const responseData = await fetchOEEForMachine(newSelectedMachine);
+        
+        // Update chart data with new machine's data
+        updateChartDataFromResponse(responseData, newSelectedMachine);
+
+        // Set selected machine only after successful fetch
+        setSelectedMachine(newSelectedMachine);
+
+        // Update selected part name from inputs
+        const matchingPart = machineInputData.find(
+          (input) => Number(input.machineNo) === Number(newSelectedMachine)
+        );
+        setSelectedPartName(matchingPart?.partName || "");
+
+      } catch (err) {
+        setError(err.message || "Failed to switch machine");
+        console.error("Error switching machine:", err);
+      } finally {
+        setIsSwitching(false);
+      }
+    },
+    [selectedMachine, isSwitching, fetchOEEForMachine, updateChartDataFromResponse, machineInputData]
+  );
 
   const handleOpenModal = useCallback((title, content) => {
     setModalContent({ title, content });
@@ -357,7 +414,6 @@ export default function StandardOEE() {
             strokeWidth={2.5}
             stroke="black"
             dot={false}
-            // strokeDasharray="5 5"
           />
         </ComposedChart>
       </ResponsiveContainer>
@@ -466,7 +522,7 @@ export default function StandardOEE() {
     []
   );
 
-    const renderBarChart2 = useCallback(
+  const renderBarChart2 = useCallback(
     (data, dataKey, color) => (
       <ResponsiveContainer width="100%" height="100%">
         <BarChart
@@ -565,6 +621,7 @@ export default function StandardOEE() {
       </ResponsiveContainer>
     );
   }, []);
+
   const boxData = [
     {
       heading: "Actual Production",
@@ -594,15 +651,18 @@ export default function StandardOEE() {
     },
   ];
 
+  const performanceTitle = Number(selectedMachine) === 2 ? "Performance " : "Productivity ";
+
   const radialChartsR1 = [
     { title: "Availability ", dataKey: "availability", color: "#0E2566" },
-    { title: "Performance ", dataKey: "productivity", color: "#00423C" },
+    { title: performanceTitle, dataKey: "productivity", color: "#00423C" },
   ];
 
   const radialChartsR2 = [
     { title: "Quality", dataKey: "quality", color: "#421b00" },
     { title: "Utilization", dataKey: "utilization", color: "#9c27b0" },
   ];
+
   const chartsR1 = [
     {
       title: "Part Produced Per Hour",
@@ -632,8 +692,9 @@ export default function StandardOEE() {
       chartType: "bar",
     },
   ];
+
   const chartsR3 =
-    selectedMachine === 2
+    Number(selectedMachine) === 2
       ? [
           {
             title: "Spots Per Shift",
@@ -642,7 +703,7 @@ export default function StandardOEE() {
             chartType: "bar",
           },
           {
-            title: "Spots Per Hour", // ✅ same as normal chart
+            title: "Spots Per Hour",
             dataKey: "partsProducedPerHour2",
             color: "#ff5722",
             chartType: "bar",
@@ -775,6 +836,7 @@ export default function StandardOEE() {
     ),
     []
   );
+
   const renderStrokesPerPersonChart = useCallback(
     (data, dataKey, color) => (
       <ResponsiveContainer width="100%" height="100%">
@@ -828,7 +890,22 @@ export default function StandardOEE() {
   );
 
   return (
-    <div style={{ padding: "20px", background: "white" }}>
+    <div style={{ padding: "20px", background: "white", position: "relative" }}>
+      {error && (
+        <Box
+          sx={{
+            backgroundColor: "#ffebee",
+            color: "#c62828",
+            padding: "10px",
+            borderRadius: "5px",
+            marginBottom: "20px",
+            border: "1px solid #ef5350",
+          }}
+        >
+          <Typography variant="body1">Error: {error}</Typography>
+        </Box>
+      )}
+      
       <Grid
         container
         spacing={2}
@@ -866,6 +943,7 @@ export default function StandardOEE() {
               name="machineId"
               value={selectedMachine}
               onChange={handleMachineChange}
+              disabled={isSwitching}
             >
               {machineData.map((machine) => (
                 <MenuItem key={machine.id} value={machine.machineNo}>
@@ -878,8 +956,21 @@ export default function StandardOEE() {
             variant="contained"
             style={{ color: "white" }}
             onClick={handleGetOEEData}
+            disabled={isLoading || isSwitching}
           >
-            Ok
+            {isLoading ? (
+              <>
+                <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                Loading...
+              </>
+            ) : isSwitching ? (
+              <>
+                <CircularProgress size={20} color="inherit" sx={{ mr: 1 }} />
+                Switching...
+              </>
+            ) : (
+              "Ok"
+            )}
           </Button>
         </Grid>
 
@@ -912,11 +1003,6 @@ export default function StandardOEE() {
         </Grid>
       </Grid>
 
-      {/* {error && (
-        <Typography color="error" sx={{ mb: 2 }}>
-          Error: {error}
-        </Typography>
-      )} */}
       {dataFetched && (
         <Grid container spacing={2}>
           {boxData.map((box, index) => (
@@ -967,8 +1053,8 @@ export default function StandardOEE() {
             </Grid>
           ))}
 
-          {[...radialChartsR1].map((data, index) => (
-            <Grid item xs={12} sm={6} md={2} key={index} marginTop={2}>
+          {radialChartsR1.map((data, index) => (
+            <Grid item xs={12} sm={6} md={2} key={`radial-r1-${index}`} marginTop={2}>
               <Box
                 height={250}
                 display="flex"
@@ -1005,6 +1091,7 @@ export default function StandardOEE() {
                   height="calc(100% - 30px)"
                 >
                   <RadialBarChart
+                    key={`${selectedMachine}-${data.dataKey}-${chartData[data.dataKey]}`}
                     percentage={chartData[data.dataKey]}
                     color={
                       chartData[data.dataKey] <= 50
@@ -1019,8 +1106,8 @@ export default function StandardOEE() {
             </Grid>
           ))}
 
-          {[...chartsR1].map((data, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index} marginTop={2}>
+          {chartsR1.map((data, index) => (
+            <Grid item xs={12} sm={6} md={4} key={`chart-r1-${index}`} marginTop={2}>
               <Box
                 height={250}
                 display="flex"
@@ -1099,8 +1186,8 @@ export default function StandardOEE() {
             </Grid>
           ))}
 
-          {[...radialChartsR2].map((data, index) => (
-            <Grid item xs={12} sm={6} md={2} key={index} marginTop={2}>
+          {radialChartsR2.map((data, index) => (
+            <Grid item xs={12} sm={6} md={2} key={`radial-r2-${index}`} marginTop={2}>
               <Box
                 height={250}
                 display="flex"
@@ -1137,6 +1224,7 @@ export default function StandardOEE() {
                   flexGrow={1}
                 >
                   <RadialBarChart
+                    key={`${selectedMachine}-${data.dataKey}-${chartData[data.dataKey]}`}
                     percentage={chartData[data.dataKey]}
                     color={
                       chartData[data.dataKey] <= 50
@@ -1145,14 +1233,14 @@ export default function StandardOEE() {
                         ? "#ff9b00"
                         : "#4caf50"
                     }
-                    //color={data.color}
                   />
                 </Box>
               </Box>
             </Grid>
           ))}
-          {[...chartsR2].map((data, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index} marginTop={2}>
+          
+          {chartsR2.map((data, index) => (
+            <Grid item xs={12} sm={6} md={4} key={`chart-r2-${index}`} marginTop={2}>
               <Box
                 height={250}
                 display="flex"
@@ -1216,8 +1304,9 @@ export default function StandardOEE() {
               </Box>
             </Grid>
           ))}
-          {[...chartsR3].map((data, index) => (
-            <Grid item xs={12} sm={6} md={4} key={index} marginTop={2}>
+          
+          {chartsR3.map((data, index) => (
+            <Grid item xs={12} sm={6} md={4} key={`chart-r3-${index}`} marginTop={2}>
               <Box
                 height={250}
                 display="flex"
@@ -1257,7 +1346,7 @@ export default function StandardOEE() {
                               data.dataKey,
                               data.color
                             )
-                          : data.title === "Stops Per Hour"
+                          : data.title === "Spots Per Hour"
                           ? renderBarChart2(
                               chartData[data.dataKey],
                               data.dataKey,

@@ -591,32 +591,34 @@ export default function WeeklyReportM1() {
                       .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.cycleTime), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, r) => sum + Number(r.cycleTime), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.quality), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, r) => sum + Number(r.quality), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.availability), 0)
-                      .toFixed(2)}
+                     {(
+                      data.reduce((sum, r) => sum + Number(r.availability), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.performance), 0)
-                      .toFixed(2)}
+                     {(
+                      data.reduce((sum, r) => sum + Number(r.performance), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data.reduce((sum, r) => sum + Number(r.oee), 0).toFixed(2)}
+                     {(
+                      data.reduce((sum, r) => sum + Number(r.oee), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.utilization), 0)
-                      .toFixed(2)}
+                     {(
+                      data.reduce((sum, r) => sum + Number(r.utilization), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
                     {data
@@ -647,19 +649,19 @@ export default function WeeklyReportM1() {
                       .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.mtbf), 0)
-                      .toFixed(2)}
+                     {(
+                      data.reduce((sum, r) => sum + Number(r.mtbf), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.mttr), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, r) => sum + Number(r.mttr), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {data
-                      .reduce((sum, r) => sum + Number(r.standardCycletime), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, r) => sum + Number(r.standardCycletime), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
                     {data

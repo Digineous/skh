@@ -575,46 +575,34 @@ export default function WeeklyReportM1() {
                       .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce(
-                        (sum, row) => sum + (Number(row.cycleTime) || 0),
-                        0
-                      )
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.cycleTime), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce((sum, row) => sum + (Number(row.quality) || 0), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.quality), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce(
-                        (sum, row) => sum + (Number(row.availability) || 0),
-                        0
-                      )
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.availability), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce(
-                        (sum, row) => sum + (Number(row.performance) || 0),
-                        0
-                      )
-                      .toFixed(2)}
+                     {(
+                      data.reduce((sum, row) => sum + Number(row.performance), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce((sum, row) => sum + (Number(row.oee) || 0), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.oee), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce(
-                        (sum, row) => sum + (Number(row.utilization) || 0),
-                        0
-                      )
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.utilization), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
                     {data
@@ -653,23 +641,19 @@ export default function WeeklyReportM1() {
                       .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce((sum, row) => sum + (Number(row.mtbf) || 0), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.mtbf), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce((sum, row) => sum + (Number(row.mttr) || 0), 0)
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.mttr), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
-                    {data
-                      .reduce(
-                        (sum, row) =>
-                          sum + (Number(row.standardCycletime) || 0),
-                        0
-                      )
-                      .toFixed(2)}
+                    {(
+                      data.reduce((sum, row) => sum + Number(row.standardCycletime), 0) / data.length
+                    ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell sx={{ fontWeight: "bold" }}>
                     {data

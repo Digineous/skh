@@ -489,34 +489,52 @@ export default function YearlyReportM1() {
                       .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.cycleTime || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.cycleTime || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.quality || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.quality || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.availability || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.availability || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.performance || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.performance || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.oee || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.oee || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.utilization || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.utilization || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
                     {tableData
@@ -547,22 +565,28 @@ export default function YearlyReportM1() {
                       .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.mtbf || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.mtbf || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce((sum, r) => sum + Number(r.mttr || 0), 0)
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.mttr || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
-                    {tableData
-                      .reduce(
-                        (sum, r) => sum + Number(r.standardCycletime || 0),
-                        0
-                      )
-                      .toFixed(2)}
+                    {tableData.length > 0
+                      ? (
+                        tableData.reduce((sum, row) => sum + Number(row.standardCycletime || 0), 0) /
+                        tableData.length
+                      ).toFixed(2)
+                      : 0}
                   </StyledTableCell>
                   <StyledTableCell>
                     {tableData

@@ -162,6 +162,7 @@ export default function OEEReport() {
         fromDate: getCurrentDateTime(),
         toDate: getCurrentDateTime(),
     });
+    const [chartLabel, setChartLabel] = useState("Performance");
     const [data, setData] = useState([]);
     const [page, setPage] = useState(0);
     const [rowsPerPage, setRowsPerPage] = useState(25);
@@ -191,6 +192,7 @@ export default function OEEReport() {
             ...prevData,
             [name]: value,
         }));
+        
     };
     const handleLineChange = (event) => {
         setSelectedLine(event.target.value);
@@ -240,6 +242,7 @@ export default function OEEReport() {
                 //console.log("result of api: ", result.data.data);
                 handleSnackbarOpen("Data fetched successfully!", "success");
                 setData(result.data.data);
+               
             }
         } catch (error) {
             console.error("error raw data:", error);

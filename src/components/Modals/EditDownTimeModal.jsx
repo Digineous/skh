@@ -36,7 +36,7 @@ import { apigetLines } from '../../api/LineMaster/api.getline';
 import { apiGetDownTimeReasons } from '../../api/MachineDownTimeReason/api.getDowntTimeReason';
 
 
-function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,setRefreshData }) {
+function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes, setRefreshData }) {
     //console.log("hi", editOpen)
     const [plants, setPlants] = useState([])
     const [lines, setLines] = useState([])
@@ -48,41 +48,49 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
     const [downTimeReasons, setDownTimeReasons] = useState([])
     const [formData, setFormData] = useState({
         plantName: "",
-        lineName: "",
+        plantNo: "",
+        lineNo: "",
+        machineNo: "",
         displayMachineName: "",
         shiftName: "",
-        plantNo: "",
         reason: "",
-        startDownDate: "",
-        endDownDate: "",
+        startDownDate: null,
+        endDownDate: null,
     });
+
+
     useEffect(() => {
         if (downTimeToEdit) {
+            const startDate = dayjs(downTimeToEdit.startDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
+            const endDate = dayjs(downTimeToEdit.endDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
+
             setFormData({
-                plantName: downTimeToEdit.plantName || "",
-                lineName: downTimeToEdit.lineName || "",
+                lineNo: downTimeToEdit.lineNo || "",
+                machineNo: downTimeToEdit.machineNo || "",
                 displayMachineName: downTimeToEdit.displayMachineName || "",
                 shiftName: downTimeToEdit.shiftName || "",
                 plantNo: downTimeToEdit.plantNo || "",
                 reason: downTimeToEdit.reason || "",
-                startDownDate: downTimeToEdit.startDownDate || "",
-                endDownDate: downTimeToEdit.endDownDate || "",
+                startDownDate: startDate.isValid() ? startDate : null,
+                endDownDate: endDate.isValid() ? endDate : null,
             });
         }
-    }, [downTimeToEdit, downTimes]);  // Add `editOpen` and `downTimes` as dependencies to run when these change
+    }, [downTimeToEdit, downTimes]);
 
     const handleModalClose = () => {
         setEditModal(false);
         setFormData({
             plantName: "",
-            lineName: "",
+            plantNo: "",
+            lineNo: "",
+            machineNo: "",
             displayMachineName: "",
             shiftName: "",
-            plantNo: "",
             reason: "",
-            startDownDate: "",
-            endDownDate: "",
+            startDownDate: null,
+            endDownDate: null,
         });
+
     };
 
     const handleInputChange = (e) => {
@@ -105,54 +113,67 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
         }
     }
 
+
+    const getTimeDifference = (start, end) => {
+        if (!start || !end) return "00:00:00";
+
+        const startDate = dayjs(start, "DD/MM/YYYY HH:mm");
+        const endDate = dayjs(end, "DD/MM/YYYY HH:mm");
+
+        if (!startDate.isValid() || !endDate.isValid()) return "00:00:00";
+
+        const diffInMinutes = endDate.diff(startDate, "minute");
+        if (diffInMinutes < 0) return "00:00:00"; // handle invalid
+
+        const hours = Math.floor(diffInMinutes / 60);
+        const minutes = diffInMinutes % 60;
+
+        return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:00`;
+    };
+
+
     const date = new Date()
     const currentDate = date.toLocaleDateString()
     const handleEditDowntime = async () => {
-  try {
-    // format dates
-    const formattedData = {
-      ...downTimeToEdit,
-      plantName: formData.plantName,
-      lineName: formData.lineName,
-      displayMachineName: formData.displayMachineName,
-      shiftName: formData.shiftName,
-      plantNo: formData.plantNo,
-      reason: formData.reason,
-      startDownDate: formData.startDownDate
-        ? dayjs(formData.startDownDate).format("DD/MM/YYYY HH:mm")
-        : "",
-      endDownDate: formData.endDownDate
-        ? dayjs(formData.endDownDate).format("DD/MM/YYYY HH:mm")
-        : "",
-      startTime: formData.startDownDate,
-      endTime: formData.endDownDate,
+        try {
+            const formattedData = {
+                ...downTimeToEdit,
+                ...formData,
+                plantName: formData.plantName,
+                lineName: formData.lineName,
+                displayMachineName: formData.displayMachineName,
+                shiftName: formData.shiftName,
+                plantNo: formData.plantNo,
+                reason: formData.reason,
+                startDownDate: formData.startDownDate ? formData.startDownDate.format("DD/MM/YYYY HH:mm") : "",
+                endDownDate: formData.endDownDate ? formData.endDownDate.format("DD/MM/YYYY HH:mm") : "",
+                startTime: formData.startDownDate ? formData.startDownDate.format("DD/MM/YYYY HH:mm") : "",
+                endTime: formData.endDownDate ? formData.endDownDate.format("DD/MM/YYYY HH:mm") : "",
+            };
+
+            const timediff = getTimeDifference(formattedData.startDownDate, formattedData.endDownDate);
+            formattedData.totalDownTime = timediff;
+            formattedData.machineDownDate = formattedData.startDownDate;
+
+            console.log("Edit payload:", formattedData);
+
+            await updateDownTimeApiCaller(formattedData);
+            setRefreshData((prev) => !prev);
+            setEditModal(false);
+        } catch (error) {
+            console.error("Edit failed:", error);
+        }
     };
 
-    // calculate totalDownTime like in Add
-    const timediff = await getTimeDifference(
-      formattedData.startDownDate,
-      formattedData.endDownDate
-    );
-    formattedData.totalDownTime = timediff;
-    formattedData.machineDownDate = formattedData.startDownDate;
-
-    console.log("Edit payload:", formattedData);
-
-    await updateDownTimeApiCaller(formattedData);
-    setRefreshData(prev => !prev);
-    setEditModal(false);
-  } catch (error) {
-    console.error("Edit failed:", error);
-  }
-};
 
 
     const handleDateTimeChange = (newValue, fieldName) => {
         setFormData((prevData) => ({
             ...prevData,
-            [fieldName]: newValue?.format('DD/MM/YYYY HH:mm') || '', // Ensure proper format
+            [fieldName]: newValue, // store dayjs directly
         }));
     };
+
     const handleSnackbarOpen = (message, severity) => {
         setSnackbarMessage(message);
         setSeverity(severity);
@@ -215,7 +236,7 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
         getReasons();
     }, []);
 
-
+    const [tempData, setTempdata] = useState({});
     useEffect(() => {
         if (downTimeToEdit) {
             // Try both possible formats
@@ -223,15 +244,16 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
             const endDate = dayjs(downTimeToEdit.endDownDate, ["DD/MM/YYYY HH:mm", "DD-MMM-YYYY hh:mm A"], true);
 
             setFormData({
-                plantName: downTimeToEdit.plantName || "",
-                lineName: downTimeToEdit.lineName || "",
-                displayMachineName: downTimeToEdit.displayMachineName || "",
-                shiftName: downTimeToEdit.shiftName || "",
                 plantNo: downTimeToEdit.plantNo || "",
+                lineNo: downTimeToEdit.lineNo || "",
+                machineNo: downTimeToEdit.machineNo || "",   // ✅ here
+                shiftName: downTimeToEdit.shiftName || "",
                 reason: downTimeToEdit.reason || "",
                 startDownDate: startDate.isValid() ? startDate : null,
                 endDownDate: endDate.isValid() ? endDate : null,
             });
+
+
         }
     }, [downTimeToEdit, downTimes]);
 
@@ -277,53 +299,59 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
                             <FormControl fullWidth>
                                 <InputLabel>Plant Name</InputLabel>
                                 <Select
-                                    name="plantName"
-                                    value={formData.plantName}
+                                    name="plantNo"
+                                    value={formData.plantNo}
                                     onChange={handleInputChange}
                                 >
                                     {plants.map((row) => (
-                                        <MenuItem key={row.plantName} value={row.plantName}>
+                                        <MenuItem key={row.plantNo} value={row.plantNo}>
                                             {row.plantName}
                                         </MenuItem>
                                     ))}
                                 </Select>
+
                             </FormControl>
                         </Grid>
 
                         {/* Line Name */}
                         <Grid item xs={12} sm={6}>
                             <FormControl fullWidth>
-                                <InputLabel>Line Name</InputLabel>
+                                <InputLabel>Line</InputLabel>
                                 <Select
-                                    name="lineName"
-                                    value={formData.lineName}
+                                    name="lineNo"
+                                    value={formData.lineNo}
                                     onChange={handleInputChange}
                                 >
                                     {lines.map((row) => (
-                                        <MenuItem key={row.lineName} value={row.lineName}>
+                                        <MenuItem key={row.lineNo} value={row.lineNo}>
                                             {row.lineName}
                                         </MenuItem>
                                     ))}
                                 </Select>
                             </FormControl>
+
                         </Grid>
 
                         {/* Machine Name */}
                         <Grid item xs={12} sm={6}>
                             <FormControl fullWidth>
-                                <InputLabel>Machine Name</InputLabel>
+                                <InputLabel>Machine</InputLabel>
                                 <Select
-                                    name="displayMachineName"
-                                    value={formData.displayMachineName}
+                                    name="machineNo"
+                                    value={formData.machineNo}
                                     onChange={handleInputChange}
                                 >
-                                    {machines.map((row) => (
-                                        <MenuItem key={row.displayMachineName} value={row.displayMachineName}>
-                                            {row.displayMachineName}
-                                        </MenuItem>
-                                    ))}
+                                    {machines
+                                        .filter((m) => m.lineNo === formData.lineNo)
+                                        .map((row) => (
+                                            <MenuItem key={row.machineNo} value={row.machineNo}>
+                                                {row.displayMachineName}
+                                            </MenuItem>
+                                        ))}
                                 </Select>
+
                             </FormControl>
+
                         </Grid>
 
                         {/* Shift Name */}
@@ -375,9 +403,9 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
                                 /> */}
                                 <DateTimePicker
                                     label="Start Time"
-                                    value={formData.startDownDate} // now Dayjs
+                                    value={formData.startDownDate}
                                     onChange={(newValue) => handleDateTimeChange(newValue, "startDownDate")}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    renderInput={(params) => <TextField {...params} fullWidth required />}
                                 />
                             </LocalizationProvider>
                         </Grid>
@@ -395,9 +423,9 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
 
                                 <DateTimePicker
                                     label="End Time"
-                                    value={formData.endDownDate} // now Dayjs
+                                    value={formData.endDownDate}
                                     onChange={(newValue) => handleDateTimeChange(newValue, "endDownDate")}
-                                    renderInput={(params) => <TextField {...params} fullWidth />}
+                                    renderInput={(params) => <TextField {...params} fullWidth required />}
                                 />
 
                             </LocalizationProvider>
@@ -422,4 +450,4 @@ function EditDownTimeModal({ editOpen, downTimeToEdit, setEditModal, downTimes,s
     )
 }
 
-export default EditDownTimeModal
+export default EditDownTimeModal;

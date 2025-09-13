@@ -4,6 +4,13 @@ import { baseUrl } from "./baseUrl";
 export const apiUpdateDTime = async (updatedDtimeData) => {
   //console.log(updatedDtimeData);
   const url = baseUrl + `/downtime/updateDownTime/${updatedDtimeData.id}`;
+  const shiftId = Number(
+    updatedDtimeData.shiftName === "Morning Shift" ? 1 :
+      updatedDtimeData.shiftName === "Evening Shift" ? 2 :
+        updatedDtimeData.shiftName === "Night Shift" ? 3 : 0
+  )
+  console.log("payload data:", updatedDtimeData);
+  console.log("payload data:", shiftId);
 
   try {
     const token = localStorage.getItem("token");
@@ -11,11 +18,11 @@ export const apiUpdateDTime = async (updatedDtimeData) => {
     const datas = await axios.put(
       url,
       {
-        id:updatedDtimeData.id,
+        id: updatedDtimeData.id,
         plantNo: updatedDtimeData.plantNo,
         lineNo: updatedDtimeData.lineNo,
         machineNo: updatedDtimeData.machineNo,
-        shiftId: '1',
+        shiftId: shiftId,
         machineDownDate: updatedDtimeData.machineDownDate,
         totalDownTime: updatedDtimeData.totalDownTime,
         startTime: updatedDtimeData.startTime,

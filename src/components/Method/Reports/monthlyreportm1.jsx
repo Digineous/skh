@@ -29,6 +29,7 @@ import { apigetMachine } from "../../../api/MachineMaster/apigetmachine";
 import { apigetLines } from "../../../api/LineMaster/api.getline";
 import { apiMonthlyReportsM1 } from "../../../api/ReportMaster/api.mothlyreportm1";
 import { apiGetDevice } from "../../../api/DeviceMaster/api.getdevice";
+import DownloadButton from "../../../utils/DownloadButton";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
@@ -206,6 +207,49 @@ export default function WeeklyReportM1() {
       setLoading(false);
     }
   };
+
+  const downloadApiCall = async () => {
+    const body = {
+      deviceNo: rawData.deviceNo,
+      year: rawData.year,
+      month: rawData.month,
+    };
+
+    const result = await apiMonthlyReportsM1(body);
+
+    return result;
+  };
+
+  const formatDataExcel = (data) => {
+    if (!data || data.length === 0) return [];
+
+    return data.map((row) => ({
+      "Date Time": row.dateTime,
+      "Plant Name": row.plantName,
+      "Line Name": row.lineName,
+      "Machine Name": row.displayMachineName,
+      "Actual Production": Number(row.actualProduction).toFixed(2),
+      Gap: Number(row.gap).toFixed(2),
+      Target: Number(row.target).toFixed(2),
+      "Cycle Time": Number(row.cycleTime).toFixed(2),
+      Quality: Number(row.quality).toFixed(2),
+      Availability: Number(row.availability).toFixed(2),
+      Performance: Number(row.performance).toFixed(2),
+      OEE: Number(row.oee).toFixed(2),
+      Utilization: Number(row.utilization).toFixed(2),
+      Downtime: Number(row.downtime).toFixed(2),
+      Uptime: Number(row.uptime).toFixed(2),
+      Defects: Number(row.defects).toFixed(2),
+      "Runtime In Mins": Number(row.runtimeInMins).toFixed(2),
+      "Planned Production Time": Number(row.plannedProductionTime).toFixed(2),
+      MTBF: Number(row.mtbf).toFixed(2),
+      MTTR: Number(row.mttr).toFixed(2),
+      "Standard Cycletime": Number(row.standardCycletime).toFixed(2),
+      "Setup Time": Number(row.setupTime).toFixed(2),
+      "Breakdown Time": Number(row.breakdownTime).toFixed(2),
+    }));
+  };
+
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
   );
@@ -341,6 +385,13 @@ export default function WeeklyReportM1() {
           <Button variant="contained" color="primary" onClick={handleAddSubmit}>
             OK
           </Button>
+        </Grid>
+        <Grid item>
+          <DownloadButton
+            apiCall={downloadApiCall}
+            formatData={formatDataExcel}
+            fileName="MonthlyBucket(M1).xlsx"
+          />
         </Grid>
       </Grid>
 

@@ -292,41 +292,42 @@ export default function HourlyBucketM1() {
     setPage(newPage);
   };
   const downloadApiCall = async () => {
-    const { lineNo, machineId, fromDate, shiftNo } = hourlyBucket;
-    const formattedFromDate = format(parseISO(fromDate), "dd-MMM-yyyy");
+    const fromDate = new Date(hourlyBucket.fromDate);
+    fromDate.setHours(7, 0, 0, 0); // force 7 AM
 
-    return await apiHourlyBucket1({
-      lineNo,
-      machineId,
-      fromDate: formattedFromDate,
-      shiftNo,
-    });
+    const toDate = new Date(hourlyBucket.toDate); // keep as-is
+
+    const body = {
+      deviceNo: hourlyBucket.deviceNo,
+      fromDate: fromDate.toISOString(),
+      toDate: toDate.toISOString(),
+    };
+
+    const result = await apiHourlyBucketOEE(body);
+
+    return result;
   };
 
-  const formatData = (data) => {
-    return data.map((row) => ({
-      "M Id": row.machineID ?? "",
-      "Date Time": row.dateTime ?? "",
-      VAT: row.vat != null ? parseFloat(row.vat) : "",
-      "Avg CT": row.avgSct != null ? parseFloat(row.avgSct) : "",
-      "U Loss": row.uLoss != null ? parseFloat(row.uLoss) : "",
-      "Revised U Loss":
-        row.revisedULoss != null ? parseFloat(row.revisedULoss) : "",
-      "U%": row.uPer != null ? parseFloat(row.uPer) : "",
-      "A Loss": row.aLoss != null ? parseFloat(row.aLoss) : "",
-      "Revised A Loss":
-        row.revisedALoss != null ? parseFloat(row.revisedALoss) : "",
-      "A%": row.aPer != null ? parseFloat(row.aPer) : "",
-      "P Loss": row.pLoss != null ? parseFloat(row.pLoss) : "",
-      "P %": row.pPer != null ? parseFloat(row.pPer) : "",
-      "Q Loss ": row.qLoss != null ? parseFloat(row.qLoss) : "",
-      "Q% ": row.qPer != null ? parseFloat(row.qPer) : "",
-      Total: row.total != null ? parseFloat(row.total) : "",
-      "OPEC1% ": row.opeC1 != null ? parseFloat(row.opeC1) : "",
-      "OPEC2% ": row.opeC2 != null ? parseFloat(row.opeC2) : "",
-      "OEE%": row.oee != null ? parseFloat(row.oee) : "",
-    }));
-  };
+const formatData = (data) => {
+  return data.map((row) => ({
+    "Device Name": row.deviceName || "",
+    "Part Name": row.partName || "",
+    "Date Time": row.dateTime || "",
+    "Actual Production": row.actualproduction != null ? Number(row.actualproduction).toFixed(2) : "0.00",
+    Target: row.target != null ? Number(row.target).toFixed(2) : "0.00",
+    Gap: row.gap != null ? Number(row.gap).toFixed(2) : "0.00",
+    OEE: row.oee != null ? Number(row.oee).toFixed(2) : "0.00",
+    Quality: row.quality != null ? Number(row.quality).toFixed(2) : "0.00",
+    Availability: row.availability != null ? Number(row.availability).toFixed(2) : "0.00",
+    Performance: row.performance != null ? Number(row.performance).toFixed(2) : "0.00",
+    Utilization: row.utilization != null ? Number(row.utilization).toFixed(2) : "0.00",
+    "Down Time": row.downtime != null ? Number(row.downtime).toFixed(2) : "0.00",
+    "Run Time (Min)": row.runtimeInMins != null ? Number(row.runtimeInMins).toFixed(2) : "0.00",
+    "Cycle Time": row.cycleTime != null ? Number(row.cycleTime).toFixed(2) : "0.00",
+    "Breakdown Time": row.breakdownTime != null ? Number(row.breakdownTime).toFixed(2) : "0.00",
+    Defects: row.defects != null ? Number(row.defects).toFixed(2) : "0.00",
+  }));
+};
 
   // const handleNavigateWholeDayM1 = () => {
   //   const { fromDate, lineNo, machineId } = hourlyBucket;

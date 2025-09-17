@@ -99,7 +99,7 @@ const PartMaster = () => {
   const [machineData, setMachineData] = useState([]);
   const [plantData, setPlantData] = useState([]);
   const [page, setPage] = useState(0);
-  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [rowsPerPage, setRowsPerPage] = useState(25);
   const [loading, setLoading] = useState(false);
 
   const [error, setError] = useState(null);
@@ -113,7 +113,7 @@ const PartMaster = () => {
   const [selectedLineName, setSelectedLineName] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedPartNames, setSelectedPartNames] = useState("");
-  const [selectedMachineName, setSelectedMachineName] = useState("");
+  const [selectedMachineName, setSelectedMachineName] = useState();
   const [partsName, getPartsName] = useState({
     machineId: "",
     partId: "",
@@ -125,6 +125,8 @@ const PartMaster = () => {
     partName: "",
   });
   const [viewMPAdd, setViewMPAdd] = useState(false);
+
+
 
   const [updatedPartData, setUpdatedPartData] = useState({
     partNo: "",
@@ -203,10 +205,10 @@ const PartMaster = () => {
     }
   };
 
-  const handleEditSubmit = (row) => {
-    //console.log("edit data", row);
-    setUpdatedPartData(row);
+  const handleEditSubmit = async (row) => {
 
+    setUpdatedPartData(row);
+    setSelectedLine(row.lineNo);
     setOpen(true);
   };
   const handleSnackbarOpen = (message, severity) => {
@@ -264,12 +266,13 @@ const PartMaster = () => {
   // };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-   
+
 
     setUpdatedPartData((prevData) => ({
       ...prevData,
       [name]: value,
-    }))};
+    }))
+  };
 
   const handlMultiplePartsClick = async (event) => {
     event.preventDefault();
@@ -373,7 +376,7 @@ const PartMaster = () => {
       // };
       console.log("part DAta:", updatedPartData)
       const payload = {
-        ...updatedPartData,plantProduction: Number(updatedPartData.plantProduction), // ✅ force number
+        ...updatedPartData, plantProduction: Number(updatedPartData.plantProduction), // ✅ force number
       };
       console.log("part DAta:", payload)
       const result = await apiAddPart(payload);
@@ -535,7 +538,7 @@ const PartMaster = () => {
       >
         <Grid container spacing={2}>
           <Grid item>
-        
+
             <Button
               variant="contained"
               color="primary"
@@ -552,6 +555,8 @@ const PartMaster = () => {
               Add New
             </Button>
           </Grid>
+
+
           <Grid item>
             <input
               type="file"
@@ -596,9 +601,24 @@ const PartMaster = () => {
               Download Template
             </Button>
           </Grid>
+          <Grid>
+            <FormControl  sx={{minWidth: 200, margin:"0 14px" }}>
+              <InputLabel >Select Machine</InputLabel>
+              <Select
+                value={selectedMachineName}
+                onChange={(e) => setSelectedMachineName(e.target.value)}
+              >
+                {machineData.map((machine) => (
+                  <MenuItem key={machine.id} value={machine.displayMachineName}>
+                    {machine.displayMachineName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Grid>
         </Grid>
         <TablePagination
-          rowsPerPageOptions={[25,50,100]}
+          rowsPerPageOptions={[25, 50, 100]}
           component="div"
           count={partData.length}
           rowsPerPage={rowsPerPage}
@@ -628,13 +648,13 @@ const PartMaster = () => {
                   Part No
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                Part Operation Name
+                  Part Operation Name
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
                   Standard Cycle Time in secs
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">
-                 Number Of Person
+                  Number Of Person
                 </StyledTableCell>
                 <StyledTableCell className="table-cell">Action</StyledTableCell>
               </TableRow>
@@ -665,8 +685,14 @@ const PartMaster = () => {
                   </StyledTableRow>
                 ))
                 : partData
+                  .filter((row) =>
+                    selectedMachineName
+                      ? row.displayMachineName === selectedMachineName
+                      : true
+                  )
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => (
+
                     <StyledTableRow key={row.id}>
                       <StyledTableCell className="table-cell">
                         {row.plantName}
@@ -795,16 +821,17 @@ const PartMaster = () => {
                 <InputLabel>Machine Name</InputLabel>
                 <Select
                   name="machineNo"
-                  value={updatedPartData?.machineNo}
+                  value={updatedPartData?.machineNo || ""}
                   onChange={handleInputChange}
                 >
-                  {filteredMachines.map((id) => (
-                    <MenuItem key={id.id} value={id.machineNo}>
-                      {id.displayMachineName}
+                  {filteredMachines.map((machine) => (
+                    <MenuItem key={machine.id} value={machine.machineNo}>
+                      {machine.displayMachineName}
                     </MenuItem>
                   ))}
                 </Select>
               </FormControl>
+
             </Grid>
             <Grid item xs={6}>
               <TextField

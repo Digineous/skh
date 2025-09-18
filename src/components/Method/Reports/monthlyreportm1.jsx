@@ -220,10 +220,41 @@ export default function WeeklyReportM1() {
     return result;
   };
 
+  // const formatDataExcel = (data) => {
+  //   if (!data || data.length === 0) return [];
+
+  //   return data.map((row) => ({
+  //     "Date Time": row.dateTime,
+  //     "Plant Name": row.plantName,
+  //     "Line Name": row.lineName,
+  //     "Machine Name": row.displayMachineName,
+  //     "Actual Production": Number(row.actualProduction).toFixed(2),
+  //     Gap: Number(row.gap).toFixed(2),
+  //     Target: Number(row.target).toFixed(2),
+  //     "Cycle Time": Number(row.cycleTime).toFixed(2),
+  //     Quality: Number(row.quality).toFixed(2),
+  //     Availability: Number(row.availability).toFixed(2),
+  //     Performance: Number(row.performance).toFixed(2),
+  //     OEE: Number(row.oee).toFixed(2),
+  //     Utilization: Number(row.utilization).toFixed(2),
+  //     Downtime: Number(row.downtime).toFixed(2),
+  //     Uptime: Number(row.uptime).toFixed(2),
+  //     Defects: Number(row.defects).toFixed(2),
+  //     "Runtime In Mins": Number(row.runtimeInMins).toFixed(2),
+  //     "Planned Production Time": Number(row.plannedProductionTime).toFixed(2),
+  //     MTBF: Number(row.mtbf).toFixed(2),
+  //     MTTR: Number(row.mttr).toFixed(2),
+  //     "Standard Cycletime": Number(row.standardCycletime).toFixed(2),
+  //     "Setup Time": Number(row.setupTime).toFixed(2),
+  //     "Breakdown Time": Number(row.breakdownTime).toFixed(2),
+  //   }));
+  // };
+
+
   const formatDataExcel = (data) => {
     if (!data || data.length === 0) return [];
 
-    return data.map((row) => ({
+    const formatted = data.map((row) => ({
       "Date Time": row.dateTime,
       "Plant Name": row.plantName,
       "Line Name": row.lineName,
@@ -248,6 +279,35 @@ export default function WeeklyReportM1() {
       "Setup Time": Number(row.setupTime).toFixed(2),
       "Breakdown Time": Number(row.breakdownTime).toFixed(2),
     }));
+
+    // ✅ Add totals row at the end
+    const totals = {
+      "Date Time": "TOTAL",
+      "Plant Name": "",
+      "Line Name": "",
+      "Machine Name": "",
+      "Actual Production": data.reduce((sum, r) => sum + Number(r.actualProduction), 0).toFixed(2),
+      Gap: data.reduce((sum, r) => sum + Number(r.gap), 0).toFixed(2),
+      Target: data.reduce((sum, r) => sum + Number(r.target), 0).toFixed(2),
+      "Cycle Time": (data.reduce((sum, r) => sum + Number(r.cycleTime), 0) / data.length).toFixed(2),
+      Quality: (data.reduce((sum, r) => sum + Number(r.quality), 0) / data.length).toFixed(2),
+      Availability: (data.reduce((sum, r) => sum + Number(r.availability), 0) / data.length).toFixed(2),
+      Performance: (data.reduce((sum, r) => sum + Number(r.performance), 0) / data.length).toFixed(2),
+      OEE: (data.reduce((sum, r) => sum + Number(r.oee), 0) / data.length).toFixed(2),
+      Utilization: (data.reduce((sum, r) => sum + Number(r.utilization), 0) / data.length).toFixed(2),
+      Downtime: data.reduce((sum, r) => sum + Number(r.downtime), 0).toFixed(2),
+      Uptime: data.reduce((sum, r) => sum + Number(r.uptime), 0).toFixed(2),
+      Defects: data.reduce((sum, r) => sum + Number(r.defects), 0).toFixed(2),
+      "Runtime In Mins": data.reduce((sum, r) => sum + Number(r.runtimeInMins), 0).toFixed(2),
+      "Planned Production Time": data.reduce((sum, r) => sum + Number(r.plannedProductionTime), 0).toFixed(2),
+      MTBF: (data.reduce((sum, r) => sum + Number(r.mtbf), 0) / data.length).toFixed(2),
+      MTTR: (data.reduce((sum, r) => sum + Number(r.mttr), 0) / data.length).toFixed(2),
+      "Standard Cycletime": (data.reduce((sum, r) => sum + Number(r.standardCycletime), 0) / data.length).toFixed(2),
+      "Setup Time": data.reduce((sum, r) => sum + Number(r.setupTime), 0).toFixed(2),
+      "Breakdown Time": data.reduce((sum, r) => sum + Number(r.breakdownTime), 0).toFixed(2),
+    };
+
+    return [...formatted, totals];
   };
 
   const filteredMachines = machineData.filter(
@@ -601,22 +661,22 @@ export default function WeeklyReportM1() {
                     ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                     {(
+                    {(
                       data.reduce((sum, r) => sum + Number(r.availability), 0) / data.length
                     ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                     {(
+                    {(
                       data.reduce((sum, r) => sum + Number(r.performance), 0) / data.length
                     ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                     {(
+                    {(
                       data.reduce((sum, r) => sum + Number(r.oee), 0) / data.length
                     ).toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                     {(
+                    {(
                       data.reduce((sum, r) => sum + Number(r.utilization), 0) / data.length
                     ).toFixed(2)}
                   </StyledTableCell>
@@ -649,7 +709,7 @@ export default function WeeklyReportM1() {
                       .toFixed(2)}
                   </StyledTableCell>
                   <StyledTableCell>
-                     {(
+                    {(
                       data.reduce((sum, r) => sum + Number(r.mtbf), 0) / data.length
                     ).toFixed(2)}
                   </StyledTableCell>

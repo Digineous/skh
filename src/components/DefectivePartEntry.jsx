@@ -20,6 +20,7 @@ import AddNewDefectivePartEntryModal from "./Modals/AddNewDefectivePartEntryModa
 import EditDefectivePartEntryModal from "./Modals/EditDefectivePartEntryModal";
 import AddDefectReasonModal from "./Modals/AddDefectReasonModal";
 import { apiDeleteQualityRejection } from "../api/QualityRejection/api.deleteqrejection";
+import { getDefectivePartReason} from "../api/DefectivePartMaster/getDefectReason";
 
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -81,10 +82,25 @@ function DefectivePartEntry() {
     flag: false,
     id: 0,
   });
-  const [defectReasons, setDefectReasons] = useState([
-    { id: 1, reason: "Reason 2" },
-    { id: 2, reason: "Reason 3" }
-  ])
+  const [defectReasons, setDefectReasons] = useState([{}])
+
+  const getDefectReason = async () => {
+    try {
+      const response = await getDefectivePartReason()
+      console.log("defective reason", response.data.data)
+      setDefectReasons(response.data.data);
+    } catch (error) {
+      console.error("error:",error)
+    }
+
+  }
+
+  useEffect(() => {
+    
+  getDefectReason()
+   
+  }, [])
+  
 
   // Helper function to filter data by shift
   const getShiftData = (shiftName) => {

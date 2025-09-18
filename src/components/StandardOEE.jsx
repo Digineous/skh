@@ -34,6 +34,7 @@ import { Link } from "react-router-dom";
 import ProductionQualityChart from "./ProductionQualityChart";
 import { apigetMachine } from "../api/MachineMaster/apigetmachine";
 import { apiGetMachineInput } from "../api/api.getmachineinput";
+import { apiGetPart } from "../api/PartMaster/api.getpart";
 
 const ChartModal = ({ open, handleClose, title, children }) => (
   <Modal
@@ -162,6 +163,7 @@ export default function StandardOEE() {
     oeePercentage: 0,
   });
   const [selectedPartName, setSelectedPartName] = useState("");
+  const [selectedPartNo, setSelectedPartNo] = useState("");
 
   const formatNumberWithCommas = (number) => {
     if (number === null || number === undefined || isNaN(number)) return "0.00";
@@ -342,6 +344,7 @@ export default function StandardOEE() {
           (input) => Number(input.machineNo) === Number(newSelectedMachine)
         );
         setSelectedPartName(matchingPart?.partName || "");
+        setSelectedPartNo(matchingPart?.partNumber || "");
 
       } catch (err) {
         setError(err.message || "Failed to switch machine");
@@ -705,7 +708,7 @@ export default function StandardOEE() {
         {
           title: "Spots Per Hour",
           dataKey: "partsProducedPerHour2",
-          color: "#ff5722",
+          color: "#2196f3",
           chartType: "bar",
         },
       ]
@@ -719,7 +722,7 @@ export default function StandardOEE() {
         {
           title: "Strokes Per Minute",
           dataKey: "strokesPerMins",
-          color: "#ff5722",
+          color: "#2196f3",
           chartType: "bar",
         },
         {
@@ -827,7 +830,7 @@ export default function StandardOEE() {
                 payload.noOfStrokes < 0 ? "bottom" : "top"
               }
               fontSize={12}
-              fill="#000"
+              fill="#fff"
               formatter={(value) => Math.abs(value)}
             />
           </Bar>
@@ -919,7 +922,7 @@ export default function StandardOEE() {
         }}
       >
         <Typography
-          variant="h4"
+          variant="h6"
           sx={{
             fontWeight: 800,
             color: "#2c3e50",
@@ -928,7 +931,7 @@ export default function StandardOEE() {
             mb: 2,
           }}
         >
-          Current Part Name: {selectedPartName}
+          Current Part Number & Name: {selectedPartNo} - {selectedPartName}
         </Typography>
 
         <Grid
@@ -1388,7 +1391,7 @@ export default function StandardOEE() {
                           data.color
                         )
                         : renderStrokesPerMinuteChart(
-                          chartData[data.dataKey].slice(0, 20),
+                          chartData[data.dataKey].slice(0, 60),
                           data.dataKey,
                           data.color
                         )}

@@ -205,7 +205,7 @@ export default function QuaterlyReportM1() {
     const data = {
       deviceNo: Number(rawData.deviceNo),
       year: rawData.year,
-      quater: rawData.quarter,
+      quarter: rawData.quarter,
     };
 
     const result = await postQuaterly(data);

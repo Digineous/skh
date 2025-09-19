@@ -238,7 +238,13 @@ export default function HourlyBucketM1() {
       handleSnackbarOpen("Hourly bucket data fetched successfully!", "success");
       // setLoading(false);
       //console.log("hourly1 response", result.data);
-      setData(result.data);
+      setData(
+        result.data.map((row) => ({
+          ...row,
+          downtime: row.actualproduction === 0 ? 0 : row.downtime,
+          runtimeInMins: row.actualproduction === 0 ? 0 : row.runtimeInMins,
+        }))
+      );
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error getting hourly bucket 1 data:", error);
@@ -275,7 +281,13 @@ export default function HourlyBucketM1() {
         "success"
       );
 
-      setData(result.data);
+      setData(
+        result.data.map((row) => ({
+          ...row,
+          downtime: row.actualproduction === 0 ? 0 : row.downtime,
+          runtimeInMins: row.actualproduction === 0 ? 0 : row.runtimeInMins,
+        }))
+      );
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error getting hourly bucket 1 data:", error);
@@ -308,26 +320,43 @@ export default function HourlyBucketM1() {
     return result;
   };
 
-const formatData = (data) => {
-  return data.map((row) => ({
-    "Device Name": row.deviceName || "",
-    "Part Name": row.partName || "",
-    "Date Time": row.dateTime || "",
-    "Actual Production": row.actualproduction != null ? Number(row.actualproduction).toFixed(2) : "0.00",
-    Target: row.target != null ? Number(row.target).toFixed(2) : "0.00",
-    Gap: row.gap != null ? Number(row.gap).toFixed(2) : "0.00",
-    OEE: row.oee != null ? Number(row.oee).toFixed(2) : "0.00",
-    Quality: row.quality != null ? Number(row.quality).toFixed(2) : "0.00",
-    Availability: row.availability != null ? Number(row.availability).toFixed(2) : "0.00",
-    Performance: row.performance != null ? Number(row.performance).toFixed(2) : "0.00",
-    Utilization: row.utilization != null ? Number(row.utilization).toFixed(2) : "0.00",
-    "Down Time": row.downtime != null ? Number(row.downtime).toFixed(2) : "0.00",
-    "Run Time (Min)": row.runtimeInMins != null ? Number(row.runtimeInMins).toFixed(2) : "0.00",
-    "Cycle Time": row.cycleTime != null ? Number(row.cycleTime).toFixed(2) : "0.00",
-    "Breakdown Time": row.breakdownTime != null ? Number(row.breakdownTime).toFixed(2) : "0.00",
-    Defects: row.defects != null ? Number(row.defects).toFixed(2) : "0.00",
-  }));
-};
+  const formatData = (data) => {
+    return data.map((row) => {
+      const downtime = row.actualproduction === 0 ? 0 : row.downtime;
+      const runtimeInMins = row.actualproduction === 0 ? 0 : row.runtimeInMins;
+
+      return {
+        "Device Name": row.deviceName || "",
+        "Part Name": row.partName || "",
+        "Date Time": row.dateTime || "",
+        "Actual Production":
+          row.actualproduction != null
+            ? Number(row.actualproduction).toFixed(2)
+            : "0.00",
+        Target: row.target != null ? Number(row.target).toFixed(2) : "0.00",
+        Gap: row.gap != null ? Number(row.gap).toFixed(2) : "0.00",
+        OEE: row.oee != null ? Number(row.oee).toFixed(2) : "0.00",
+        Quality: row.quality != null ? Number(row.quality).toFixed(2) : "0.00",
+        Availability:
+          row.availability != null
+            ? Number(row.availability).toFixed(2)
+            : "0.00",
+        Performance:
+          row.performance != null ? Number(row.performance).toFixed(2) : "0.00",
+        Utilization:
+          row.utilization != null ? Number(row.utilization).toFixed(2) : "0.00",
+        "Down Time": Number(downtime).toFixed(2),
+        "Run Time (Min)": Number(runtimeInMins).toFixed(2),
+        "Cycle Time":
+          row.cycleTime != null ? Number(row.cycleTime).toFixed(2) : "0.00",
+        "Breakdown Time":
+          row.breakdownTime != null
+            ? Number(row.breakdownTime).toFixed(2)
+            : "0.00",
+        Defects: row.defects != null ? Number(row.defects).toFixed(2) : "0.00",
+      };
+    });
+  };
 
   // const handleNavigateWholeDayM1 = () => {
   //   const { fromDate, lineNo, machineId } = hourlyBucket;

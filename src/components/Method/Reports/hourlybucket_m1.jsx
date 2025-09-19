@@ -209,6 +209,7 @@ export default function HourlyBucketM1() {
   const filteredMachines = machineData.filter(
     (machine) => machine.lineNo === selectedLine
   );
+
   const handleAddSubmit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -219,14 +220,17 @@ export default function HourlyBucketM1() {
       shiftName: hourlyBucket.shiftName,
     };
     try {
-      //console.log("hourly 1 data:", body);
       const result = await apiHourlyBucketOEE(body);
 
-      // await getmachine();
+      // Apply rule here
+      const adjustedData = result.data.map((row) => ({
+        ...row,
+        downtime: row.actualproduction === 0 ? 0 : row.downtime,
+        runtimeInMins: row.actualproduction === 0 ? 0 : row.runtimeInMins,
+      }));
+
       handleSnackbarOpen("Hourly bucket data fetched successfully!", "success");
-      // setLoading(false);
-      //console.log("hourly1 response", result.data);
-      setData(result.data);
+      setData(adjustedData);
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error getting hourly bucket 1 data:", error);
@@ -253,18 +257,22 @@ export default function HourlyBucketM1() {
       fromDate: fromDate.toISOString(),
       toDate: now.toISOString(),
     };
+
     try {
-      //console.log("hourly 1 data:", body);
       const result = await apiHourlyBucketOEE(body);
 
-      // await getmachine();
+      // Apply rule here
+      const adjustedData = result.data.map((row) => ({
+        ...row,
+        downtime: row.actualproduction === 0 ? 0 : row.downtime,
+        runtimeInMins: row.actualproduction === 0 ? 0 : row.runtimeInMins,
+      }));
+
       handleSnackbarOpen(
         "Hourly bucket for whole day data fetched successfully!",
         "success"
       );
-      // setLoading(false);
-      //console.log("hourly1 response", result.data);
-      setData(result.data);
+      setData(adjustedData);
       setRefreshData((prev) => !prev);
     } catch (error) {
       console.error("Error getting hourly bucket 1 data:", error);
@@ -276,46 +284,41 @@ export default function HourlyBucketM1() {
       setLoading(false);
     }
   };
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
   const downloadApiCall = async () => {
-    const { lineNo, machineId, fromDate, shiftNo } = hourlyBucket;
-    const formattedFromDate = format(parseISO(fromDate), "dd-MMM-yyyy");
+    // return the already loaded table data
+    return data;
+  };
 
-    return await apiHourlyBucket1({
-      lineNo,
-      machineId,
-      fromDate: formattedFromDate,
-      shiftNo,
+  const formatData = (rows) => {
+    return rows.map((row) => {
+      const downtime = row.actualproduction === 0 ? 0 : row.downtime;
+      const runtimeInMins = row.actualproduction === 0 ? 0 : row.runtimeInMins;
+
+      return {
+        "Device Name": row.deviceName ?? "",
+        "Part Name": row.partName ?? "",
+        "Date Time": row.dateTime ?? "",
+        "Actual Production": row.actualproduction ?? 0,
+        Target: row.target ?? 0,
+        Gap: row.gap ?? 0,
+        OEE: row.oee ?? 0,
+        Quality: row.quality ?? 0,
+        Availability: row.availability ?? 0,
+        Performance: row.performance ?? 0,
+        Utilization: row.utilization ?? 0,
+        "Down Time": downtime,
+        "Run Time (Min)": runtimeInMins,
+        "Cycle Time": row.cycleTime ?? 0,
+        "Breakdown Time": row.breakdownTime ?? 0,
+        Defects: row.defects ?? 0,
+      };
     });
   };
-
-  const formatData = (data) => {
-    return data.map((row) => ({
-      "M Id": row.machineID ?? "",
-      "Date Time": row.dateTime ?? "",
-      VAT: row.vat != null ? parseFloat(row.vat) : "",
-      "Avg CT": row.avgSct != null ? parseFloat(row.avgSct) : "",
-      "U Loss": row.uLoss != null ? parseFloat(row.uLoss) : "",
-      "Revised U Loss":
-        row.revisedULoss != null ? parseFloat(row.revisedULoss) : "",
-      "U%": row.uPer != null ? parseFloat(row.uPer) : "",
-      "A Loss": row.aLoss != null ? parseFloat(row.aLoss) : "",
-      "Revised A Loss":
-        row.revisedALoss != null ? parseFloat(row.revisedALoss) : "",
-      "A%": row.aPer != null ? parseFloat(row.aPer) : "",
-      "P Loss": row.pLoss != null ? parseFloat(row.pLoss) : "",
-      "P %": row.pPer != null ? parseFloat(row.pPer) : "",
-      "Q Loss ": row.qLoss != null ? parseFloat(row.qLoss) : "",
-      "Q% ": row.qPer != null ? parseFloat(row.qPer) : "",
-      Total: row.total != null ? parseFloat(row.total) : "",
-      "OPEC1% ": row.opeC1 != null ? parseFloat(row.opeC1) : "",
-      "OPEC2% ": row.opeC2 != null ? parseFloat(row.opeC2) : "",
-      "OEE%": row.oee != null ? parseFloat(row.oee) : "",
-    }));
-  };
-
+  
   // const handleNavigateWholeDayM1 = () => {
   //   const { fromDate, lineNo, machineId } = hourlyBucket;
   //   const selectedMachine = machineData.find(
@@ -352,7 +355,7 @@ export default function HourlyBucketM1() {
           alignItems: { xs: "start", sm: "center" },
         }}
       >
-        <h2>Hour Report</h2>
+        <h2>Hourly Report</h2>
       </Box>
 
       <Grid container spacing={2} sx={{ mb: 1 }} alignItems="center">

@@ -73,7 +73,8 @@ const ChartModal = ({ open, handleClose, title, children }) => (
 
 const RadialBarChart = ({ percentage, color }) => {
   const hexToRgba = (hex) => {
-    if (!hex || typeof hex !== "string" || !hex.startsWith("#")) return "rgba(0,0,0,0.05)";
+    if (!hex || typeof hex !== "string" || !hex.startsWith("#"))
+      return "rgba(0,0,0,0.05)";
     let r = parseInt(hex.slice(1, 3), 16);
     let g = parseInt(hex.slice(3, 5), 16);
     let b = parseInt(hex.slice(5, 7), 16);
@@ -203,27 +204,24 @@ export default function StandardOEE() {
     return item ? parseFloat(item.value) || 0 : 0;
   }, []);
 
-  const fetchOEEForMachine = useCallback(
-    async (machineNo) => {
-      try {
-        const response = await standardDashboardApi.getStandardOEE({
-          plantNo: "",
-          lineNo: "",
-          machineNo: machineNo,
-          deviceNo: "",
-        });
+  const fetchOEEForMachine = useCallback(async (machineNo) => {
+    try {
+      const response = await standardDashboardApi.getStandardOEE({
+        plantNo: "",
+        lineNo: "",
+        machineNo: machineNo,
+        deviceNo: "",
+      });
 
-        if (response.data?.data?.[0]?.oeeDashboard) {
-          return response.data.data[0].oeeDashboard;
-        } else {
-          throw new Error("Unexpected API response structure");
-        }
-      } catch (err) {
-        throw err;
+      if (response.data?.data?.[0]?.oeeDashboard) {
+        return response.data.data[0].oeeDashboard;
+      } else {
+        throw new Error("Unexpected API response structure");
       }
-    },
-    []
-  );
+    } catch (err) {
+      throw err;
+    }
+  }, []);
 
   // Fixed function to update chart data properly
   const updateChartDataFromResponse = useCallback(
@@ -265,12 +263,12 @@ export default function StandardOEE() {
 
       const partsProducedPerHour2 = Array.isArray(responseData.partsPerHour)
         ? [...responseData.partsPerHour]
-          .map((p) => ({
-            ...p,
-            actualProduction: (p.actualProduction ?? 0) * 31,
-            target: (p.target ?? 0) * 31,
-          }))
-          .reverse()
+            .map((p) => ({
+              ...p,
+              actualProduction: (p.actualProduction ?? 0) * 31,
+              target: (p.target ?? 0) * 31,
+            }))
+            .reverse()
         : [];
 
       const cycleTimeReverse = Array.isArray(responseData.cycleTime)
@@ -282,14 +280,15 @@ export default function StandardOEE() {
         partsProduced: partsProducedPerHour,
         cycleTime: cycleTimeReverse,
         downtime: responseData.downtime || [],
-        energyPerProduction: responseData.energyPerHourProduction?.reverse() || [],
+        energyPerProduction:
+          responseData.energyPerHourProduction?.reverse() || [],
         availability: findValue(responseData.oeeLatestData, "Availability %"),
         productivity: findValue(responseData.oeeLatestData, "Performance %"),
         quality: findValue(responseData.oeeLatestData, "Quality %"),
         utilization: findValue(responseData.oeeLatestData, "Utilization %"),
         downtimeDistribution: responseData.downtime || [],
         strokesPerShift: strokesPerShift,
-        strokesPerMins: strokesPerMins.reverse(),
+        strokesPerMins: strokesPerMins,
         partsProducedPerHour2: partsProducedPerHour2,
         strokesPerPerson: responseData.strokesPerPerson || [],
         oeeLatestData: responseData.oeeLatestData || [],
@@ -321,7 +320,10 @@ export default function StandardOEE() {
   const handleMachineChange = useCallback(
     async (event) => {
       const newSelectedMachine = Number(event.target.value);
-      if (!newSelectedMachine || newSelectedMachine === Number(selectedMachine)) {
+      if (
+        !newSelectedMachine ||
+        newSelectedMachine === Number(selectedMachine)
+      ) {
         return;
       }
 
@@ -345,7 +347,6 @@ export default function StandardOEE() {
         );
         setSelectedPartName(matchingPart?.partName || "");
         setSelectedPartNo(matchingPart?.partNumber || "");
-
       } catch (err) {
         setError(err.message || "Failed to switch machine");
         console.error("Error switching machine:", err);
@@ -353,7 +354,13 @@ export default function StandardOEE() {
         setIsSwitching(false);
       }
     },
-    [selectedMachine, isSwitching, fetchOEEForMachine, updateChartDataFromResponse, machineInputData]
+    [
+      selectedMachine,
+      isSwitching,
+      fetchOEEForMachine,
+      updateChartDataFromResponse,
+      machineInputData,
+    ]
   );
 
   const handleOpenModal = useCallback((title, content) => {
@@ -654,7 +661,7 @@ export default function StandardOEE() {
     },
   ];
 
-  const performanceTitle = Number(selectedMachine) === 2 ? "Performance " : "Productivity ";
+  const performanceTitle = "Performance";
 
   const radialChartsR1 = [
     { title: "Availability ", dataKey: "availability", color: "#0E2566" },
@@ -699,39 +706,39 @@ export default function StandardOEE() {
   const chartsR3 =
     Number(selectedMachine) === 2
       ? [
-        {
-          title: "Spots Per Shift",
-          dataKey: "strokesPerShift",
-          color: "#2196f3",
-          chartType: "bar",
-        },
-        {
-          title: "Spots Per Hour",
-          dataKey: "partsProducedPerHour2",
-          color: "#2196f3",
-          chartType: "bar",
-        },
-      ]
+          {
+            title: "Spots Per Shift",
+            dataKey: "strokesPerShift",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+          {
+            title: "Spots Per Hour",
+            dataKey: "partsProducedPerHour2",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+        ]
       : [
-        {
-          title: "Strokes Per Shift",
-          dataKey: "strokesPerShift",
-          color: "#2196f3",
-          chartType: "bar",
-        },
-        {
-          title: "Strokes Per Minute",
-          dataKey: "strokesPerMins",
-          color: "#2196f3",
-          chartType: "bar",
-        },
-        {
-          title: "Strokes Per Person",
-          dataKey: "strokesPerPerson",
-          color: "#2196f3",
-          chartType: "bar",
-        },
-      ];
+          {
+            title: "Strokes Per Shift",
+            dataKey: "strokesPerShift",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+          {
+            title: "Strokes Per Minute",
+            dataKey: "strokesPerMins",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+          {
+            title: "Strokes Per Person",
+            dataKey: "strokesPerPerson",
+            color: "#2196f3",
+            chartType: "bar",
+          },
+        ];
 
   const renderStrokesPerShiftChart = useCallback(
     (data, dataKey, color) => (
@@ -921,18 +928,36 @@ export default function StandardOEE() {
           gap: 2,
         }}
       >
-        <Typography
-          variant="h6"
+        <Box
           sx={{
-            fontWeight: 800,
-            color: "#2c3e50",
-            textAlign: "left",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "flex-start", // aligns to left
+            gap: 1, // spacing between rows
             mt: 2,
             mb: 2,
           }}
         >
-          Current Part Number & Name: {selectedPartNo} - {selectedPartName}
-        </Typography>
+          <Typography
+            variant="subtitle2"
+            sx={{
+              fontWeight: 800,
+              color: "#2c3e50",
+            }}
+          >
+            Current Part Number: {selectedPartNo}
+          </Typography>
+
+          <Typography
+            variant="subtitle2"
+            sx={{
+              fontWeight: 800,
+              color: "#2c3e50",
+            }}
+          >
+            Current Part Name: {selectedPartName}
+          </Typography>
+        </Box>
 
         <Grid
           item
@@ -1057,7 +1082,14 @@ export default function StandardOEE() {
           ))}
 
           {radialChartsR1.map((data, index) => (
-            <Grid item xs={12} sm={6} md={2} key={`radial-r1-${index}`} marginTop={2}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={2}
+              key={`radial-r1-${index}`}
+              marginTop={2}
+            >
               <Box
                 height={250}
                 display="flex"
@@ -1094,14 +1126,16 @@ export default function StandardOEE() {
                   height="calc(100% - 30px)"
                 >
                   <RadialBarChart
-                    key={`${selectedMachine}-${data.dataKey}-${chartData[data.dataKey]}`}
+                    key={`${selectedMachine}-${data.dataKey}-${
+                      chartData[data.dataKey]
+                    }`}
                     percentage={chartData[data.dataKey]}
                     color={
                       chartData[data.dataKey] <= 50
                         ? "#f44336"
                         : chartData[data.dataKey] <= 75
-                          ? "#ff9b00"
-                          : "#4caf50"
+                        ? "#ff9b00"
+                        : "#4caf50"
                     }
                   />
                 </Box>
@@ -1110,7 +1144,14 @@ export default function StandardOEE() {
           ))}
 
           {chartsR1.map((data, index) => (
-            <Grid item xs={12} sm={6} md={4} key={`chart-r1-${index}`} marginTop={2}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={`chart-r1-${index}`}
+              marginTop={2}
+            >
               <Box
                 height={250}
                 display="flex"
@@ -1190,7 +1231,14 @@ export default function StandardOEE() {
           ))}
 
           {radialChartsR2.map((data, index) => (
-            <Grid item xs={12} sm={6} md={2} key={`radial-r2-${index}`} marginTop={2}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={2}
+              key={`radial-r2-${index}`}
+              marginTop={2}
+            >
               <Box
                 height={250}
                 display="flex"
@@ -1227,14 +1275,16 @@ export default function StandardOEE() {
                   flexGrow={1}
                 >
                   <RadialBarChart
-                    key={`${selectedMachine}-${data.dataKey}-${chartData[data.dataKey]}`}
+                    key={`${selectedMachine}-${data.dataKey}-${
+                      chartData[data.dataKey]
+                    }`}
                     percentage={chartData[data.dataKey]}
                     color={
                       chartData[data.dataKey] <= 50
                         ? "#f44336"
                         : chartData[data.dataKey] <= 75
-                          ? "#ff9b00"
-                          : "#4caf50"
+                        ? "#ff9b00"
+                        : "#4caf50"
                     }
                   />
                 </Box>
@@ -1243,7 +1293,14 @@ export default function StandardOEE() {
           ))}
 
           {chartsR2.map((data, index) => (
-            <Grid item xs={12} sm={6} md={4} key={`chart-r2-${index}`} marginTop={2}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={`chart-r2-${index}`}
+              marginTop={2}
+            >
               <Box
                 height={250}
                 display="flex"
@@ -1272,15 +1329,15 @@ export default function StandardOEE() {
                         data.title,
                         data.title === "Energy Consumed Per Part"
                           ? energyChart(
-                            chartData[data.dataKey],
-                            data.dataKey,
-                            data.color
-                          )
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
                           : renderBarChart1(
-                            chartData[data.dataKey],
-                            data.dataKey,
-                            data.color
-                          )
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
                       )
                     }
                   />
@@ -1294,22 +1351,29 @@ export default function StandardOEE() {
                 >
                   {data.title === "Energy Consumed Per Part"
                     ? energyChart(
-                      chartData[data.dataKey],
-                      data.dataKey,
-                      data.color
-                    )
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )
                     : renderBarChart1(
-                      chartData[data.dataKey],
-                      data.dataKey,
-                      data.color
-                    )}
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )}
                 </Box>
               </Box>
             </Grid>
           ))}
 
           {chartsR3.map((data, index) => (
-            <Grid item xs={12} sm={6} md={4} key={`chart-r3-${index}`} marginTop={2}>
+            <Grid
+              item
+              xs={12}
+              sm={6}
+              md={4}
+              key={`chart-r3-${index}`}
+              marginTop={2}
+            >
               <Box
                 height={250}
                 display="flex"
@@ -1339,27 +1403,27 @@ export default function StandardOEE() {
                         data.title === "Strokes Per Shift" ||
                           data.title === "Spots Per Shift"
                           ? renderStrokesPerShiftChart(
-                            chartData[data.dataKey],
-                            data.dataKey,
-                            data.color
-                          )
-                          : data.title === "Strokes Per Person"
-                            ? renderStrokesPerPersonChart(
                               chartData[data.dataKey],
                               data.dataKey,
                               data.color
                             )
-                            : data.title === "Spots Per Hour"
-                              ? renderBarChart2(
-                                chartData[data.dataKey],
-                                data.dataKey,
-                                data.color
-                              )
-                              : renderStrokesPerMinuteChart(
-                                chartData[data.dataKey],
-                                data.dataKey,
-                                data.color
-                              )
+                          : data.title === "Strokes Per Person"
+                          ? renderStrokesPerPersonChart(
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
+                          : data.title === "Spots Per Hour"
+                          ? renderBarChart2(
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
+                          : renderStrokesPerMinuteChart(
+                              chartData[data.dataKey],
+                              data.dataKey,
+                              data.color
+                            )
                       )
                     }
                   />
@@ -1372,29 +1436,29 @@ export default function StandardOEE() {
                   height="calc(100% - 30px)"
                 >
                   {data.title === "Strokes Per Shift" ||
-                    data.title === "Spots Per Shift"
+                  data.title === "Spots Per Shift"
                     ? renderStrokesPerShiftChart(
-                      chartData[data.dataKey],
-                      data.dataKey,
-                      data.color
-                    )
-                    : data.title === "Strokes Per Person"
-                      ? renderStrokesPerPersonChart(
                         chartData[data.dataKey],
                         data.dataKey,
                         data.color
                       )
-                      : data.title === "Spots Per Hour"
-                        ? renderBarChart2(
-                          chartData[data.dataKey],
-                          data.dataKey,
-                          data.color
-                        )
-                        : renderStrokesPerMinuteChart(
-                          chartData[data.dataKey].slice(0, 60),
-                          data.dataKey,
-                          data.color
-                        )}
+                    : data.title === "Strokes Per Person"
+                    ? renderStrokesPerPersonChart(
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )
+                    : data.title === "Spots Per Hour"
+                    ? renderBarChart2(
+                        chartData[data.dataKey],
+                        data.dataKey,
+                        data.color
+                      )
+                    : renderStrokesPerMinuteChart(
+                        chartData[data.dataKey].slice(-20),
+                        data.dataKey,
+                        data.color
+                      )}
                 </Box>
               </Box>
             </Grid>
